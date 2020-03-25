@@ -1,0 +1,27 @@
+/* rarh3 */
+
+main let
+
+    var goblins : int := 6;
+
+in begin
+
+    let
+        var creatures : int := 2;
+
+        function addInt (first : int, second : int) : int begin
+            return first + second;
+        end;
+
+        function subInt (first : int, second : int) : int begin
+            return first - second;
+        end;
+
+    in
+        creatures := goblins;
+        creatures := addInt(creatures, goblins);
+        printi(12);
+        printi(creatures);
+    end
+
+end

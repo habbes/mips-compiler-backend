@@ -1,0 +1,32 @@
+/* rarh3 */
+
+main let
+
+    type goblinArray = array [5] of int;
+    var goblins : goblinArray := 16;
+    var number : int;
+    var four: int;
+
+in begin
+
+    goblins[3] := 11;
+    printi(11);
+    printi(goblins[3]);
+
+    printi(16);
+    printi(goblins[4]);
+
+    goblins[2] := 2;
+    printi(2);
+    printi(goblins[2]);
+
+    number := goblins[2];
+    printi(2);
+    printi(number);
+
+    number := goblins[four];
+    printi(16);
+    printi(number);
+
+    printi(goblins[3] + goblins[4] + goblins[2] + goblins[four] == 45);
+end

@@ -1,0 +1,13 @@
+#start_function main
+    void main()
+    int-list: _t1_s0, _t2_s0, _t3_s0
+    float-list: 
+    main:
+    add, 2, 3, _t1_s0
+    call, printi, _t1_s0
+    add, 1, 2, _t2_s0
+    add, _t2_s0, 3, _t3_s0
+    call, printi, _t3_s0
+    return, , , 
+#end_function main
+

@@ -1,0 +1,30 @@
+main let
+
+    var one : int := 1;
+    var two : int := 2;
+    var three : int := 3;
+    var six : int := 6;
+    var number : int := 0;
+
+in begin
+
+
+    for number := 1 to 2 do
+        if (number == 1) then
+            six := two * three;
+            six := three + three;
+            six := two ** three - two;
+            six := six;
+            six := (two * two * three) / two; 
+        else
+            six := two * three;
+            six := three + three;
+            six := two ** three - two;
+            six := six;
+            six := (two * two * three) / two; 
+        endif;
+    enddo;
+
+    printi(six);
+
+end

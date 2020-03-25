@@ -1,0 +1,40 @@
+#start_function main
+    void main()
+    int-list: goblins_s1[5], number_s1, four_s1, _t1_s0, _t2_s0, _t3_s0, _t4_s0, _t5_s0, _t6_s0, _t7_s0, _t8_s0, _t9_s0, _t10_s0, _t11_s0, _t12_s0, _t13_s0
+    float-list: 
+    assign, goblins_s1, 5, 16
+    main:
+    array_store, goblins_s1, 3, 11
+    call, printi, 11
+    array_load, _t1_s0, goblins_s1, 3
+    call, printi, _t1_s0
+    call, printi, 16
+    array_load, _t2_s0, goblins_s1, 4
+    call, printi, _t2_s0
+    array_store, goblins_s1, 2, 2
+    call, printi, 2
+    array_load, _t3_s0, goblins_s1, 2
+    call, printi, _t3_s0
+    array_load, _t4_s0, goblins_s1, 2
+    assign, number_s1, _t4_s0, 
+    call, printi, 2
+    call, printi, number_s1
+    array_load, _t5_s0, goblins_s1, four_s1
+    assign, number_s1, _t5_s0, 
+    call, printi, 16
+    call, printi, number_s1
+    array_load, _t7_s0, goblins_s1, four_s1
+    array_load, _t8_s0, goblins_s1, 2
+    array_load, _t9_s0, goblins_s1, 4
+    array_load, _t10_s0, goblins_s1, 3
+    add, _t10_s0, _t9_s0, _t11_s0
+    add, _t11_s0, _t8_s0, _t12_s0
+    add, _t12_s0, _t7_s0, _t13_s0
+    assign, _t6_s0, 0, 
+    brneq, _t13_s0, 45, if_label_0
+    assign, _t6_s0, 1, 
+    if_label_0:
+    call, printi, _t6_s0
+    return, , , 
+#end_function main
+

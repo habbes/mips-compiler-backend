@@ -1,0 +1,36 @@
+spim -keepstats -f sum-to-n-dn.s
+Loaded: /usr/share/spim/exceptions.s
+55
+55
+Stats -- #instructions : 493
+         #reads : 98  #writes 93  #branches 30  #other 272
+spim -keepstats -f sum-to-n-db.s
+Loaded: /usr/share/spim/exceptions.s
+55
+55
+Stats -- #instructions : 391
+         #reads : 71  #writes 69  #branches 30  #other 221
+spim -keepstats -f sum-to-n-dg.s
+Loaded: /usr/share/spim/exceptions.s
+55
+55
+Stats -- #instructions : 191
+         #reads : 21  #writes 19  #branches 30  #other 121
+spim -keepstats -f sum-to-n-sn.s
+Loaded: /usr/share/spim/exceptions.s
+55
+55
+Stats -- #instructions : 305
+         #reads : 96  #writes 94  #branches 30  #other 85
+spim -keepstats -f sum-to-n-sb.s
+Loaded: /usr/share/spim/exceptions.s
+55
+55
+Stats -- #instructions : 255
+         #reads : 70  #writes 70  #branches 30  #other 85
+spim -keepstats -f sum-to-n-sg.s
+Loaded: /usr/share/spim/exceptions.s
+55
+55
+Stats -- #instructions : 156
+         #reads : 21  #writes 20  #branches 30  #other 85

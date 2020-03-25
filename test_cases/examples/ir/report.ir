@@ -1,0 +1,15 @@
+#start_function main
+    void main()
+    int-list: two_s1, three_s1, four_s1, five_s1, _t1_s0
+    float-list: 
+    main:
+    assign, four_s1, 4, 
+    assign, two_s1, 2, 
+    add, two_s1, 3, _t1_s0
+    assign, five_s1, _t1_s0, 
+    assign, three_s1, 3, 
+    call, printi, five_s1
+    call, printi, four_s1
+    return, , , 
+#end_function main
+

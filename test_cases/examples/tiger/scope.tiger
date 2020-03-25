@@ -1,0 +1,19 @@
+/* rarh3 */
+
+main let
+
+    var x : int := 5;
+
+    function changex () begin
+        x := x + 1;
+    end;
+
+in begin
+
+    printi(x);
+    changex();
+    printi(x);
+
+/* output is 5, 6 */
+
+end

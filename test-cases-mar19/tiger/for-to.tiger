@@ -1,0 +1,33 @@
+main let
+
+    type goblinArray = array [5] of int;
+    var elves : int;
+    var counter : int;
+    var goblins : goblinArray;
+    var goblinCount : int;
+
+in begin
+
+    elves := 0;
+    for counter := 0 to 4 do
+        elves := elves + counter;
+        printi(counter);
+    enddo;
+
+    printi(elves);
+
+    for counter := 0 to 4 do
+        goblins[counter] := counter;
+        printi(goblins[counter]);
+    enddo;
+
+    goblinCount := 0;
+
+    for counter := 0 to 4 do
+        goblinCount := goblinCount + goblins[counter];
+        printi(goblinCount);
+    enddo;
+
+    printi(goblinCount);
+
+end

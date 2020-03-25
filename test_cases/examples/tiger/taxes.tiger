@@ -1,0 +1,49 @@
+/* rarh3 */
+
+main let
+
+    type integerArray = array [3] of int;
+
+    var taxBrackets : integerArray;
+    var goodSalary : int := 40000;
+    var betterSalary : int := 80000;
+    var bestSalary : int := 120000;
+    var goodTax, betterTax, bestTax : int;
+    var tax : int;
+
+    function getTaxes(salary : int) : int begin
+        if (salary >= 100000) then
+            tax := (50000 / taxBrackets[0]);
+            tax := tax + (50000 / taxBrackets[1]);
+            tax := tax + ((salary - 100000) / taxBrackets[2]);
+        else
+            if (salary >= 50000) then
+                tax := (50000 / taxBrackets[0]);
+                tax := tax + ((salary - 50000) / taxBrackets[1]);
+            else
+                tax := (salary / taxBrackets[0]);
+            endif;
+        endif;
+        return tax;
+    end;
+
+in begin
+
+    /* only using integers, so 1/20 = 5% */
+    taxBrackets[0] := 20;   /* 5% */
+    taxBrackets[1] := 10;   /* 10% */
+    taxBrackets[2] := 4;    /* 25% */
+
+    goodTax := getTaxes(goodSalary);  
+    betterTax := getTaxes(betterSalary);  
+    bestTax := getTaxes(bestSalary);  
+
+    printi(goodTax);
+    printi(betterTax);
+    printi(bestTax);
+
+    printi(goodTax == 2000);  
+    printi(betterTax == 5500);    
+    printi(bestTax == 12500); 
+
+end

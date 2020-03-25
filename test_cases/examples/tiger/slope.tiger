@@ -1,0 +1,27 @@
+/* rarh3 */
+
+main let
+
+    var x1, x2, y1, y2 : int;
+    var slope : int;
+    var numerator : int;
+    var denominator : int;
+    var intercept : int;
+
+in begin
+
+    x1 := y1 := 1;
+    x2 := y2 := 2;
+    numerator := (y2 - y1);
+    denominator := (x2 - x1);
+    slope := numerator / denominator;
+    intercept := y2 - slope * x2;
+
+    x2 := 7;
+    y2 := slope * x2 + intercept;
+    slope := (y2 - y1) / (x2 - x1);
+
+    printi(slope == 1);
+    printi(intercept == 0);
+
+end

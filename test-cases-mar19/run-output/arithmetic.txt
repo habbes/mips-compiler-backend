@@ -1,0 +1,43 @@
+spim -keepstats -f arithmetic-dn.s
+Loaded: /usr/share/spim/exceptions.s
+6
+36
+36
+Stats -- #instructions : 474
+         #reads : 92  #writes 90  #branches 17  #other 275
+spim -keepstats -f arithmetic-db.s
+Loaded: /usr/share/spim/exceptions.s
+6
+36
+36
+Stats -- #instructions : 424
+         #reads : 79  #writes 78  #branches 17  #other 250
+spim -keepstats -f arithmetic-dg.s
+Loaded: /usr/share/spim/exceptions.s
+6
+36
+36
+Stats -- #instructions : 270
+         #reads : 41  #writes 39  #branches 17  #other 173
+spim -keepstats -f arithmetic-sn.s
+Loaded: /usr/share/spim/exceptions.s
+6
+36
+36
+Stats -- #instructions : 295
+         #reads : 90  #writes 91  #branches 17  #other 97
+spim -keepstats -f arithmetic-sb.s
+Loaded: /usr/share/spim/exceptions.s
+6
+36
+36
+Stats -- #instructions : 270
+         #reads : 77  #writes 79  #branches 17  #other 97
+spim -keepstats -f arithmetic-sg.s
+Loaded: /usr/share/spim/exceptions.s
+6
+36
+36
+Stats -- #instructions : 195
+         #reads : 41  #writes 40  #branches 17  #other 97
+makefile:2: recipe for target 'runone' failed

@@ -1,0 +1,72 @@
+spim -keepstats -f sort-dn.s
+Loaded: /usr/share/spim/exceptions.s
+2
+5
+6
+7
+10
+20
+33
+44
+Stats -- #instructions : 4271
+         #reads : 766  #writes 618  #branches 382  #other 2505
+spim -keepstats -f sort-db.s
+Loaded: /usr/share/spim/exceptions.s
+2
+5
+6
+7
+10
+20
+33
+44
+Stats -- #instructions : 3757
+         #reads : 592  #writes 535  #branches 382  #other 2248
+spim -keepstats -f sort-dg.s
+Loaded: /usr/share/spim/exceptions.s
+2
+5
+6
+7
+10
+20
+33
+44
+Stats -- #instructions : 2575
+         #reads : 338  #writes 198  #branches 382  #other 1657
+spim -keepstats -f sort-sn.s
+Loaded: /usr/share/spim/exceptions.s
+2
+5
+6
+7
+10
+20
+33
+44
+Stats -- #instructions : 2884
+         #reads : 758  #writes 619  #branches 382  #other 1125
+spim -keepstats -f sort-sb.s
+Loaded: /usr/share/spim/exceptions.s
+2
+5
+6
+7
+10
+20
+33
+44
+Stats -- #instructions : 2635
+         #reads : 592  #writes 536  #branches 382  #other 1125
+spim -keepstats -f sort-sg.s
+Loaded: /usr/share/spim/exceptions.s
+2
+5
+6
+7
+10
+20
+33
+44
+Stats -- #instructions : 2044
+         #reads : 338  #writes 199  #branches 382  #other 1125

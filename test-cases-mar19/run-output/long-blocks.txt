@@ -1,0 +1,30 @@
+spim -keepstats -f long-blocks-dn.s
+Loaded: /usr/share/spim/exceptions.s
+6
+Stats -- #instructions : 633
+         #reads : 128  #writes 119  #branches 32  #other 354
+spim -keepstats -f long-blocks-db.s
+Loaded: /usr/share/spim/exceptions.s
+6
+Stats -- #instructions : 517
+         #reads : 95  #writes 94  #branches 32  #other 296
+spim -keepstats -f long-blocks-dg.s
+Loaded: /usr/share/spim/exceptions.s
+6
+Stats -- #instructions : 277
+         #reads : 38  #writes 31  #branches 32  #other 176
+spim -keepstats -f long-blocks-sn.s
+Loaded: /usr/share/spim/exceptions.s
+6
+Stats -- #instructions : 390
+         #reads : 127  #writes 120  #branches 32  #other 111
+spim -keepstats -f long-blocks-sb.s
+Loaded: /usr/share/spim/exceptions.s
+6
+Stats -- #instructions : 333
+         #reads : 95  #writes 95  #branches 32  #other 111
+spim -keepstats -f long-blocks-sg.s
+Loaded: /usr/share/spim/exceptions.s
+6
+Stats -- #instructions : 213
+         #reads : 38  #writes 32  #branches 32  #other 111

@@ -1,0 +1,35 @@
+#start_function fact
+    int fact(int n_s2)
+    int-list: n_s2, _t1_s0, _t2_s0, _t3_s0, _t4_s0
+    float-list: 
+    assign, _t1_s0, 0, 
+    brneq, n_s2, 1, if_label_1
+    assign, _t1_s0, 1, 
+    if_label_1:
+    brneq, _t1_s0, 1, if_label_0
+    return, 1, , 
+    if_label_0:
+    sub, n_s2, 1, _t2_s0
+    callr, _t3_s0, fact, _t2_s0
+    assign, r_s1, _t3_s0, 
+    mul, n_s2, r_s1, _t4_s0
+    return, _t4_s0, , 
+#end_function fact
+
+#start_function main
+    void main()
+    int-list: r_s1, _t5_s0, _t6_s0
+    float-list: 
+    assign, r_s1, 1, 
+    main:
+    callr, _t5_s0, fact, 5
+    assign, r_s1, _t5_s0, 
+    call, printi, r_s1
+    call, printi, 120
+    callr, _t6_s0, fact, 7
+    assign, r_s1, _t6_s0, 
+    call, printi, r_s1
+    call, printi, 5040
+    return, , , 
+#end_function main
+

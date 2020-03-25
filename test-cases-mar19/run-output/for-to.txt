@@ -1,0 +1,126 @@
+spim -keepstats -f for-to-dn.s
+Loaded: /usr/share/spim/exceptions.s
+0
+1
+2
+3
+4
+10
+0
+1
+2
+3
+4
+0
+1
+3
+6
+10
+10
+Stats -- #instructions : 1014
+         #reads : 164  #writes 138  #branches 101  #other 611
+spim -keepstats -f for-to-db.s
+Loaded: /usr/share/spim/exceptions.s
+0
+1
+2
+3
+4
+10
+0
+1
+2
+3
+4
+0
+1
+3
+6
+10
+10
+Stats -- #instructions : 918
+         #reads : 130  #writes 124  #branches 101  #other 563
+spim -keepstats -f for-to-dg.s
+Loaded: /usr/share/spim/exceptions.s
+0
+1
+2
+3
+4
+10
+0
+1
+2
+3
+4
+0
+1
+3
+6
+10
+10
+Stats -- #instructions : 668
+         #reads : 68  #writes 61  #branches 101  #other 438
+spim -keepstats -f for-to-sn.s
+Loaded: /usr/share/spim/exceptions.s
+0
+1
+2
+3
+4
+10
+0
+1
+2
+3
+4
+0
+1
+3
+6
+10
+10
+Stats -- #instructions : 700
+         #reads : 147  #writes 139  #branches 101  #other 313
+spim -keepstats -f for-to-sb.s
+Loaded: /usr/share/spim/exceptions.s
+0
+1
+2
+3
+4
+10
+0
+1
+2
+3
+4
+0
+1
+3
+6
+10
+10
+Stats -- #instructions : 669
+         #reads : 130  #writes 125  #branches 101  #other 313
+spim -keepstats -f for-to-sg.s
+Loaded: /usr/share/spim/exceptions.s
+0
+1
+2
+3
+4
+10
+0
+1
+2
+3
+4
+0
+1
+3
+6
+10
+10
+Stats -- #instructions : 544
+         #reads : 68  #writes 62  #branches 101  #other 313

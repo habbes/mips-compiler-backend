@@ -1,0 +1,84 @@
+#start_function getTaxes
+    int getTaxes(int salary_s2)
+    int-list: salary_s2, _t1_s0, _t2_s0, _t3_s0, _t4_s0, _t5_s0, _t6_s0, _t7_s0, _t8_s0, _t9_s0, _t10_s0, _t11_s0, _t12_s0, _t13_s0, _t14_s0, _t15_s0, _t16_s0, _t17_s0, _t18_s0, _t19_s0
+    float-list: 
+    assign, _t1_s0, 0, 
+    brlt, salary_s2, 100000, if_label_0
+    assign, _t1_s0, 1, 
+    if_label_0:
+    brneq, _t1_s0, 1, if_label_1
+    array_load, _t2_s0, taxBrackets_s1, 0
+    div, 50000, _t2_s0, _t3_s0
+    assign, tax_s1, _t3_s0, 
+    array_load, _t4_s0, taxBrackets_s1, 1
+    div, 50000, _t4_s0, _t5_s0
+    add, tax_s1, _t5_s0, _t6_s0
+    assign, tax_s1, _t6_s0, 
+    array_load, _t7_s0, taxBrackets_s1, 2
+    sub, salary_s2, 100000, _t8_s0
+    div, _t8_s0, _t7_s0, _t9_s0
+    add, tax_s1, _t9_s0, _t10_s0
+    assign, tax_s1, _t10_s0, 
+    goto, if_label_2, , 
+    if_label_1:
+    assign, _t11_s0, 0, 
+    brlt, salary_s2, 50000, if_label_3
+    assign, _t11_s0, 1, 
+    if_label_3:
+    brneq, _t11_s0, 1, if_label_4
+    array_load, _t12_s0, taxBrackets_s1, 0
+    div, 50000, _t12_s0, _t13_s0
+    assign, tax_s1, _t13_s0, 
+    array_load, _t14_s0, taxBrackets_s1, 1
+    sub, salary_s2, 50000, _t15_s0
+    div, _t15_s0, _t14_s0, _t16_s0
+    add, tax_s1, _t16_s0, _t17_s0
+    assign, tax_s1, _t17_s0, 
+    goto, if_label_5, , 
+    if_label_4:
+    array_load, _t18_s0, taxBrackets_s1, 0
+    div, salary_s2, _t18_s0, _t19_s0
+    assign, tax_s1, _t19_s0, 
+    if_label_5:
+    if_label_2:
+    return, tax_s1, , 
+#end_function getTaxes
+
+#start_function main
+    void main()
+    int-list: taxBrackets_s1[3], goodSalary_s1, betterSalary_s1, bestSalary_s1, goodTax_s1, betterTax_s1, bestTax_s1, tax_s1, _t20_s0, _t21_s0, _t22_s0, _t23_s0, _t24_s0, _t25_s0
+    float-list: 
+    assign, goodSalary_s1, 40000, 
+    assign, betterSalary_s1, 80000, 
+    assign, bestSalary_s1, 120000, 
+    main:
+    array_store, taxBrackets_s1, 0, 20
+    array_store, taxBrackets_s1, 1, 10
+    array_store, taxBrackets_s1, 2, 4
+    callr, _t20_s0, getTaxes, goodSalary_s1
+    assign, goodTax_s1, _t20_s0, 
+    callr, _t21_s0, getTaxes, betterSalary_s1
+    assign, betterTax_s1, _t21_s0, 
+    callr, _t22_s0, getTaxes, bestSalary_s1
+    assign, bestTax_s1, _t22_s0, 
+    call, printi, goodTax_s1
+    call, printi, betterTax_s1
+    call, printi, bestTax_s1
+    assign, _t23_s0, 0, 
+    brneq, goodTax_s1, 2000, if_label_6
+    assign, _t23_s0, 1, 
+    if_label_6:
+    call, printi, _t23_s0
+    assign, _t24_s0, 0, 
+    brneq, betterTax_s1, 5500, if_label_7
+    assign, _t24_s0, 1, 
+    if_label_7:
+    call, printi, _t24_s0
+    assign, _t25_s0, 0, 
+    brneq, bestTax_s1, 12500, if_label_8
+    assign, _t25_s0, 1, 
+    if_label_8:
+    call, printi, _t25_s0
+    return, , , 
+#end_function main
+

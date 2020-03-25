@@ -1,0 +1,18 @@
+/* rarh3 */
+
+main let
+
+var two : int;
+var three : int;
+var four : int;
+var five : int;
+
+in begin
+
+    four := 4;
+    two := 2;
+    five := two + 3;
+    three := 3;
+    printi(five);
+    printi(four);
+end

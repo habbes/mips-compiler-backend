@@ -1,0 +1,31 @@
+/* rarh3 */
+
+main let
+
+    var two : int := 2;
+    var three : int := 3;
+    var number1 : int;
+    var number2 : int;
+    var number3 : int;
+    var number4 : int;
+    var number5 : int;
+    var number6 : int;
+
+in begin
+
+    printi(two * three);
+
+    number1 := three + three;
+    number2 := 2 * three;
+    number3 := 2 + 2 + 2;
+    number4 := (1 * 1) + 2 + three;
+    number5 := three + three;
+    number5 := three + three;
+    number5 := two + two + two;
+    number5 := two + two + two;
+    number6 := (2**3) - 2;
+
+    printi(number1 + number2 + number3 + number4 + number5 + number6);
+    printi(36);
+
+end

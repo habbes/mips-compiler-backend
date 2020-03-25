@@ -1,0 +1,40 @@
+#start_function main
+    void main()
+    int-list: elves_s1, counter_s1, goblins_s1[5], goblinCount_s1, _t1_s0, _t2_s0, _t3_s0, _t4_s0
+    float-list: 
+    main:
+    assign, elves_s1, 0, 
+    assign, counter_s1, 0, 
+    loop_label_0:
+    brgt, counter_s1, 4, loop_label_1
+    add, elves_s1, counter_s1, _t1_s0
+    assign, elves_s1, _t1_s0, 
+    call, printi, counter_s1
+    add, counter_s1, 1, counter_s1
+    goto, loop_label_0, , 
+    loop_label_1:
+    call, printi, elves_s1
+    assign, counter_s1, 0, 
+    loop_label_2:
+    brgt, counter_s1, 4, loop_label_3
+    array_store, goblins_s1, counter_s1, counter_s1
+    array_load, _t2_s0, goblins_s1, counter_s1
+    call, printi, _t2_s0
+    add, counter_s1, 1, counter_s1
+    goto, loop_label_2, , 
+    loop_label_3:
+    assign, goblinCount_s1, 0, 
+    assign, counter_s1, 0, 
+    loop_label_4:
+    brgt, counter_s1, 4, loop_label_5
+    array_load, _t3_s0, goblins_s1, counter_s1
+    add, goblinCount_s1, _t3_s0, _t4_s0
+    assign, goblinCount_s1, _t4_s0, 
+    call, printi, goblinCount_s1
+    add, counter_s1, 1, counter_s1
+    goto, loop_label_4, , 
+    loop_label_5:
+    call, printi, goblinCount_s1
+    return, , , 
+#end_function main
+

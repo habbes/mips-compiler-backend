@@ -1,0 +1,34 @@
+#start_function main
+    void main()
+    int-list: true_s1, false_s1, _t1_s0, _t2_s0, _t3_s0, _t4_s0, _t5_s0, _t6_s0, _t7_s0, _t8_s0, _t9_s0, _t10_s0, _t11_s0, _t12_s0
+    float-list: 
+    assign, true_s1, 1, 
+    assign, false_s1, 0, 
+    main:
+    and, true_s1, true_s1, _t1_s0
+    call, printi, _t1_s0
+    and, true_s1, false_s1, _t2_s0
+    call, printi, _t2_s0
+    and, false_s1, false_s1, _t3_s0
+    call, printi, _t3_s0
+    or, true_s1, true_s1, _t4_s0
+    call, printi, _t4_s0
+    or, true_s1, false_s1, _t5_s0
+    call, printi, _t5_s0
+    or, false_s1, false_s1, _t6_s0
+    call, printi, _t6_s0
+    and, 1, true_s1, _t7_s0
+    call, printi, _t7_s0
+    and, true_s1, 1, _t8_s0
+    call, printi, _t8_s0
+    and, 1, 1, _t9_s0
+    call, printi, _t9_s0
+    or, 0, false_s1, _t10_s0
+    call, printi, _t10_s0
+    or, false_s1, 0, _t11_s0
+    call, printi, _t11_s0
+    or, 0, 0, _t12_s0
+    call, printi, _t12_s0
+    return, , , 
+#end_function main
+

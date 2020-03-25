@@ -1,0 +1,30 @@
+/* rarh3 */
+
+main let
+
+    var first : int := 1;
+    var second : int := 2;
+    var areEqual : int := 0;
+
+in begin
+
+    if (first == second) then
+        areEqual := 1;
+    else
+        areEqual := 2;
+    endif;
+    printi(first);
+    printi(second);
+    printi(areEqual);
+
+    first := 2;
+    if (first == second) then
+        areEqual := 1;
+    else
+        areEqual := 2;
+    endif;
+    printi(first);
+    printi(second);
+    printi(areEqual);
+
+end

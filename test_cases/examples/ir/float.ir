@@ -1,0 +1,102 @@
+#start_function return88
+    float return88()
+    int-list: 
+    float-list: 
+    return, 88.0, , 
+#end_function return88
+
+#start_function returnf
+    float returnf(float f_s3)
+    int-list: 
+    float-list: f_s3
+    return, f_s3, , 
+#end_function returnf
+
+#start_function main
+    void main()
+    int-list: one_s1, zero_s1, _t10_s0, _t11_s0, _t12_s0, _t13_s0, _t14_s0, _t15_s0
+    float-list: goblins_s1[5], two_s1, four_s1, six_s1, number_s1, _t1_s0, _t2_s0, _t3_s0, _t4_s0, _t5_s0, _t6_s0, _t7_s0, _t8_s0, _t9_s0, _t16_s0, _t17_s0
+    assign, goblins_s1, 5, 11.0
+    assign, two_s1, 2.0, 
+    assign, six_s1, 6.0, 
+    assign, one_s1, 1, 
+    assign, zero_s1, 1, 
+    assign, number_s1, 0.0, 
+    main:
+    call, printf, two_s1
+    call, printf, 2.0
+    add, 2.0, 2.0, _t1_s0
+    call, printf, _t1_s0
+    call, printf, 4.0
+    add, 2.0, 2.0, _t2_s0
+    assign, four_s1, _t2_s0, 
+    call, printf, four_s1
+    call, printf, 4.0
+    mul, four_s1, four_s1, _t3_s0
+    call, printf, _t3_s0
+    call, printf, 16.0
+    add, two_s1, 2.0, _t4_s0
+    call, printf, _t4_s0
+    call, printf, 4.0
+    add, 2.0, two_s1, _t5_s0
+    call, printf, _t5_s0
+    call, printf, 4.0
+    sub, four_s1, 2.0, _t6_s0
+    call, printf, _t6_s0
+    call, printf, 2.0
+    sub, 6.0, four_s1, _t7_s0
+    call, printf, _t7_s0
+    call, printf, 2.0
+    array_load, _t8_s0, goblins_s1, 0
+    call, printf, _t8_s0
+    call, printf, 11.0
+    array_load, _t9_s0, goblins_s1, one_s1
+    call, printf, _t9_s0
+    call, printf, 11.0
+    assign, _t10_s0, 0, 
+    brgeq, 1.0, 2.0, if_label_0
+    assign, _t10_s0, 1, 
+    if_label_0:
+    call, printi, _t10_s0
+    call, printi, 1
+    assign, _t11_s0, 0, 
+    brleq, 1.0, 2.0, if_label_1
+    assign, _t11_s0, 1, 
+    if_label_1:
+    call, printi, _t11_s0
+    call, printi, 0
+    assign, _t12_s0, 0, 
+    brneq, 1.0, 2.0, if_label_2
+    assign, _t12_s0, 1, 
+    if_label_2:
+    call, printi, _t12_s0
+    call, printi, 0
+    assign, _t13_s0, 0, 
+    brleq, six_s1, 4.0, if_label_3
+    assign, _t13_s0, 1, 
+    if_label_3:
+    call, printi, _t13_s0
+    call, printi, 1
+    assign, _t14_s0, 0, 
+    brleq, 6.0, four_s1, if_label_4
+    assign, _t14_s0, 1, 
+    if_label_4:
+    call, printi, _t14_s0
+    call, printi, 1
+    assign, _t15_s0, 0, 
+    brleq, six_s1, four_s1, if_label_5
+    assign, _t15_s0, 1, 
+    if_label_5:
+    call, printi, _t15_s0
+    call, printi, 1
+    callr, _t16_s0, return88
+    assign, number_s1, _t16_s0, 
+    call, printf, number_s1
+    call, printf, 88.0
+    callr, _t17_s0, returnf, 99.0
+    assign, number_s1, _t17_s0, 
+    call, printf, number_s1
+    call, printf, 99.0
+    return, , , 
+#end_function main
+

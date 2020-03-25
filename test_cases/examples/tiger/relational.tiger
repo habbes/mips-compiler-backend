@@ -1,0 +1,17 @@
+/* rarh3 */
+
+main let
+
+    var one : int := 1;
+    var two : int := 2;
+    var six : int := 3;
+
+in begin
+
+    printi(two > one);
+    printi(two > 1);
+    printi(2 > one);
+    printi(2 > 1);
+
+
+end

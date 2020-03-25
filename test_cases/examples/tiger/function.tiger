@@ -1,0 +1,80 @@
+/* rarh3 */
+
+main let
+
+    var difference : int;
+    var sum : int;
+    var result : int;
+    var one : int;
+    var two : int;
+
+
+    function subtractInt (first : int, second : int) : int begin
+        return first - second;
+    end;
+
+    function addInt (first : int, second : int) : int begin
+        return first + second;
+    end;
+
+
+    function multiply(a : int, b : int) : int begin
+
+        for a := 0 to 5 do
+            printi(a);
+        enddo;
+
+        /* now a is 6 */
+        return a * b;
+    end;
+
+
+
+    function isFive(number : int) : int begin
+        if (number == 5) then
+            number := 5;
+        else
+            number := 6;
+        endif;
+
+        return number;
+    end;
+
+
+in begin
+
+
+    difference := subtractInt(4, 3);
+    printi(1);
+    printi(difference);
+
+    sum := addInt(4, 3);
+    printi(7);
+    printi(sum);
+
+    printi(6);
+    printi(2*3);
+
+
+    sum := multiply(4, 4);
+    printi(24);
+    printi(sum);
+
+
+    result := isFive(5);
+    printi(5);
+    printi(result);
+
+
+    result := isFive(3);
+    printi(6);
+    printi(result);
+
+    one := 1;
+    two := 2;
+    result := addInt(one, two);
+    printi(3);
+    printi(result);
+
+    printi(difference + sum + result == 1 + 24 + 3);
+end

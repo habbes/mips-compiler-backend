@@ -1,0 +1,35 @@
+/* rarh3 */
+
+main let
+
+    type intArray = array [13] of int;
+
+    var monthLengths : intArray := 31;
+    var monthOK : int;
+    var dayOK : int;
+    var day : int;
+    var month : int;
+    var date: int := 1042;
+
+in begin
+
+    monthLengths[2] := 28;
+    monthLengths[4] := 30;
+    monthLengths[6] := 30;
+    monthLengths[9] := 30;
+    monthLengths[11] := 30;
+
+    /* date is in mmdd format */
+    month := date / 100;
+    day := date - (month * 100);
+
+    dayOK := 99;
+    monthOK := month <= 12;
+    if monthOK then
+        dayOK := day <= monthLengths[month];
+    endif;
+
+    printi(date);
+    printi(monthOK);
+    printi(dayOK);
+end

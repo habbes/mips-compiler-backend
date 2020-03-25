@@ -1,0 +1,37 @@
+#start_function addInt
+    int addInt(int first_s3, int second_s3)
+    int-list: first_s3, second_s3, _t1_s0
+    float-list:
+    add, first_s3, second_s3, _t1_s0
+    return, _t1_s0, ,
+#end_function addInt
+
+#start_function subInt
+    int subInt(int first_s4, int second_s4)
+    int-list: first_s4, second_s4, _t2_s0
+    float-list:
+    sub, first_s4, second_s4, _t2_s0
+    return, _t2_s0, ,
+#end_function subInt
+
+#start_function main
+    void main()
+    int-list: goblins_s1, creatures_s2, _t3_s0
+    float-list:
+    assign, goblins_s1, 6,
+    main:
+    
+    
+    
+    
+    
+    assign, creatures_s2, 2,
+    assign, creatures_s2, goblins_s1,
+    callr, _t3_s0, addInt, creatures_s2, goblins_s1
+    assign, creatures_s2, _t3_s0,
+    call, printi, 12
+    call, printi, creatures_s2
+
+    return, , ,
+#end_function main
+

@@ -1,0 +1,82 @@
+/* rarh3 */
+
+main let
+
+    type goblinArray = array [5] of float;
+
+    var goblins : goblinArray := 11.0;
+    var two : float := 2.0;
+    var four : float;
+    var six : float := 6.0;
+    var one : int := 1;
+    var zero : int := 1;
+    var number : float := 0.0;
+
+    function return88() : float begin
+        return 88.0;
+    end;
+
+    function returnf(f : float) : float begin
+        return f;
+    end;
+
+in begin
+
+    printf(two);
+    printf(2.0);
+
+    printf(2.0 + 2.0);
+    printf(4.0);
+
+    four := 2.0 + 2.0;
+    printf(four);
+    printf(4.0);
+
+    printf(four * four);
+    printf(16.0);
+
+    printf(two + 2.0);
+    printf(4.0);
+
+    printf(2.0 + two);
+    printf(4.0);
+
+    printf(four - 2.0);
+    printf(2.0);
+
+    printf(6.0 - four);
+    printf(2.0);
+
+    printf(goblins[0]);
+    printf(11.0);
+
+    printf(goblins[one]);
+    printf(11.0);
+
+    printi(1.0 < 2.0);
+    printi(1);
+
+    printi(1.0 > 2.0);
+    printi(0);
+
+    printi(1.0 == 2.0);
+    printi(0);
+
+    printi(six > 4.0);
+    printi(1);
+
+    printi(6.0 > four);
+    printi(1);
+
+    printi(six > four);
+    printi(1);
+
+    number := return88();
+    printf(number);
+    printf(88.0);
+
+    number := returnf(99.0);
+    printf(number);
+    printf(99.0);
+
+end

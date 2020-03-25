@@ -1,0 +1,94 @@
+#start_function subtractInt
+    int subtractInt(int first_s2, int second_s2)
+    int-list: first_s2, second_s2, _t1_s0
+    float-list: 
+    sub, first_s2, second_s2, _t1_s0
+    return, _t1_s0, , 
+#end_function subtractInt
+
+#start_function addInt
+    int addInt(int first_s3, int second_s3)
+    int-list: first_s3, second_s3, _t2_s0
+    float-list: 
+    add, first_s3, second_s3, _t2_s0
+    return, _t2_s0, , 
+#end_function addInt
+
+#start_function multiply
+    int multiply(int a_s4, int b_s4)
+    int-list: a_s4, b_s4, _t3_s0
+    float-list: 
+    assign, a_s4, 0, 
+    loop_label_0:
+    brgt, a_s4, 5, loop_label_1
+    call, printi, a_s4
+    add, a_s4, 1, a_s4
+    goto, loop_label_0, , 
+    loop_label_1:
+    mul, a_s4, b_s4, _t3_s0
+    return, _t3_s0, , 
+#end_function multiply
+
+#start_function isFive
+    int isFive(int number_s5)
+    int-list: number_s5, _t4_s0
+    float-list: 
+    assign, _t4_s0, 0, 
+    brneq, number_s5, 5, if_label_2
+    assign, _t4_s0, 1, 
+    if_label_2:
+    brneq, _t4_s0, 1, if_label_3
+    assign, number_s5, 5, 
+    goto, if_label_4, , 
+    if_label_3:
+    assign, number_s5, 6, 
+    if_label_4:
+    return, number_s5, , 
+#end_function isFive
+
+#start_function main
+    void main()
+    int-list: difference_s1, sum_s1, result_s1, one_s1, two_s1, _t5_s0, _t6_s0, _t7_s0, _t8_s0, _t9_s0, _t10_s0, _t11_s0, _t12_s0, _t13_s0, _t14_s0, _t15_s0, _t16_s0
+    float-list: 
+    main:
+    callr, _t5_s0, subtractInt, 4, 3
+    assign, difference_s1, _t5_s0, 
+    call, printi, 1
+    call, printi, difference_s1
+    callr, _t6_s0, addInt, 4, 3
+    assign, sum_s1, _t6_s0, 
+    call, printi, 7
+    call, printi, sum_s1
+    call, printi, 6
+    mul, 2, 3, _t7_s0
+    call, printi, _t7_s0
+    callr, _t8_s0, multiply, 4, 4
+    assign, sum_s1, _t8_s0, 
+    call, printi, 24
+    call, printi, sum_s1
+    callr, _t9_s0, isFive, 5
+    assign, result_s1, _t9_s0, 
+    call, printi, 5
+    call, printi, result_s1
+    callr, _t10_s0, isFive, 3
+    assign, result_s1, _t10_s0, 
+    call, printi, 6
+    call, printi, result_s1
+    assign, one_s1, 1, 
+    assign, two_s1, 2, 
+    callr, _t11_s0, addInt, one_s1, two_s1
+    assign, result_s1, _t11_s0, 
+    call, printi, 3
+    call, printi, result_s1
+    add, difference_s1, sum_s1, _t13_s0
+    add, _t13_s0, result_s1, _t14_s0
+    add, 1, 24, _t15_s0
+    add, _t15_s0, 3, _t16_s0
+    assign, _t12_s0, 0, 
+    brneq, _t14_s0, _t16_s0, if_label_5
+    assign, _t12_s0, 1, 
+    if_label_5:
+    call, printi, _t12_s0
+    return, , , 
+#end_function main
+

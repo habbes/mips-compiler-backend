@@ -1,0 +1,20 @@
+#start_function changex
+    void changex()
+    int-list: _t1_s0
+    float-list: 
+    add, x_s1, 1, _t1_s0
+    assign, x_s1, _t1_s0, 
+#end_function changex
+
+#start_function main
+    void main()
+    int-list: x_s1
+    float-list: 
+    assign, x_s1, 5, 
+    main:
+    call, printi, x_s1
+    call, changex
+    call, printi, x_s1
+    return, , , 
+#end_function main
+

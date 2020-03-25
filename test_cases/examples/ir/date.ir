@@ -1,0 +1,37 @@
+#start_function main
+    void main()
+    int-list: monthLengths_s1[13], monthOK_s1, dayOK_s1, day_s1, month_s1, date_s1, _t1_s0, _t2_s0, _t3_s0, _t4_s0, _t5_s0, _t6_s0
+    float-list: 
+    assign, monthLengths_s1, 13, 31
+    assign, date_s1, 1042, 
+    main:
+    array_store, monthLengths_s1, 2, 28
+    array_store, monthLengths_s1, 4, 30
+    array_store, monthLengths_s1, 6, 30
+    array_store, monthLengths_s1, 9, 30
+    array_store, monthLengths_s1, 11, 30
+    div, date_s1, 100, _t1_s0
+    assign, month_s1, _t1_s0, 
+    mul, month_s1, 100, _t2_s0
+    sub, date_s1, _t2_s0, _t3_s0
+    assign, day_s1, _t3_s0, 
+    assign, dayOK_s1, 99, 
+    assign, _t4_s0, 0, 
+    brgt, month_s1, 12, if_label_0
+    assign, _t4_s0, 1, 
+    if_label_0:
+    assign, monthOK_s1, _t4_s0, 
+    brneq, monthOK_s1, 1, if_label_1
+    array_load, _t6_s0, monthLengths_s1, month_s1
+    assign, _t5_s0, 0, 
+    brgt, day_s1, _t6_s0, if_label_2
+    assign, _t5_s0, 1, 
+    if_label_2:
+    assign, dayOK_s1, _t5_s0, 
+    if_label_1:
+    call, printi, date_s1
+    call, printi, monthOK_s1
+    call, printi, dayOK_s1
+    return, , , 
+#end_function main
+
