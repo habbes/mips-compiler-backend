@@ -1,6 +1,9 @@
 #include <fstream>
 #include "ir_parser.h"
 
+#define test_expect(expr, message, ...) if(!(expr)) {fprintf(stderr, "Test failed: ");fprintf(stderr, (message), __VA_ARGS__); fprintf(stderr,"\n"); return false;}
+#define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
+
 bool testSimpleParser()
 {
     std::string filename = "../test_cases/examples/ir/sum-to-n.ir";
@@ -11,23 +14,9 @@ bool testSimpleParser()
     auto & program = parser.program();
     
     auto & func = program[0];
-    if (func.name() != "main")
-    {
-        puts("Wrong func name");
-        return false;
-    }
-
-    if (func.returnType().name != "void")
-    {
-        printf("Incorrect return type %s\n", func.returnType().name.c_str());
-        return false;
-    }
-
-    if (func.params().size() != 0)
-    {
-        printf("Incorrect params");
-        return false;
-    }
+    test_expect(func.name() == "main", "Expected func 'main' but found '%s'", func.name().c_str());
+    test_expect(func.returnType().name == "void", "Expected void return type but found '%s'", func.returnType().name.c_str());
+    test_expect(func.params().size() == 0, "Expected 0 params but found %lu", func.params().size());
     return true;
 }
 
@@ -40,81 +29,33 @@ bool testMultiFunction()
     parser.parse();
     auto & program = parser.program();
 
-    if (program.numFunctions() != 5)
-    {
-        puts("Incorrect num functions\n");
-        return false;
-    }
+    test_expect(program.numFunctions() == 5, "Expected 5 functions but got %d", program.numFunctions());
     
     auto & subtractInt = program[0];
 
-    if (subtractInt.name() != "subtractInt")
-    {
-        return false;
-    }
-    if (subtractInt.returnType().name != "int")
-    {
-        return false;
-    }
-    if (subtractInt.params().size() != 2)
-    {
-        return false;
-    }
-    if (subtractInt.params()[0].dataType != "int")
-    {
-        return false;
-    }
-    if (subtractInt.params()[0].name != "first_s2")
-    {
-        return false;
-    }
-    if (subtractInt.params()[1].dataType != "int")
-    {
-        return false;
-    }
-    if (subtractInt.params()[1].name != "second_s2")
-    {
-        return false;
-    }
-
+    test_expect(subtractInt.name() == "subtractInt", "subtractInt name subtractInt but got %s", subtractInt.name().c_str());
+    test_expect(subtractInt.returnType().name == "int", "subtractInt should return int subtractInt but got %s", subtractInt.returnType().name.c_str());
+    test_expect(subtractInt.params().size(), "subtractInt should have 2 params but got %lu", subtractInt.params().size());
+    test_expect(subtractInt.params()[0].dataType == "int", "subtractInt param 0 should be int but got %s", subtractInt.params()[0].dataType.c_str());
+    test_expect(subtractInt.params()[0].name == "first_s2", "subtractInt param 0 should first_s2 but got %s", subtractInt.params()[0].name.c_str());
+    test_expect(subtractInt.params()[1].dataType == "int", "subtractInt param 0 should be int but got %s", subtractInt.params()[1].dataType.c_str());
+    test_expect(subtractInt.params()[1].name == "second_s2", "subtractInt param 0 should first_s2 but got %s", subtractInt.params()[1].name.c_str());
+  
     auto & isFive = program[3];
-    if (isFive.name() != "isFive")
-    {
-        return false;
-    }
-    if (isFive.returnType().name != "int")
-    {
-        return false;
-    }
-    if (isFive.params().size() != 1)
-    {
-        return false;
-    }
-    if (isFive.params()[0].dataType != "int")
-    {
-        return false;
-    }
-    if (isFive.params()[0].name != "number_s5")
-    {
-        return false;
-    }
-
+    test_expect(isFive.name() == "isFive", "expected func isFive but got %s", isFive.name().c_str());
+    test_expect(isFive.returnType().name == "int", "isFive should return int but got %s", isFive.returnType().name.c_str());
+    test_expect(isFive.params().size() == 1, "isFive should have 1 param but got %lu", isFive.params().size());
+    test_expect(isFive.params()[0].dataType == "int", "isFive param 0 should be int but got %s", isFive.params()[0].dataType.c_str());
+    test_expect(isFive.params()[0].dataType == "number_s5", "isFive params 0 should be number_s5 but got %s", isFive.params()[0].name.c_str());
     return true;
 }
 
+
+
 int main(int argc, char *argv[])
 {
-    if (!testSimpleParser())
-    {
-        puts("Tests failed");
-        return 1;
-    }
-
-    if (!testMultiFunction())
-    {
-        puts("Tests failed");
-        return 1;
-    }
+    test_run_scenario(testSimpleParser);
+    test_run_scenario(testMultiFunction);
 
     puts("SUCCESS!");
     return 0;
