@@ -8,13 +8,13 @@ class IrParser
     std::istream & source_;
     std::unique_ptr<IrProgram> program_;
 
-    void parseStatement(std::string & statement);
     bool parseFunction();
     bool parseFunctionSignature();
     bool parseIntList();
     bool parseFloatList();
     bool parseVarList(const std::string & dataType);
     bool parseFunctionBody();
+    bool parseStatement(std::string & statement);
     /**
      * reads the next statement from the source
      * @param nextStatement string where the read statement should be stored

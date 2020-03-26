@@ -119,18 +119,42 @@ bool IrParser::parseFunctionBody()
     std::string statement;
     while (readNextStatement(statement))
     {
-        if (statement.find("#end_function", 0) == 0)
-        {
-            return true;
-        }
+        if (statement.find("#end_function", 0) == 0) return true;
+        if (!parseStatement(statement)) return false;
     }
 
     return false;
 }
 
-void IrParser::parseStatement(std::string & statement)
+bool IrParser::parseStatement(std::string & statement)
 {
+    TokenList tokens;
+    getTokens(statement, tokens, ',');
+    if (tokens.size() == 0) return false;
 
+    OpCode op = stringToOpCode(tokens[0]);
+    IrInstructionBuilder builder(op);
+    
+    for (auto arg = tokens.begin() + 1; arg < tokens.end(); arg++)
+    {
+        SymbolInfo symbol;
+        tokenToSymbol(*arg, symbol);
+        if (symbol.type == SymbolType::VAR)
+        {
+            if (program_->currentFunction().vars().count(symbol.name) > 0)
+            {
+                symbol = program_->currentFunction().vars().at(symbol.name);
+            }
+            else
+            {
+                symbol.type = SymbolType::TARGET_LABEL;
+            }
+        }
+        builder.param(symbol);
+    }
+
+    program_->currentFunction().addInstruction(std::move(builder.build()));
+    return true;
 }
 
 bool IrParser::readNextStatement(std::string & nextStatement)

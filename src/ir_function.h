@@ -9,14 +9,15 @@
 
 typedef std::vector<SymbolInfo> ParamList;
 typedef std::unordered_map<std::string, SymbolInfo> VarMap;
+typedef std::vector<std::unique_ptr<IrInstruction>> InstructionList;
 
 class IrFunction
 {
     std::string name_;
     SymbolInfo returnType_;
-    std::vector<SymbolInfo> params_;
-    std::unordered_map<std::string, SymbolInfo> vars_;
-    std::vector<std::unique_ptr<IrInstruction>> instructions_;
+    ParamList params_;
+    VarMap vars_;
+    InstructionList instructions_;
 public:
     IrFunction(const std::string & name);
     const std::string & name() const;
@@ -27,4 +28,7 @@ public:
     const ParamList &params() const;
     void addVar(SymbolInfo);
     const VarMap &vars() const;
+    void addInstruction(IrInstructionUPtr instruction);
+    const IrInstruction & instruction(int i) const;
+    int numInstructions() const;
 };

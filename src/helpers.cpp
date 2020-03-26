@@ -22,7 +22,7 @@ bool getNextToken(std::string & source, std::string & token, char delim)
     return getNextToken(static_cast<std::istream &>(stream), token, delim);
 }
 
-void getTokens(std::stringstream & source, std::vector<std::string> & tokens, char delim, const std::string & stopAt)
+void getTokens(std::stringstream & source, TokenList & tokens, char delim, const std::string & stopAt)
 {
     std::string token;
     while (getNextToken(source, token, delim))
@@ -35,7 +35,7 @@ void getTokens(std::stringstream & source, std::vector<std::string> & tokens, ch
     }
 }
 
-void getTokens(std::string & source, std::vector<std::string> & tokens, char delim, const std::string & stopAt)
+void getTokens(std::string & source, TokenList & tokens, char delim, const std::string & stopAt)
 {
     std::stringstream stream(source);
     getTokens(stream, tokens, delim, stopAt);

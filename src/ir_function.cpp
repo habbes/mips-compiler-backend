@@ -42,3 +42,18 @@ const VarMap & IrFunction::vars() const
 {
     return vars_;
 }
+
+int IrFunction::numInstructions () const
+{
+    return instructions_.size();
+}
+
+const IrInstruction & IrFunction::instruction(int i) const
+{
+    return *instructions_[i];
+}
+
+void IrFunction::addInstruction (IrInstructionUPtr inst)
+{
+    instructions_.push_back(std::move(inst));
+}

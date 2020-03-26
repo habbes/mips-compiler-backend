@@ -39,6 +39,17 @@ bool testSimpleParser()
     test_expect(func.vars().at("dummy_s0") == dummy_s0, "expected dummy_s0 but got %s", dummy_s0.toString().c_str());
     test_expect(func.vars().at("dummy_float") == dummy_float, "expected dummy_float but got %s", dummy_float.toString().c_str());
 
+    test_expect(func.numInstructions() == 17, "func should have 17 instructions but got %d", func.numInstructions());
+
+    IrInstruction ins1 = { 
+        .op = OpCode::ASSIGN,
+        .params = {
+            { .name = "n_s1", .type = SymbolType::VAR, .dataType = DTYPE_INT },
+            { .name = "10", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 10 }
+        }
+    };
+
+    test_expect(func.instruction(0) == ins1, "expect instruction 0 to be assign but got %s", func.instruction(0).toString().c_str());
     return true;
 }
 
@@ -89,7 +100,7 @@ bool testMultiFunction()
 int main(int argc, char *argv[])
 {
     test_run_scenario(testSimpleParser);
-    test_run_scenario(testMultiFunction);
+    // test_run_scenario(testMultiFunction);
 
     puts("SUCCESS!");
     return 0;
