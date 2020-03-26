@@ -40,13 +40,25 @@ bool testMultiFunction()
     test_expect(subtractInt.params()[0].name == "first_s2", "subtractInt param 0 should first_s2 but got %s", subtractInt.params()[0].name.c_str());
     test_expect(subtractInt.params()[1].dataType == "int", "subtractInt param 0 should be int but got %s", subtractInt.params()[1].dataType.c_str());
     test_expect(subtractInt.params()[1].name == "second_s2", "subtractInt param 0 should first_s2 but got %s", subtractInt.params()[1].name.c_str());
+
+    auto & addInt = program[1];
+    test_expect(addInt.name() == "addInt", "expected func addInt but got %s", addInt.name().c_str());
+
+    auto & multiplyInt = program[2];
+    test_expect(multiplyInt.name() == "multiply", "expected func multiply but got %s", multiplyInt.name().c_str());
   
     auto & isFive = program[3];
     test_expect(isFive.name() == "isFive", "expected func isFive but got %s", isFive.name().c_str());
     test_expect(isFive.returnType().name == "int", "isFive should return int but got %s", isFive.returnType().name.c_str());
     test_expect(isFive.params().size() == 1, "isFive should have 1 param but got %lu", isFive.params().size());
     test_expect(isFive.params()[0].dataType == "int", "isFive param 0 should be int but got %s", isFive.params()[0].dataType.c_str());
-    test_expect(isFive.params()[0].dataType == "number_s5", "isFive params 0 should be number_s5 but got %s", isFive.params()[0].name.c_str());
+    test_expect(isFive.params()[0].name == "number_s5", "isFive params 0 should be number_s5 but got %s", isFive.params()[0].name.c_str());
+
+    auto & mainFunc = program[4];
+    test_expect(mainFunc.name() == "main", "expect func main but got %s", mainFunc.name().c_str());
+    test_expect(mainFunc.params().size() == 0, "main should have 0 params but got %lu", mainFunc.params().size());
+    test_expect(mainFunc.returnType().name == "void", "main should return void but got %s", mainFunc.returnType().name.c_str());
+
     return true;
 }
 

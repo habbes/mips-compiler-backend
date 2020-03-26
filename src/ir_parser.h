@@ -11,6 +11,9 @@ class IrParser
     void parseStatement(std::string & statement);
     bool parseFunction();
     bool parseFunctionSignature();
+    bool parseIntList();
+    bool parseFloatList();
+    bool parseFunctionBody();
     /**
      * reads the next statement from the source
      * @param nextStatement string where the read statement should be stored

@@ -34,6 +34,9 @@ bool IrParser::parseFunction()
     program_->newFunction(headerTokens[1]);
 
     if (!parseFunctionSignature()) return false;
+    if (!parseIntList()) return false;
+    if (!parseFloatList()) return false;
+    if (!parseFunctionBody()) return false;
 
     return true;
 }
@@ -77,6 +80,34 @@ bool IrParser::parseFunctionSignature()
     }
     
     return true;
+}
+
+bool IrParser::parseIntList()
+{
+    std::string statement;
+    if (!readNextStatement(statement)) return false;
+    return true;
+}
+
+bool IrParser::parseFloatList()
+{
+    std::string statement;
+    if (!readNextStatement(statement)) return false;
+    return true;
+}
+
+bool IrParser::parseFunctionBody()
+{
+    std::string statement;
+    while (readNextStatement(statement))
+    {
+        if (statement.find("#end_function", 0) == 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void IrParser::parseStatement(std::string & statement)
