@@ -35,8 +35,8 @@ void getTokens(std::stringstream & source, std::vector<std::string> & tokens, ch
     }
 }
 
-// void getTokens(std::string & source, std::vector<std::string> tokens, char delim = ' ', std::string stopAt = "")
-// {
-//     std::stringstream stream(source);
-//     getTokens(stream, tokens, delim, stopAt);
-// }
+void getTokens(std::string & source, std::vector<std::string> & tokens, char delim, const std::string & stopAt)
+{
+    std::stringstream stream(source);
+    getTokens(stream, tokens, delim, stopAt);
+}

@@ -8,6 +8,7 @@
 #include "ir_instruction.h"
 
 typedef std::vector<SymbolInfo> ParamList;
+typedef std::unordered_map<std::string, SymbolInfo> VarMap;
 
 class IrFunction
 {
@@ -24,4 +25,6 @@ public:
     const SymbolInfo &returnType() const;
     void addParam(SymbolInfo);
     const ParamList &params() const;
+    void addVar(SymbolInfo);
+    const VarMap &vars() const;
 };

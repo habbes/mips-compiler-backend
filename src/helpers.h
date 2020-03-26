@@ -23,4 +23,4 @@ inline std::string& trim(std::string& str, const std::string& chars = "\t\n\v\f\
 bool getNextToken(std::string & source, std::string & token, char delim = ' ');
 bool getNextToken(std::istream & source, std::string & token, char delim = ' ');
 void getTokens(std::stringstream & source, std::vector<std::string> & tokens, char delim = ' ', const std::string & stopAt = "");
-// void getTokens(std::string & source, std::vector<std::string> & tokens, char delim = ' ', std::string stopAt = "");
+void getTokens(std::string & source, std::vector<std::string> & tokens, char delim = ' ', const std::string & stopAt = "");

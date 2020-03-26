@@ -13,6 +13,7 @@ class IrParser
     bool parseFunctionSignature();
     bool parseIntList();
     bool parseFloatList();
+    bool parseVarList(const std::string & dataType);
     bool parseFunctionBody();
     /**
      * reads the next statement from the source

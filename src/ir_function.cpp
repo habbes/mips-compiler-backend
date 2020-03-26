@@ -32,3 +32,13 @@ const ParamList & IrFunction::params() const
 {
     return params_;
 }
+
+void IrFunction::addVar(SymbolInfo var)
+{
+    vars_.insert_or_assign(var.name, var);
+}
+
+const VarMap & IrFunction::vars() const
+{
+    return vars_;
+}

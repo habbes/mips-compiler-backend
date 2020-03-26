@@ -27,8 +27,7 @@ bool IrParser::parseFunction()
     if (!res) return false;
 
     std::vector<std::string> headerTokens;
-    std::stringstream stream(statement);
-    getTokens(stream, headerTokens);
+    getTokens(statement, headerTokens);
     if (!res || headerTokens[0] != "#start_function") return false;
 
     program_->newFunction(headerTokens[1]);
@@ -73,8 +72,7 @@ bool IrParser::parseFunctionSignature()
             param = trim(temp);
         }
 
-        std::stringstream paramStream(param);
-        getTokens(paramStream, paramPair);
+        getTokens(param, paramPair);
         SymbolInfo paramSymbol = { .name = paramPair[1], .type = SymbolType::VAR, .dataType = paramPair[0] };
         program_->currentFunction().addParam(paramSymbol);
     }
@@ -84,17 +82,37 @@ bool IrParser::parseFunctionSignature()
 
 bool IrParser::parseIntList()
 {
-    std::string statement;
-    if (!readNextStatement(statement)) return false;
-    return true;
+    return parseVarList(DTYPE_INT);
 }
 
 bool IrParser::parseFloatList()
 {
+    return parseVarList(DTYPE_FLOAT);
+}
+
+bool IrParser::parseVarList(const std::string & dataType)
+{
     std::string statement;
     if (!readNextStatement(statement)) return false;
+
+    std::stringstream stream(statement);
+
+    // read int-list or float-list:
+    std::string header;
+    getNextToken(stream, header);
+
+    std::vector<std::string> varNames;
+    getTokens(stream, varNames, ',');
+
+    for (auto & name: varNames)
+    {
+        SymbolInfo var = { .name = name, .type = SymbolType::VAR, .dataType = dataType };
+        program_->currentFunction().addVar(var);
+    }
+
     return true;
 }
+
 
 bool IrParser::parseFunctionBody()
 {

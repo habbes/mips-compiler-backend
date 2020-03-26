@@ -6,7 +6,7 @@
 
 bool testSimpleParser()
 {
-    std::string filename = "../test_cases/examples/ir/sum-to-n.ir";
+    std::string filename = "../test_cases/examples/ir/simple_test.ir";
     std::ifstream source(filename);
 
     IrParser parser(source);
@@ -17,6 +17,28 @@ bool testSimpleParser()
     test_expect(func.name() == "main", "Expected func 'main' but found '%s'", func.name().c_str());
     test_expect(func.returnType().name == "void", "Expected void return type but found '%s'", func.returnType().name.c_str());
     test_expect(func.params().size() == 0, "Expected 0 params but found %lu", func.params().size());
+    test_expect(func.vars().size() == 9, "func should have 9 vars but got %lu", func.vars().size());
+
+    SymbolInfo total_s1 = { .name = "total_s1", .type = SymbolType::VAR, .dataType = DTYPE_INT };
+    SymbolInfo n_s1 = { .name = "n_s1", .type = SymbolType::VAR, .dataType = DTYPE_INT };
+    SymbolInfo index_s1 = { .name = "index_s1", .type = SymbolType::VAR, .dataType = DTYPE_INT };
+    SymbolInfo _t1_s0 = { .name = "_t1_s0", .type = SymbolType::VAR, .dataType = DTYPE_INT };
+    SymbolInfo _t2_s0 = { .name = "_t2_s0", .type = SymbolType::VAR, .dataType = DTYPE_INT };
+    SymbolInfo _t3_s0 = { .name = "_t3_s0", .type = SymbolType::VAR, .dataType = DTYPE_INT };
+    SymbolInfo _t4_s0 = { .name = "_t4_s0", .type = SymbolType::VAR, .dataType = DTYPE_INT };
+    SymbolInfo dummy_s0 = { .name = "dummy_s0", .type = SymbolType::VAR, .dataType = DTYPE_FLOAT };
+    SymbolInfo dummy_float = { .name = "dummy_float", .type = SymbolType::VAR, .dataType = DTYPE_FLOAT };
+
+    test_expect(func.vars().at("total_s1") == total_s1, "expected total_s1 but got %s", total_s1.toString().c_str());
+    test_expect(func.vars().at("n_s1") == n_s1, "expected n_s1 but got %s", n_s1.toString().c_str());
+    test_expect(func.vars().at("index_s1") == index_s1, "expected index_s1 but got %s", index_s1.toString().c_str());
+    test_expect(func.vars().at("_t1_s0") == _t1_s0, "expected _t1_s0 but got %s", _t1_s0.toString().c_str());
+    test_expect(func.vars().at("_t2_s0") == _t2_s0, "expected _t2_s0 but got %s", _t2_s0.toString().c_str());
+    test_expect(func.vars().at("_t3_s0") == _t3_s0, "expected _t3_s0 but got %s", _t3_s0.toString().c_str());
+    test_expect(func.vars().at("_t4_s0") == _t4_s0, "expected _t4_s0 but got %s", _t4_s0.toString().c_str());
+    test_expect(func.vars().at("dummy_s0") == dummy_s0, "expected dummy_s0 but got %s", dummy_s0.toString().c_str());
+    test_expect(func.vars().at("dummy_float") == dummy_float, "expected dummy_float but got %s", dummy_float.toString().c_str());
+
     return true;
 }
 

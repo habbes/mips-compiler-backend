@@ -6,7 +6,6 @@ CXXFLAGS = -std=c++17 -g
 
 test: $(OBJ)
 	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
-	./test
 
 .PHONY: clean
 clean:
