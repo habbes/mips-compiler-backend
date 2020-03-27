@@ -106,7 +106,9 @@ bool IrParser::parseVarList(const std::string & dataType)
 
     for (auto & name: varNames)
     {
-        SymbolInfo var = { .name = name, .type = SymbolType::VAR, .dataType = dataType };
+        SymbolInfo var;
+        tokenToSymbol(name, var);
+        var.dataType = dataType;
         program_->currentFunction().addVar(var);
     }
 

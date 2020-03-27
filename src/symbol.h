@@ -19,13 +19,15 @@ struct SymbolInfo
     std::string name;
     SymbolType type;
     std::string dataType;
-    int intValue;
-    float floatValue;
+    int intValue = 0;
+    float floatValue = 0;
+    bool isArray = false;
+    int arraySize = 0;
 
-    bool operator==(SymbolInfo & other) const;
+    bool operator==(const SymbolInfo & other) const;
     bool operator!=(SymbolInfo & other) const;
     std::string toString() const;
 };
 
 std::string symbolTypeToString(SymbolType type);
-void tokenToSymbol (std::string token, SymbolInfo & symbol);
+void tokenToSymbol (const std::string token, SymbolInfo & symbol);

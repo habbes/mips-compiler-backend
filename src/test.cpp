@@ -239,6 +239,57 @@ bool testParseMultipleFunctions()
     return true;
 }
 
+bool testParseArray()
+{
+    std::string filename = "../test_cases/examples/ir/array.ir";
+    std::ifstream source(filename);
+
+    IrParser parser(source);
+    parser.parse();
+    auto & program = parser.program();
+
+    auto & func = program[0];
+
+    SymbolInfo goblins_s1 = { .name = "goblins_s1", .type = SymbolType::VAR, .dataType = DTYPE_INT, 0, 0, .isArray = true, .arraySize = 5 };
+    test_expect(func.vars().at("goblins_s1") == goblins_s1, "goblins_s1 should be int array of size 5, but got %s",
+        func.vars().at("goblins_s1").toString().c_str());
+    
+    IrInstruction ins0 = {
+        .op = OpCode::ASSIGN,
+        .params = {
+            goblins_s1,
+            { .name = "5", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 5 },
+            { .name = "16", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 16 }
+        }
+    };
+    test_expect(func.instruction(0) == ins0, "instruction 0 should be assign,goblins_s1,5,16 but got %s",
+        func.instruction(0).toString().c_str());
+    
+    IrInstruction ins2 = {
+        .op = OpCode::ARRAY_STORE,
+        .params = {
+            goblins_s1,
+            { .name = "3", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 3 },
+            { .name = "11", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 11 }
+        }
+    };
+    test_expect(func.instruction(2) == ins2, "instruction 2 should be array_store,goblins_s1,3,11 but got %s",
+        func.instruction(2).toString().c_str());
+
+    IrInstruction ins4 = {
+        .op = OpCode::ARRAY_LOAD,
+        .params = {
+            { .name = "_t1_s0", .type = SymbolType::VAR, .dataType = DTYPE_INT },
+            goblins_s1,
+            { .name = "3", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 3 }
+        }
+    };
+    test_expect(func.instruction(4) == ins4, "instruction 4 should be array_load,_t1_s0,goblins_s1,3 but got %s",
+        func.instruction(4).toString().c_str());
+     
+    return true;
+}
+
 bool testFunctionMemoryBugs()
 {
     // std::string filename = "../test_cases/examples/ir/simple_test.ir";
@@ -269,6 +320,7 @@ int main(int argc, char *argv[])
     test_run_scenario(testParseSimpleFunction);
     test_run_scenario(testParseMultipleFunctions);
     test_run_scenario(testFunctionMemoryBugs);
+    test_run_scenario(testParseArray);
 
     puts("SUCCESS!");
     return 0;
