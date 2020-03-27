@@ -132,14 +132,26 @@ bool IrParser::parseStatement(std::string & statement)
     getTokens(statement, tokens, ',');
     if (tokens.size() == 0) return false;
 
+    if (*(tokens[0].cend() - 1) == ':')
+    {
+        // this is a label
+        SymbolInfo symbol = { .name = tokens[0].substr(0, tokens[0].size() - 1), .type = SymbolType::TARGET_LABEL };
+        program_->currentFunction().addInstruction(IrInstructionBuilder::fromOp(OpCode::LABEL).param(symbol).build());
+        return true;
+    }
+
     OpCode op = stringToOpCode(tokens[0]);
     IrInstructionBuilder builder(op);
     
-    for (auto arg = tokens.begin() + 1; arg < tokens.end(); arg++)
+    for (auto i = 1; i < tokens.size(); i++)
     {
         SymbolInfo symbol;
-        tokenToSymbol(*arg, symbol);
-        if (symbol.type == SymbolType::VAR)
+        tokenToSymbol(tokens[i], symbol);
+        if (op == OpCode::CALL && i == 1)
+        {
+            symbol.type = SymbolType::FUNC;
+        }
+        else if (symbol.type == SymbolType::VAR)
         {
             if (program_->currentFunction().vars().count(symbol.name) > 0)
             {
@@ -153,7 +165,7 @@ bool IrParser::parseStatement(std::string & statement)
         builder.param(symbol);
     }
 
-    program_->currentFunction().addInstruction(std::move(builder.build()));
+    program_->currentFunction().addInstruction(builder.build());
     return true;
 }
 

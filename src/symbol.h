@@ -10,7 +10,8 @@ enum SymbolType
     TYPE,
     VAR,
     CONST,
-    TARGET_LABEL
+    TARGET_LABEL,
+    FUNC
 };
 
 struct SymbolInfo
