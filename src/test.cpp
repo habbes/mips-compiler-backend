@@ -4,7 +4,7 @@
 #define test_expect(expr, message, ...) if(!(expr)) {fprintf(stderr, "Test failed: ");fprintf(stderr, (message), __VA_ARGS__); fprintf(stderr,"\n"); return false;}
 #define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
 
-bool testSimpleParser()
+bool testParseSimpleFunction()
 {
     std::string filename = "../test_cases/examples/ir/simple_test.ir";
     std::ifstream source(filename);
@@ -131,7 +131,7 @@ bool testSimpleParser()
     return true;
 }
 
-bool testMultiFunction()
+bool testParseMultipleFunctions()
 {
     std::string filename = "../test_cases/examples/ir/function.ir";
     std::ifstream source(filename);
@@ -152,11 +152,42 @@ bool testMultiFunction()
     test_expect(subtractInt.params()[1].dataType == "int", "subtractInt param 1 should be int but got %s", subtractInt.params()[1].dataType.c_str());
     test_expect(subtractInt.params()[1].name == "second_s2", "subtractInt param 1 should first_s2 but got %s", subtractInt.params()[1].name.c_str());
 
+    IrInstruction subIns0 = {
+        .op = OpCode::SUB,
+        .params = {
+            { .name = "first_s2", .type = SymbolType::VAR, .dataType = DTYPE_INT },
+            { .name = "second_s2", .type = SymbolType::VAR, .dataType = DTYPE_INT },
+            { .name = "_t1_s0", .type = SymbolType::VAR, .dataType = DTYPE_INT }
+        }
+    };
+    test_expect(subtractInt.instruction(0) == subIns0, "subtractInt instruction 0 should be sub,first_s2,second_s2,_t1_s0 but got %s",
+        subtractInt.instruction(0).toString().c_str());
+
+    IrInstruction subIns1 = {
+        .op = OpCode::RETURN,
+        .params = {
+            { .name = "_t1_s0", .type = SymbolType::VAR, .dataType = DTYPE_INT }
+        }
+    };
+    test_expect(subtractInt.instruction(1) == subIns1, "subtractInt instruction 1 should be return,_t1_s0 but got %s",
+        subtractInt.instruction(1).toString().c_str());
+
     auto & addInt = program[1];
     test_expect(addInt.name() == "addInt", "expected func addInt but got %s", addInt.name().c_str());
 
     auto & multiplyInt = program[2];
     test_expect(multiplyInt.name() == "multiply", "expected func multiply but got %s", multiplyInt.name().c_str());
+
+    IrInstruction mulInst2 = {
+        .op = OpCode::BRGT,
+        .params = {
+            { .name = "a_s4", .type = SymbolType::VAR, .dataType = DTYPE_INT },
+            { .name = "5", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 5 },
+            { .name = "loop_label_1", .type = SymbolType::TARGET_LABEL }
+        }
+    };
+    test_expect(multiplyInt.instruction(2) == mulInst2, "multiplyInt instruction 2 should be brgt but got %s",
+        multiplyInt.instruction(2).toString().c_str());
   
     auto & isFive = program[3];
     test_expect(isFive.name() == "isFive", "expected func isFive but got %s", isFive.name().c_str());
@@ -165,10 +196,45 @@ bool testMultiFunction()
     test_expect(isFive.params()[0].dataType == "int", "isFive param 0 should be int but got %s", isFive.params()[0].dataType.c_str());
     test_expect(isFive.params()[0].name == "number_s5", "isFive params 0 should be number_s5 but got %s", isFive.params()[0].name.c_str());
 
+    IrInstruction fiveIns1 = {
+        .op = OpCode::BRNEQ,
+        .params = {
+            { .name = "number_s5", .type = SymbolType::VAR, .dataType = DTYPE_INT },
+            { .name = "5", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 5 },
+            { .name = "if_label_2", .type = SymbolType::TARGET_LABEL }
+        }
+    };
+    test_expect(isFive.instruction(1) == fiveIns1, "isFive instruction 1 should be brneq but got %s",
+        isFive.instruction(1).toString().c_str());
+
     auto & mainFunc = program[4];
     test_expect(mainFunc.name() == "main", "expect func main but got %s", mainFunc.name().c_str());
     test_expect(mainFunc.params().size() == 0, "main should have 0 params but got %lu", mainFunc.params().size());
     test_expect(mainFunc.returnType().name == "void", "main should return void but got %s", mainFunc.returnType().name.c_str());
+
+    IrInstruction mainIns1 = {
+        .op = OpCode::CALLR,
+        .params = {
+            { .name = "_t5_s0", .type = SymbolType::VAR, .dataType = DTYPE_INT },
+            { .name = "subtractInt", .type = SymbolType::FUNC },
+            { .name = "4", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 4 },
+            { .name = "3", .type = SymbolType::CONST, .dataType = DTYPE_INT, .intValue = 3 }
+        }
+    };
+    test_expect(mainFunc.instruction(1) == mainIns1, "main instruction 1 should be callr,_t5_s0,subtractInt,4,3 but got %s",
+        mainFunc.instruction(1).toString().c_str());
+    
+    IrInstruction mainIns26 = {
+        .op = OpCode::CALLR,
+        .params = {
+            { .name = "_t11_s0", .type = SymbolType::VAR, .dataType = DTYPE_INT },
+            { .name = "addInt", .type = SymbolType::FUNC },
+            { .name = "one_s1", .type = SymbolType::VAR, .dataType = DTYPE_INT },
+            { .name = "two_s1", .type = SymbolType::VAR, .dataType = DTYPE_INT }
+        }
+    };
+    test_expect(mainFunc.instruction(1) == mainIns1, "main instruction 1 should be callr,_t11_s0,addInt,one_s1,two_s1 but got %s",
+        mainFunc.instruction(1).toString().c_str());
 
     return true;
 }
@@ -200,8 +266,8 @@ bool testFunctionMemoryBugs()
 
 int main(int argc, char *argv[])
 {
-    test_run_scenario(testSimpleParser);
-    // test_run_scenario(testMultiFunction);
+    test_run_scenario(testParseSimpleFunction);
+    test_run_scenario(testParseMultipleFunctions);
     test_run_scenario(testFunctionMemoryBugs);
 
     puts("SUCCESS!");

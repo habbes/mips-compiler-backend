@@ -151,6 +151,10 @@ bool IrParser::parseStatement(std::string & statement)
         {
             symbol.type = SymbolType::FUNC;
         }
+        else if (op == OpCode::CALLR && i == 2)
+        {
+            symbol.type = SymbolType::FUNC;
+        }
         else if (symbol.type == SymbolType::VAR)
         {
             if (program_->currentFunction().vars().count(symbol.name) > 0)
