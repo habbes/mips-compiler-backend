@@ -52,21 +52,6 @@ enum MipsSymbolType
     CONST
 };
 
-// union MipsSymbolValue
-// {
-//     MipsReg reg;
-//     int number;
-//     std::string name;
-//     ~MipsSymbolValue() {}
-//     MipsSymbolValue() = default;
-//     MipsSymbolValue(const MipsSymbolValue &other)
-//     {
-//         reg = other.reg;
-//         number = other.number;
-//         name = other.name;
-//     }
-// };
-
 enum MipsSymbolSize
 {
     WORD,
@@ -89,5 +74,8 @@ struct MipsSymbol
     bool operator==(const MipsSymbol & other) const;
     bool operator!=(const MipsSymbol & other) const;
     std::string toString() const;
+    static MipsSymbol makeConst(int value);
+    static MipsSymbol makeReg (std::string reg, mips::MipsSymbolSize dataType = mips::WORD);
 };
+
 }

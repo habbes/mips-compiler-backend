@@ -22,3 +22,13 @@ std::string mips::MipsSymbol::toString () const
         << ")";
     return buffer.str();
 }
+
+mips::MipsSymbol mips::MipsSymbol::makeConst (int value)
+{
+    return { std::to_string(value), mips::MipsSymbolType::CONST };
+}
+
+mips::MipsSymbol mips::MipsSymbol::makeReg (std::string reg, mips::MipsSymbolSize dataType)
+{
+    return { reg, mips::MipsSymbolType::REG, dataType };
+}

@@ -317,6 +317,8 @@ bool testFunctionMemoryBugs()
     return true;
 }
 
+#define test_mips_instruction(inst, expected) test_expect((inst) == (expected), "expected mips instruction '%s' but got '%s'", (expected), (inst).toString().c_str())
+
 bool testSimpleMipsTranslation()
 {
     std::string filename = "../test_cases/examples/ir/sum-to-n.ir";
@@ -349,6 +351,8 @@ bool testSimpleMipsTranslation()
     test_expect(vars.at("_t3_s0") == _t3_s0, "expected _t3_s0 but got %s", vars.at("_t3_s0").toString().c_str());
     test_expect(vars.at("_t4_s0") == _t4_s0, "expected _t4_s0 but got %s", vars.at("_t4_s0").toString().c_str());
     
+    test_mips_instruction(func.instruction(0), "li, $t8, 10");
+    test_mips_instruction(func.instruction(1), "sw, $t8, n_s1");
     
 
     return true;

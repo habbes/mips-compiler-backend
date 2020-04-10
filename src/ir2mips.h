@@ -7,7 +7,16 @@ class Ir2Mips
 {
     IrProgram &ir_;
     mips::MipsProgram mips_;
-    void initMips();
+    int instIndex_;
+    int funcIndex_;
+
+    const IrInstruction &nextIrInstruction();
+    const IrFunction &curIrFunction();
+    mips::MipsFunction &curMipsFunction();
+    void addMipsInstruction(mips::MipsInstruction);
+    void translateNextFunction();
+    void translateNextInstruction();
+    void translateAssign(const IrInstruction &);
 public:
     Ir2Mips(IrProgram & ir);
     mips::MipsProgram &translate();

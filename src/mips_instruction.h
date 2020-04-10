@@ -66,7 +66,9 @@ struct MipsInstruction
     std::vector<MipsSymbol> operands;
 
     bool operator==(const MipsInstruction & other) const;
+    bool operator==(const std::string & other) const;
     bool operator!=(const MipsInstruction & other) const;
+    std::string toString() const;
 };
 
 }

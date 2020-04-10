@@ -1,4 +1,5 @@
 #include "mips_function.h"
+#include <memory>
 
 mips::MipsFunction::MipsFunction (const std::string & name): name_(name) {}
 
@@ -27,9 +28,19 @@ void mips::MipsFunction::addVar (const mips::MipsSymbol &var, const std::string 
     initialValues_.insert_or_assign(var.name, initialValue);
 }
 
-void mips::MipsFunction::addInstruction (mips::MipsInstructionUPtr instruction)
+void mips::MipsFunction::addInstruction (mips:: MipsInstruction instruction)
 {
-    instructions_.push_back(std::move(instruction));
+    instructions_.push_back(std::make_unique<mips::MipsInstruction>(std::move(instruction)));
+}
+
+const mips::MipsInstruction & mips::MipsFunction::instruction (int i) const
+{
+    return *instructions_[i];
+}
+
+int mips::MipsFunction::numInstructions () const
+{
+    return instructions_.size();
 }
 
 std::string mips::MipsFunction::name () const
