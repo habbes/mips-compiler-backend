@@ -82,13 +82,12 @@ enum MipsSymbolSize
 
 struct MipsSymbol
 {
+    std::string name;
     MipsSymbolType type;
     MipsSymbolSize size;
-    int constValue;
-    std::string label;
-    MipsReg reg;
 
     bool operator==(const MipsSymbol & other) const;
     bool operator!=(const MipsSymbol & other) const;
+    std::string toString() const;
 };
 }

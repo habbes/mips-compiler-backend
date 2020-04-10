@@ -1,8 +1,11 @@
 #include <fstream>
 #include "ir_parser.h"
+#include "ir2mips.h"
 
 #define test_expect(expr, message, ...) if(!(expr)) {fprintf(stderr, "Test failed: ");fprintf(stderr, (message), __VA_ARGS__); fprintf(stderr,"\n"); return false;}
 #define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
+
+
 
 bool testParseSimpleFunction()
 {
@@ -314,6 +317,43 @@ bool testFunctionMemoryBugs()
     return true;
 }
 
+bool testSimpleMipsTranslation()
+{
+    std::string filename = "../test_cases/examples/ir/sum-to-n.ir";
+    std::ifstream source(filename);
+
+    IrParser parser(source);
+    parser.parse();
+    auto & irProgram = parser.program();
+    Ir2Mips translator(irProgram);
+    translator.translate();
+    auto & mipsProgram = translator.mips();
+
+    auto & func = mipsProgram[0];
+    test_expect(func.name() == "main", "expected main but got %s", func.name().c_str());
+
+    using mips::MipsSymbol;
+    MipsSymbol total_s1 = { .name = "total_s1", .type = mips::VAR, mips::WORD };
+    MipsSymbol n_s1 = { "n_s1", mips::VAR, mips::WORD };
+    MipsSymbol index_s1 = { "index_s1", mips::VAR, mips::WORD };
+    MipsSymbol _t1_s0 = { "_t1_s0", mips::VAR, mips::WORD };
+    MipsSymbol _t2_s0 = { "_t2_s0", mips::VAR, mips::WORD };
+    MipsSymbol _t3_s0 = { "_t3_s0", mips::VAR, mips::WORD };
+    MipsSymbol _t4_s0 = { "_t4_s0", mips::VAR, mips::WORD };
+    auto vars = func.vars();
+    test_expect(vars.at("total_s1") == total_s1, "expected total_s1 but got %s", vars.at("total_s1").toString().c_str());
+    test_expect(vars.at("n_s1") == n_s1, "expected n_s1 but got %s", vars.at("n_s1").toString().c_str());
+    test_expect(vars.at("index_s1") == index_s1, "expected index_s1 but got %s", vars.at("index_s1").toString().c_str());
+    test_expect(vars.at("_t1_s0") == _t1_s0, "expected _t1_s0 but got %s", vars.at("_t1_s0").toString().c_str());
+    test_expect(vars.at("_t2_s0") == _t2_s0, "expected _t2_s0 but got %s", vars.at("_t2_s0").toString().c_str());
+    test_expect(vars.at("_t3_s0") == _t3_s0, "expected _t3_s0 but got %s", vars.at("_t3_s0").toString().c_str());
+    test_expect(vars.at("_t4_s0") == _t4_s0, "expected _t4_s0 but got %s", vars.at("_t4_s0").toString().c_str());
+    
+    
+
+    return true;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -321,6 +361,7 @@ int main(int argc, char *argv[])
     test_run_scenario(testParseMultipleFunctions);
     test_run_scenario(testFunctionMemoryBugs);
     test_run_scenario(testParseArray);
+    test_run_scenario(testSimpleMipsTranslation);
 
     puts("SUCCESS!");
     return 0;

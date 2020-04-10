@@ -11,9 +11,9 @@ class MipsProgram
 public:
     MipsFunction &newFunction(const std::string &);
     MipsFunction &newFunction(const IrFunction &);
-    MipsFunction &functionAt(int i);
-    MipsFunction &operator[](int i);
-    MipsFunction &currentFunction();
+    MipsFunction &functionAt(int i) const;
+    MipsFunction &operator [](int i) const;
+    MipsFunction &currentFunction() const;
     int numFunctions() const;
 };
 

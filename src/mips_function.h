@@ -25,6 +25,8 @@ public:
     MipsFunction(const IrFunction & ir);
     void addVar(const MipsSymbol & var, const std::string & initVal);
     void addInstruction(MipsInstructionUPtr instruction);
+    std::string name() const;
+    const MipsVarMap &vars() const;
 };
 
 }
