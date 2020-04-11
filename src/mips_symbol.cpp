@@ -32,3 +32,8 @@ mips::MipsSymbol mips::MipsSymbol::makeReg (std::string reg, mips::MipsSymbolSiz
 {
     return { reg, mips::MipsSymbolType::REG, dataType };
 }
+
+mips::MipsSymbol mips::MipsSymbol::makeLabel (const std::string & label)
+{
+    return { label, mips::LABEL };
+}

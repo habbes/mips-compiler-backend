@@ -351,9 +351,58 @@ bool testSimpleMipsTranslation()
     test_expect(vars.at("_t3_s0") == _t3_s0, "expected _t3_s0 but got %s", vars.at("_t3_s0").toString().c_str());
     test_expect(vars.at("_t4_s0") == _t4_s0, "expected _t4_s0 but got %s", vars.at("_t4_s0").toString().c_str());
     
-    test_mips_instruction(func.instruction(0), "li, $t8, 10");
-    test_mips_instruction(func.instruction(1), "sw, $t8, n_s1");
+    test_mips_instruction(func.instruction(0), "li $t8, 10");
+    test_mips_instruction(func.instruction(1), "sw $t8, n_s1");
     
+    return true;
+}
+
+bool testMipsArithmeticAssignments()
+{
+    std::string filename = "../test_cases/examples/ir/very_simple.ir";
+    std::ifstream source(filename);
+
+    IrParser parser(source);
+    parser.parse();
+    auto & irProgram = parser.program();
+    Ir2Mips translator(irProgram);
+    translator.translate();
+    auto & mipsProgram = translator.mips();
+
+    auto & func = mipsProgram[0];
+
+    // assign, n_s1, 10,
+    test_mips_instruction(func.instruction(0), "li $t8, 10");
+    test_mips_instruction(func.instruction(1), "sw $t8, n_s1");
+
+    // main:
+    test_mips_instruction(func.instruction(2), "main:")
+    // assign, b_s1, n_s1,
+    test_mips_instruction(func.instruction(3), "lw $t8, n_s1");
+    test_mips_instruction(func.instruction(4), "sw $t8, b_s1");
+    // add, n_s1, b_s1, res_s1
+    test_mips_instruction(func.instruction(5), "lw $t8, n_s1");
+    test_mips_instruction(func.instruction(6), "lw $t9, b_s1");
+    test_mips_instruction(func.instruction(7), "add $t8, $t9, $t8");
+    test_mips_instruction(func.instruction(8), "sw $t8, res_s1");
+    // mul, b_s1, 20, res_s1
+    test_mips_instruction(func.instruction(9), "lw $t8, b_s1");
+    test_mips_instruction(func.instruction(10), "li $t9, 20");
+    test_mips_instruction(func.instruction(11), "mul $t8, $t9, $t8");
+    test_mips_instruction(func.instruction(12), "sw $t8, res_s1");
+    // add, 100, b_s1, b_s1 // TODO: test with dv
+    test_mips_instruction(func.instruction(13), "li $t8, 100");
+    test_mips_instruction(func.instruction(14), "lw $t9, b_s1");
+    test_mips_instruction(func.instruction(15), "add $t8, $t9, $t8");
+    test_mips_instruction(func.instruction(16), "sw $t8, b_s1");
+    // sub, 100, 20, res_s1
+    test_mips_instruction(func.instruction(17), "li $t8, 100");
+    test_mips_instruction(func.instruction(18), "li $t9, 20");
+    test_mips_instruction(func.instruction(19), "sub $t8, $t9, $t8");
+    test_mips_instruction(func.instruction(20), "sw $t8, res_s1");
+    // return, , , 
+    test_mips_instruction(func.instruction(21), "jr $ra");
+
 
     return true;
 }
@@ -366,6 +415,7 @@ int main(int argc, char *argv[])
     test_run_scenario(testFunctionMemoryBugs);
     test_run_scenario(testParseArray);
     test_run_scenario(testSimpleMipsTranslation);
+    test_run_scenario(testMipsArithmeticAssignments);
 
     puts("SUCCESS!");
     return 0;

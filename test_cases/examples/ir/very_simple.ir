@@ -1,0 +1,13 @@
+#start_function main
+    void main()
+    int-list: n_s1, b_s1, res_s1
+    float-list: 
+    assign, n_s1, 10,
+    main:
+    assign, b_s1, n_s1, 
+    add, n_s1, b_s1, res_s1
+    mul, b_s1, 20, res_s1
+    add, 100, b_s1, b_s1
+    sub, 100, 20, res_s1
+    return, , , 
+#end_function main

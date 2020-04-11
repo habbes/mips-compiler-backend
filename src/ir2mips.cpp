@@ -53,9 +53,38 @@ mips::MipsFunction & Ir2Mips::curMipsFunction ()
     return mips_.currentFunction();
 }
 
-void Ir2Mips::addMipsInstruction (mips::MipsInstruction inst)
+MipsSymbol Ir2Mips::irToMipsSymbol (const SymbolInfo &irSym)
+{
+    if (irSym.type == SymbolType::CONST)
+    {
+        return MipsSymbol::makeConst(irSym.intValue);
+    }
+    if (irSym.type == SymbolType::TARGET_LABEL)
+    {
+        return MipsSymbol::makeLabel(irSym.name);
+    }
+    // it's a variable
+    return curMipsFunction().vars().at(irSym.name);
+}
+
+void Ir2Mips::emitMips (mips::MipsInstruction inst)
 {
     curMipsFunction().addInstruction(std::move(inst));
+}
+
+void Ir2Mips::emitLoad (const mips::MipsSymbol & src, const mips::MipsSymbol & dest)
+{
+    if (src.type == mips::MipsSymbolType::CONST)
+    {
+        MipsInstruction inst = { mips::MipsOp::LI, { dest, src } };
+        emitMips({ mips::MipsOp::LI, { dest, src } });
+    }
+    else
+    {
+        MipsInstruction inst = { mips::MipsOp::LW, { dest, src } };
+        emitMips({ mips::MipsOp::LW, { dest, src } });
+    }
+    
 }
 
 void Ir2Mips::translateNextInstruction()
@@ -66,7 +95,25 @@ void Ir2Mips::translateNextInstruction()
         case OpCode::ASSIGN:
             translateAssign(inst);
             break;
+        case OpCode::LABEL:
+            translateLabel(inst);
+            break;
+        case OpCode::ADD:
+        case OpCode::MULT:
+        case OpCode::SUB:
+            translateBinary(inst);
+            break;
+        case OpCode::RETURN:
+            translateReturn(inst);
     }
+}
+
+void Ir2Mips::translateLabel(const IrInstruction &inst)
+{
+    auto & irLabel = inst.params[0];
+    auto mipsLabel = MipsSymbol::makeLabel(irLabel.name);
+
+    emitMips({ mips::MipsOp::INST_LABEL, { mipsLabel } });
 }
 
 void Ir2Mips::translateAssign(const IrInstruction &inst)
@@ -83,34 +130,32 @@ void Ir2Mips::translateAssign(const IrInstruction &inst)
     auto & irDest = inst.params[0];
     auto & irSrc = inst.params[1];
     auto & mipsDest = curMipsFunction().vars().at(irDest.name);
-    MipsSymbol mipsSrc;
-    if (irSrc.type == SymbolType::CONST)
-    {
+    MipsSymbol mipsSrc = MipsSymbol::makeReg(mips::REG_T8);
+    emitLoad(irToMipsSymbol(irSrc), mipsSrc);
+    emitMips({ mips::MipsOp::SW, { mipsSrc, mipsDest } });
+}
 
-        // li $t0, 10
-        mipsSrc = MipsSymbol::makeReg(mips::REG_T8);
-        MipsInstruction loadInst = {
-            mips::MipsOp::LI,
-            {
-                mipsSrc,
-                MipsSymbol::makeConst(irSrc.intValue)
-            }
-        };
-        addMipsInstruction(loadInst);
-    }
-    else
-    {
-        // lw $t0, src
-        mipsSrc = MipsSymbol::makeReg(mips::REG_T8);
-        MipsInstruction loadInst = {
-            mips::MipsOp::LW,
-            {
-                mipsSrc,
-                curMipsFunction().vars().at(irSrc.name)
-            }
-        };
-        addMipsInstruction(loadInst);
-    }
-    
-    addMipsInstruction({ mips::MipsOp::SW, { mipsSrc, mipsDest } });
+void Ir2Mips::translateBinary(const IrInstruction &inst)
+{
+    auto & irLeft = inst.params[0];
+    auto & irRight = inst.params[1];
+    auto & irDest = inst.params[2];
+    auto mipsLeft = MipsSymbol::makeReg(mips::REG_T8);
+    auto mipsRight = MipsSymbol::makeReg(mips::REG_T9);
+    auto mipsDest = irToMipsSymbol(irDest);
+
+    // load op1
+    emitLoad(irToMipsSymbol(irLeft), mipsLeft);
+    emitLoad(irToMipsSymbol(irRight), mipsRight);
+    mips::MipsOp op =
+        inst.op == OpCode::ADD ? mips::ADD :
+        inst.op == OpCode::SUB ? mips::SUB :
+        inst.op == OpCode::MULT ? mips::MUL : mips::INVALID;
+    emitMips({ op, { mipsLeft, mipsRight, mipsLeft } });
+    emitMips({ mips::MipsOp::SW, { mipsLeft, mipsDest }});
+}
+
+void Ir2Mips::translateReturn (const IrInstruction &inst)
+{
+    emitMips({ mips::MipsOp::JR, { MipsSymbol::makeReg(mips::REG_RA) } });
 }

@@ -58,6 +58,10 @@ enum MipsOp
     /* Calls */
     // System call
     SYSCALL,
+
+    /* MISC */
+    INST_LABEL,
+    INVALID = -1
 };
 
 struct MipsInstruction

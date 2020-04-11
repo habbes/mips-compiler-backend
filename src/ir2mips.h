@@ -13,10 +13,15 @@ class Ir2Mips
     const IrInstruction &nextIrInstruction();
     const IrFunction &curIrFunction();
     mips::MipsFunction &curMipsFunction();
-    void addMipsInstruction(mips::MipsInstruction);
+    mips::MipsSymbol irToMipsSymbol(const SymbolInfo &);
+    void emitMips(mips::MipsInstruction);
+    void emitLoad(const mips::MipsSymbol &, const mips::MipsSymbol &);
     void translateNextFunction();
     void translateNextInstruction();
     void translateAssign(const IrInstruction &);
+    void translateLabel(const IrInstruction &);
+    void translateBinary(const IrInstruction &);
+    void translateReturn(const IrInstruction &);
 public:
     Ir2Mips(IrProgram & ir);
     mips::MipsProgram &translate();

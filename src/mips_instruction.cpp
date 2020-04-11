@@ -27,12 +27,18 @@ bool mips::MipsInstruction::operator!= (const mips::MipsInstruction & other) con
 
 std::string mips::MipsInstruction::toString () const
 {
+    if (op == mips::MipsOp::INST_LABEL)
+    {
+        return operands[0].name + ":";
+    }
+
     std::stringstream buffer;
     buffer << mipsOpToString(op);
 
-    for (auto & operand : operands)
+    for (int i = 0; i < operands.size(); i++)
     {
-        buffer << ", " << operand.name;
+        buffer << (i == 0 ? " " : ", ");
+        buffer << operands[i].name;
     }
     
     return buffer.str();
@@ -59,6 +65,14 @@ std::string mipsOpToString (mips::MipsOp op)
             return "lh";
         case mips::MipsOp::SW:
             return "sw";
+        case mips::MipsOp::ADD:
+            return "add";
+        case mips::MipsOp::SUB:
+            return "sub";
+        case mips::MipsOp::MUL:
+            return "mul";
+        case mips::MipsOp::JR:
+            return "jr";
     }
 
     return "<unknown>";

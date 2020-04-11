@@ -76,6 +76,7 @@ struct MipsSymbol
     std::string toString() const;
     static MipsSymbol makeConst(int value);
     static MipsSymbol makeReg (std::string reg, mips::MipsSymbolSize dataType = mips::WORD);
+    static MipsSymbol makeLabel(const std::string & label);
 };
 
 }
