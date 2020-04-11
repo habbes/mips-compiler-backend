@@ -62,6 +62,10 @@ void mips::MipsProgram::write (std::ostream & out) const
     for (int i = 0; i < func.numInstructions(); i++)
     {
         auto & inst = func.instruction(i);
+        if (inst.op != mips::MipsOp::INST_LABEL)
+        {
+            out << indent;
+        }
         out << inst.toString() << std::endl;
     }
 
