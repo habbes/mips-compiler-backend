@@ -3,3 +3,7 @@
 .vscode
 src/test
 src/test_mem
+src/main
+build
+output
+ir2mips

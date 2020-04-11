@@ -8,7 +8,7 @@ bool IrInstruction::operator== (IrInstruction & other) const
     if (op != other.op) return false;
     if (params.size() != other.params.size()) return false;
 
-    for (auto i = 0; i < params.size(); ++i)
+    for (size_t i = 0; i < params.size(); ++i)
     {
         if (params[i] != other.params[i]) return false;
     }

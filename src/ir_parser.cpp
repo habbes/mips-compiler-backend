@@ -145,7 +145,7 @@ bool IrParser::parseStatement(std::string & statement)
     OpCode op = stringToOpCode(tokens[0]);
     IrInstructionBuilder builder(op);
     
-    for (auto i = 1; i < tokens.size(); i++)
+    for (size_t i = 1; i < tokens.size(); i++)
     {
         SymbolInfo symbol;
         tokenToSymbol(tokens[i], symbol);

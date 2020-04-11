@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ostream>
 #include "mips_function.h"
 
 namespace mips
@@ -15,6 +16,7 @@ public:
     MipsFunction &operator [](int i) const;
     MipsFunction &currentFunction() const;
     int numFunctions() const;
+    void write(std::ostream & out) const;
 };
 
 }

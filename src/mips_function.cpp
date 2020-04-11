@@ -52,3 +52,8 @@ const mips::MipsVarMap & mips::MipsFunction::vars () const
 {
     return vars_;
 }
+
+const mips::MipsInitVals & mips::MipsFunction::initialValues () const
+{
+    return initialValues_;
+}

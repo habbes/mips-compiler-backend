@@ -12,13 +12,14 @@ namespace mips
 typedef std::unique_ptr<MipsInstruction> MipsInstructionUPtr;
 typedef std::vector<std::unique_ptr<MipsInstruction>> MipsInstructionList;
 typedef std::unordered_map<std::string, MipsSymbol> MipsVarMap;
+typedef std::unordered_map<std::string, std::string> MipsInitVals;
 
 class MipsFunction
 {
     std::string name_;
     MipsInstructionList instructions_;
     MipsVarMap vars_;
-    std::unordered_map<std::string, std::string> initialValues_;
+    MipsInitVals initialValues_;
 
 public:
     MipsFunction(const std::string & name);
@@ -29,6 +30,7 @@ public:
     int numInstructions() const;
     std::string name() const;
     const MipsVarMap &vars() const;
+    const MipsInitVals &initialValues() const;
 };
 
 }

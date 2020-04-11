@@ -23,6 +23,30 @@ std::string mips::MipsSymbol::toString () const
     return buffer.str();
 }
 
+std::string mips::MipsSymbol::sizeString () const
+{
+    switch (size)
+    {
+        case mips::WORD:
+            return "word";
+        case mips::HALF:
+            return "half";
+        case mips::BYTE:
+            return "byte";
+        case mips::FLOAT:
+            return "float";
+        case mips::DOUBLE:
+            return "double";
+        case mips::SPACE:
+            return "space";
+        case mips::ASCII:
+            return "ascii";
+        case mips::ASCIIZ:
+            return "asciiz";
+    }
+    return "<unknown>";
+}
+
 mips::MipsSymbol mips::MipsSymbol::makeConst (int value)
 {
     return { std::to_string(value), mips::MipsSymbolType::CONST };

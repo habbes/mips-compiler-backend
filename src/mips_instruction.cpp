@@ -8,7 +8,7 @@ bool mips::MipsInstruction::operator== (const mips::MipsInstruction & other) con
     if (op != other.op) return false;
     if (operands.size() != other.operands.size()) return false;
 
-    for (auto i = 0; i < operands.size(); ++i)
+    for (size_t i = 0; i < operands.size(); ++i)
     {
         if (operands[i] != other.operands[i]) return false;
     }
@@ -35,7 +35,7 @@ std::string mips::MipsInstruction::toString () const
     std::stringstream buffer;
     buffer << mipsOpToString(op);
 
-    for (int i = 0; i < operands.size(); i++)
+    for (size_t i = 0; i < operands.size(); i++)
     {
         buffer << (i == 0 ? " " : ", ");
         buffer << operands[i].name;

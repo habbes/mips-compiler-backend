@@ -350,6 +350,9 @@ bool testSimpleMipsTranslation()
     test_expect(vars.at("_t2_s0") == _t2_s0, "expected _t2_s0 but got %s", vars.at("_t2_s0").toString().c_str());
     test_expect(vars.at("_t3_s0") == _t3_s0, "expected _t3_s0 but got %s", vars.at("_t3_s0").toString().c_str());
     test_expect(vars.at("_t4_s0") == _t4_s0, "expected _t4_s0 but got %s", vars.at("_t4_s0").toString().c_str());
+
+    auto initials = func.initialValues();
+    test_expect(initials.at("total_s1") == "0", "expected total_s1 to be 0 but got %s", initials.at("total_s1").c_str());
     
     test_mips_instruction(func.instruction(0), "li $t8, 10");
     test_mips_instruction(func.instruction(1), "sw $t8, n_s1");
