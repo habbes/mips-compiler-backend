@@ -1,11 +1,12 @@
 #include <fstream>
 #include "ir_parser.h"
 #include "ir2mips.h"
+#include "cfg.h"
 
 #define test_expect(expr, message, ...) if(!(expr)) {fprintf(stderr, "Test failed: ");fprintf(stderr, (message), __VA_ARGS__); fprintf(stderr,"\n"); return false;}
 #define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
 
-
+#define test_equals_string(actual, expected) test_expect((actual) == (expected), "expected %s but got  %s", (expected), (actual).toString().c_str())
 
 bool testParseSimpleFunction()
 {
@@ -410,6 +411,27 @@ bool testMipsArithmeticAssignments()
     return true;
 }
 
+bool testCfgSimpleBasicBlocks()
+{
+    std::string filename = "../test_cases/examples/ir/simple_blocks.ir";
+    std::ifstream source(filename);
+
+    IrParser parser(source);
+    parser.parse();
+    auto & irProgram = parser.program();
+    
+    auto & func = irProgram[0];
+    Cfg cfg(func);
+    auto & blocks = cfg.blocks();
+    test_expect(blocks.size() == 4, "expected 4 blocks but got %lu", blocks.size());
+    test_equals_string(blocks[0], "Block(0,first:0,last:2)");
+    test_equals_string(blocks[1], "Block(1,first:3,last:5)");
+    test_equals_string(blocks[2], "Block(2,first:6,last:8)");
+    test_equals_string(blocks[3], "Block(3,first:9,last:11)");
+
+    return true;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -419,6 +441,7 @@ int main(int argc, char *argv[])
     test_run_scenario(testParseArray);
     test_run_scenario(testSimpleMipsTranslation);
     test_run_scenario(testMipsArithmeticAssignments);
+    test_run_scenario(testCfgSimpleBasicBlocks);
 
     puts("SUCCESS!");
     return 0;

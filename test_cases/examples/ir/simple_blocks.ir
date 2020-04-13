@@ -1,0 +1,17 @@
+#start_function main
+    void main()
+    int-list: a, b, c
+    float-list:
+    main:
+    assign, a, 10,
+    assign, b, 20,
+    label_1:
+    add, a, b, c
+    breq, c, b, label_2
+    mul, a, b, c
+    sub, a, b, c
+    goto, label_1,,
+    label_2:
+    add, c, b, a
+    return, , ,
+#end_function main

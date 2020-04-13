@@ -20,6 +20,37 @@ bool IrInstruction::operator!= (IrInstruction & other) const
     return !(*this == other);
 }
 
+const SymbolInfo & IrInstruction::label () const
+{
+    switch (op)
+    {
+        case OpCode::BREQ:
+        case OpCode::BRGT:
+        case OpCode::BRGEQ:
+        case OpCode::BRLT:
+        case OpCode::BRLEQ:
+        case OpCode::BRNEQ:
+            return params[2];
+        case OpCode::GOTO:
+        case OpCode::LABEL:
+            return params[0];
+        default:
+            // should return error
+            return params[0];
+    }
+}
+
+bool IrInstruction::isBranch () const
+{
+    return op == OpCode::BREQ
+        || op == OpCode::BRGEQ
+        || op == OpCode::BRGT
+        || op == OpCode::BRLEQ
+        || op == OpCode::BRLT
+        || op == OpCode::BRNEQ
+        || op == OpCode::GOTO;
+}
+
 std::string IrInstruction::toString () const
 {
     std::stringstream buffer;

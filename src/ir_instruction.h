@@ -38,6 +38,8 @@ struct IrInstruction
     bool operator==(IrInstruction & other) const;
     bool operator!=(IrInstruction & other) const;
 
+    const SymbolInfo & label() const;
+    bool isBranch() const;
     std::string toString() const;
 };
 

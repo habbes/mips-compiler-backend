@@ -7,6 +7,7 @@
 class IrProgram
 {
     std::vector<std::unique_ptr<IrFunction>> functions_;
+    std::vector<int> findLeaders();
 public:
     IrFunction &newFunction(const std::string &);
     IrFunction &currentFunction();
