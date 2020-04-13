@@ -8,6 +8,6 @@ struct BasicBlock
     int first;
     int last;
 
-    bool operator==(const std::string & other) const;
+    bool operator==(const BasicBlock & other) const;
     std::string toString() const;
 };

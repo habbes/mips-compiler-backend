@@ -42,13 +42,27 @@ const SymbolInfo & IrInstruction::label () const
 
 bool IrInstruction::isBranch () const
 {
+    return isConditionalBranch() || isUnconditionalBranch();
+}
+
+bool IrInstruction::isConditionalBranch () const
+{
     return op == OpCode::BREQ
         || op == OpCode::BRGEQ
         || op == OpCode::BRGT
         || op == OpCode::BRLEQ
         || op == OpCode::BRLT
-        || op == OpCode::BRNEQ
-        || op == OpCode::GOTO;
+        || op == OpCode::BRNEQ;
+}
+
+bool IrInstruction::isUnconditionalBranch () const
+{
+    return op == OpCode::GOTO;
+}
+
+bool IrInstruction::isLabel () const
+{
+    return op == OpCode::LABEL;
 }
 
 std::string IrInstruction::toString () const

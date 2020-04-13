@@ -11,6 +11,34 @@ void Cfg::buildCfg ()
     // find leader statements
     auto leaders = findLeaders();
     findBasicBlocks(leaders);
+
+    // find edges between blocks
+    for (auto & block: blocks_)
+    {
+        nodes_.push_back({ .block = block.id });
+    }
+
+    for (auto & current: blocks_)
+    {
+        for (auto & other: blocks_)
+        {
+            if (other.id == current.id) continue;
+            auto & lastOfCurrent = function_.instruction(current.last);
+            auto & firstOfOther = function_.instruction(other.first);
+    
+            if (
+                // current has a branch to other
+                (lastOfCurrent.isBranch() && firstOfOther.isLabel() && lastOfCurrent.label() == firstOfOther.label())
+                ||
+                // current follows through to other
+                (!lastOfCurrent.isUnconditionalBranch() && other.first == current.last + 1)
+                )
+            {
+                nodes_[current.id].successors.insert(other.id);
+                nodes_[other.id].predecessors.insert(current.id);
+            }
+        }
+    }
 }
 
 void Cfg::findBasicBlocks (const std::vector<int> & leaders)
@@ -95,7 +123,12 @@ const BasicBlock & Cfg::block (int i) const
     return blocks_[i];
 }
 
-const CfgBlocksList & Cfg::blocks () const
+const CfgBlockList & Cfg::blocks () const
 {
     return blocks_;
+}
+
+const CfgNodeList & Cfg::nodes () const
+{
+    return nodes_;
 }

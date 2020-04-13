@@ -40,6 +40,9 @@ struct IrInstruction
 
     const SymbolInfo & label() const;
     bool isBranch() const;
+    bool isConditionalBranch() const;
+    bool isUnconditionalBranch() const;
+    bool isLabel() const;
     std::string toString() const;
 };
 

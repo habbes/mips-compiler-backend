@@ -4,19 +4,14 @@
 #include <unordered_map>
 #include "ir_function.h"
 #include "basic_block.h"
+#include "cfg_node.h"
 
-typedef std::vector<BasicBlock> CfgBlocksList;
-
-struct CfgNode
-{
-    int block;
-    std::vector<int> successors;
-    std::vector<int> predecessors;
-};
+typedef std::vector<BasicBlock> CfgBlockList;
+typedef std::vector<CfgNode> CfgNodeList;
 
 class Cfg
 {
-    CfgBlocksList blocks_;
+    CfgBlockList blocks_;
     std::unordered_map<int, int> statementToBlockMap_;
     std::vector<CfgNode> nodes_;
     const IrFunction & function_;
@@ -27,5 +22,6 @@ class Cfg
 public:
     Cfg(const IrFunction & function_);
     const BasicBlock &block(int i) const;
-    const CfgBlocksList &blocks() const;
+    const CfgBlockList &blocks() const;
+    const CfgNodeList &nodes() const;
 };

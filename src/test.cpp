@@ -7,6 +7,7 @@
 #define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
 
 #define test_equals_string(actual, expected) test_expect((actual) == (expected), "expected %s but got  %s", (expected), (actual).toString().c_str())
+#define test_objects_equal(actual, expected) test_expect((actual) == (expected), "expected %s but got %s", (expected).toString().c_str(), (actual).toString().c_str())
 
 bool testParseSimpleFunction()
 {
@@ -424,10 +425,25 @@ bool testCfgSimpleBasicBlocks()
     Cfg cfg(func);
     auto & blocks = cfg.blocks();
     test_expect(blocks.size() == 4, "expected 4 blocks but got %lu", blocks.size());
-    test_equals_string(blocks[0], "Block(0,first:0,last:2)");
-    test_equals_string(blocks[1], "Block(1,first:3,last:5)");
-    test_equals_string(blocks[2], "Block(2,first:6,last:8)");
-    test_equals_string(blocks[3], "Block(3,first:9,last:11)");
+    BasicBlock block0 = { .id = 0, .first = 0, .last = 2};
+    BasicBlock block1 = { 1, 3, 5 };
+    BasicBlock block2 = { 2, 6, 8 };
+    BasicBlock block3 = { 3, 9, 11 };
+    test_objects_equal(blocks[0], block0);
+    test_objects_equal(blocks[1], block1);
+    test_objects_equal(blocks[2], block2);
+    test_objects_equal(blocks[3], block3);
+
+    auto & nodes = cfg.nodes();
+    test_expect(nodes.size() == 4, "expected 4 nodes but got %lu", nodes.size());
+    CfgNode node0 = { .block = 0, .successors = { 1 }, .predecessors = {} };
+    CfgNode node1 = { 1, { 2, 3 }, { 0, 2 } };
+    CfgNode node2 = { 2, { 1 }, { 1 } };
+    CfgNode node3 = { 3, {}, { 1 } };
+    test_objects_equal(nodes[0], node0);
+    test_objects_equal(nodes[1], node1);
+    test_objects_equal(nodes[2], node2);
+    test_objects_equal(nodes[3], node3);
 
     return true;
 }

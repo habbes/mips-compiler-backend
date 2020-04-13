@@ -8,7 +8,7 @@ std::string BasicBlock::toString () const
     return buf.str();
 }
 
-bool BasicBlock::operator== (const std::string & other) const
+bool BasicBlock::operator== (const BasicBlock & other) const
 {
-    return toString() == other;
+    return id == other.id && first == other.first && last == other.last;
 }
