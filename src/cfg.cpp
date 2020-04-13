@@ -100,7 +100,7 @@ std::vector<int> Cfg::findLeaders ()
             targetLabels.insert(inst.label().name);
         }
 
-        if (inst.op == OpCode::LABEL)
+        if (inst.isLabel())
         {
             labelStatements.insert_or_assign(inst.label().name, i);
         }
