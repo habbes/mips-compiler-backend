@@ -6,7 +6,6 @@
 #define test_expect(expr, message, ...) if(!(expr)) {fprintf(stderr, "Test failed: ");fprintf(stderr, (message), __VA_ARGS__); fprintf(stderr,"\n"); return false;}
 #define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
 
-#define test_equals_string(actual, expected) test_expect((actual) == (expected), "expected %s but got  %s", (expected), (actual).toString().c_str())
 #define test_objects_equal(actual, expected) test_expect((actual) == (expected), "expected %s but got %s", (expected).toString().c_str(), (actual).toString().c_str())
 
 bool testParseSimpleFunction()

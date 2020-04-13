@@ -8,37 +8,9 @@ Cfg::Cfg (const IrFunction & function): function_(function)
 
 void Cfg::buildCfg ()
 {
-    // find leader statements
     auto leaders = findLeaders();
     findBasicBlocks(leaders);
-
-    // find edges between blocks
-    for (auto & block: blocks_)
-    {
-        nodes_.push_back({ .block = block.id });
-    }
-
-    for (auto & current: blocks_)
-    {
-        for (auto & other: blocks_)
-        {
-            if (other.id == current.id) continue;
-            auto & lastOfCurrent = function_.instruction(current.last);
-            auto & firstOfOther = function_.instruction(other.first);
-    
-            if (
-                // current has a branch to other
-                (lastOfCurrent.isBranch() && firstOfOther.isLabel() && lastOfCurrent.label() == firstOfOther.label())
-                ||
-                // current follows through to other
-                (!lastOfCurrent.isUnconditionalBranch() && other.first == current.last + 1)
-                )
-            {
-                nodes_[current.id].successors.insert(other.id);
-                nodes_[other.id].predecessors.insert(current.id);
-            }
-        }
-    }
+    connectBasicBlocks();
 }
 
 void Cfg::findBasicBlocks (const std::vector<int> & leaders)
@@ -64,6 +36,38 @@ void Cfg::findBasicBlocks (const std::vector<int> & leaders)
         }
 
         blocks_.push_back(block);
+    }
+}
+
+void Cfg::connectBasicBlocks ()
+{
+    // nodes wrap block with metadata about which blocks are connected
+    for (auto & block: blocks_)
+    {
+        nodes_.push_back({ .block = block.id });
+    }
+
+    // find edges between blocks
+    for (auto & current: blocks_)
+    {
+        for (auto & other: blocks_)
+        {
+            if (other.id == current.id) continue;
+            auto & lastOfCurrent = function_.instruction(current.last);
+            auto & firstOfOther = function_.instruction(other.first);
+    
+            if (
+                // current has a branch to other
+                (lastOfCurrent.isBranch() && firstOfOther.isLabel() && lastOfCurrent.label() == firstOfOther.label())
+                ||
+                // current follows through to other
+                (!lastOfCurrent.isUnconditionalBranch() && other.first == current.last + 1)
+                )
+            {
+                nodes_[current.id].successors.insert(other.id);
+                nodes_[other.id].predecessors.insert(current.id);
+            }
+        }
     }
 }
 

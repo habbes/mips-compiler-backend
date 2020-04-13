@@ -14,7 +14,7 @@ class Ir2Mips
     const IrFunction &curIrFunction();
     mips::MipsFunction &curMipsFunction();
     mips::MipsSymbol irToMipsSymbol(const SymbolInfo &);
-    void emitMips(mips::MipsInstruction);
+    void emit(mips::MipsInstruction);
     void emitLoad(const mips::MipsSymbol &, const mips::MipsSymbol &);
     void translateNextFunction();
     void translateNextInstruction();

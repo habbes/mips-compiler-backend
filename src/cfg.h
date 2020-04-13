@@ -18,6 +18,7 @@ class Cfg
 
     void buildCfg();
     void findBasicBlocks(const std::vector<int> & leaders);
+    void connectBasicBlocks();
     std::vector<int> findLeaders();
 public:
     Cfg(const IrFunction & function_);
