@@ -83,6 +83,18 @@ std::string mipsOpToString (mips::MipsOp op)
             return "mul";
         case mips::MipsOp::DIV:
             return "div";
+        case mips::MipsOp::BEQ:
+            return "beq";
+        case mips::MipsOp::BNE:
+            return "bne";
+        case mips::MipsOp::BLT:
+            return "blt";
+        case mips::MipsOp::BLE:
+            return "ble";
+        case mips::MipsOp::BGT:
+            return "bgt";
+        case mips::MipsOp::BGE:
+            return "bge";
         case mips::MipsOp::JR:
             return "jr";
         case mips::MipsOp::J:

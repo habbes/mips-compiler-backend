@@ -22,6 +22,7 @@ class Ir2Mips
     void translateLabel(const IrInstruction &);
     void translateBinary(const IrInstruction &);
     void translateGoto(const IrInstruction &);
+    void translateConditionalBranch(const IrInstruction &);
     void translateReturn(const IrInstruction &);
     void injectBuiltInFunctions();
     void injectProgramStart();

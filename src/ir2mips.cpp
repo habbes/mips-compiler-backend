@@ -111,6 +111,14 @@ void Ir2Mips::translateNextInstruction()
         case OpCode::AND:
             translateBinary(inst);
             break;
+        case OpCode::BREQ:
+        case OpCode::BRNEQ:
+        case OpCode::BRLT:
+        case OpCode::BRLEQ:
+        case OpCode::BRGT:
+        case OpCode::BRGEQ:
+            translateConditionalBranch(inst);
+            break;
         case OpCode::GOTO:
             translateGoto(inst);
             break;
@@ -158,6 +166,28 @@ void Ir2Mips::translateBinary(const IrInstruction &inst)
         mips::INVALID;
     emit({ op, { mipsLeft, mipsRight, mipsLeft } });
     emit({ mips::MipsOp::SW, { mipsLeft, mipsDest }});
+}
+
+void Ir2Mips::translateConditionalBranch(const IrInstruction &inst)
+{
+    auto & irLeft = inst.params[0];
+    auto & irRight = inst.params[1];
+    auto & irLabel = inst.params[2];
+    auto mipsLeft = MipsSymbol::makeReg(mips::REG_T8);
+    auto mipsRight = MipsSymbol::makeReg(mips::REG_T9);
+    auto mipsLabel = irToMipsSymbol(irLabel);
+
+    emitLoad(irToMipsSymbol(irLeft), mipsLeft);
+    emitLoad(irToMipsSymbol(irRight), mipsRight);
+    mips::MipsOp op =
+        inst.op == OpCode::BREQ ? mips::BEQ :
+        inst.op == OpCode::BRNEQ ? mips::BNE :
+        inst.op == OpCode::BRLT ? mips::BLT :
+        inst.op == OpCode::BRLEQ ? mips::BLE :
+        inst.op == OpCode::BRGT ? mips::BGT :
+        inst.op == OpCode::BRGEQ ? mips::BGE :
+        mips::INVALID;
+    emit({ op, { mipsLeft, mipsRight, mipsLabel }});
 }
 
 void Ir2Mips::translateGoto (const IrInstruction &inst)

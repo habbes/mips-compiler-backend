@@ -56,8 +56,16 @@ enum MipsOp
     J,
     // beq $t0, $t1, label -> Branch if $t0 == $t1
     BEQ,
+    // bne $t0, $t1, label -> Branch if $t0 != $t1
+    BNE,
     // blt $t0, $t1, label -> Branch if $t0 < $t1
     BLT,
+    // ble $t0, $t1, label -> Branch if $t0 <=$t1
+    BLE,
+    // bgt $t0, $t1, label -> Branch if $t0 > $t1
+    BGT,
+    // bge $t0, $t1, label -> Branch if $t0 >= $t1
+    BGE,
     // jal label -> jump and link, saves next address to $ra then jumps to label
     JAL,
     // jr $ra -> return to calling program
