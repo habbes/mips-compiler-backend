@@ -33,10 +33,41 @@ const SymbolInfo & IrInstruction::label () const
             return params[2];
         case OpCode::GOTO:
         case OpCode::LABEL:
+        case OpCode::CALL:
             return params[0];
+        case OpCode::CALLR:
+            return params[1];
         default:
             // should return error
             return params[0];
+    }
+}
+
+int IrInstruction::funcArgsCount () const
+{
+    return op == OpCode::CALL ? params.size() - 1 : params.size() - 2;
+}
+
+IrFuncArgsIterator IrInstruction::funcArgsBegin () const
+{
+    return op == OpCode::CALLR ?
+        params.begin() + 2 : params.begin() + 1;
+}
+
+IrFuncArgsIterator IrInstruction::funcArgsEnd () const
+{
+    return params.end();
+}
+
+const SymbolInfo & IrInstruction::returnValue () const
+{
+    switch (op)
+    {
+        case OpCode::CALLR:
+        case OpCode::RETURN:
+            return params[0];
+        default:
+            return *(params.end() - 1);
     }
 }
 
@@ -65,9 +96,15 @@ bool IrInstruction::isLabel () const
     return op == OpCode::LABEL;
 }
 
-bool IrInstruction::isLabel () const
+bool IrInstruction::isCall () const
 {
     return op == OpCode::CALL || op == OpCode::CALLR;
+}
+
+bool IrInstruction::hasReturnValue () const
+{
+    return op == OpCode::CALLR
+        || (op == OpCode::RETURN && params.size() > 0);
 }
 
 std::string IrInstruction::toString () const

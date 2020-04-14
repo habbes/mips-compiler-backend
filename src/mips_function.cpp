@@ -20,8 +20,8 @@ mips::MipsFunction::MipsFunction (const IrFunction & irFunc)
     if (irFunc.makesCalls())
     {
         backupRa_ = true;
-        raBackupVarName_ = name_ + "_saved_ra";
-        addVar(mips::MipsSymbol::makeVar(raBackupVarName_, mips::WORD, "0"));
+        raBackupVarName_ = name_ + "_saved_ra_";
+        addVar(mips::MipsSymbol::makeVar(raBackupVarName_, mips::WORD), "0");
     }
 }
 

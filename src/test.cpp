@@ -361,8 +361,9 @@ bool testSimpleMipsTranslation()
     auto initials = func.initialValues();
     test_expect(initials.at("total_s1") == "0", "expected total_s1 to be 0 but got %s", initials.at("total_s1").c_str());
     
-    test_mips_instruction(func.instruction(0), "li $t8, 10");
-    test_mips_instruction(func.instruction(1), "sw $t8, n_s1");
+    test_mips_instruction(func.instruction(0), "sw $ra, main_saved_ra_");
+    test_mips_instruction(func.instruction(1), "li $t8, 10");
+    test_mips_instruction(func.instruction(2), "sw $t8, n_s1");
     
     return true;
 }

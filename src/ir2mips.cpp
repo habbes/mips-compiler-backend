@@ -89,15 +89,12 @@ void Ir2Mips::emitLoad (const mips::MipsSymbol & src, const mips::MipsSymbol & d
 {
     if (src.type == mips::MipsSymbolType::CONST)
     {
-        MipsInstruction inst = { mips::MipsOp::LI, { dest, src } };
         emit({ mips::MipsOp::LI, { dest, src } });
     }
     else
     {
-        MipsInstruction inst = { mips::MipsOp::LW, { dest, src } };
         emit({ mips::MipsOp::LW, { dest, src } });
     }
-    
 }
 
 void Ir2Mips::translateNextInstruction()
@@ -130,6 +127,9 @@ void Ir2Mips::translateNextInstruction()
         case OpCode::GOTO:
             translateGoto(inst);
             break;
+        case OpCode::CALL:
+        case OpCode::CALLR:
+            translateCall(inst);
         case OpCode::RETURN:
             translateReturn(inst);
     }
@@ -203,8 +203,34 @@ void Ir2Mips::translateGoto (const IrInstruction &inst)
     emit({ mips::MipsOp::J, { irToMipsSymbol(inst.label()) } });
 }
 
+void Ir2Mips::translateCall(const IrInstruction &inst)
+{
+    // assume up to 4 args
+    // TODO add support for 4+ args, store additional args in vars or registers or stack
+    std::string regs[] = { mips::REG_A0, mips::REG_A1, mips::REG_A2, mips::REG_A3 };
+    auto it = inst.funcArgsBegin();
+    for (int i = 0; i < inst.funcArgsCount(); i++)
+    {
+        it += i;
+        emitLoad(irToMipsSymbol(*it), MipsSymbol::makeReg(regs[i]));
+    }
+
+    emit({ mips::MipsOp::JAL, { MipsSymbol::makeLabel(inst.label().name) } });
+
+    if (inst.hasReturnValue())
+    {
+        // store return from $v0
+        emit({ mips::MipsOp::SW, { MipsSymbol::makeReg(mips::REG_V0), irToMipsSymbol(inst.returnValue()) } });
+    }
+}
+
 void Ir2Mips::translateReturn (const IrInstruction &inst)
 {
+    if (inst.hasReturnValue())
+    {
+        emitLoad(irToMipsSymbol(inst.returnValue()), MipsSymbol::makeReg(mips::REG_V0));
+    }
+
     if (curMipsFunction().backsUpRa())
     {
         // restore $ra from backup: lw $ra, func_saved_ra

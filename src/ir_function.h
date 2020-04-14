@@ -18,7 +18,7 @@ class IrFunction
     ParamList params_;
     VarMap vars_;
     InstructionList instructions_;
-    bool makesCalls_;
+    bool makesCalls_ = false;
 public:
     IrFunction(const std::string & name);
     const std::string & name() const;

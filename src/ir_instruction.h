@@ -30,20 +30,28 @@ enum OpCode
     INVALID = -1
 };
 
+typedef std::vector<SymbolInfo> IrSymbolList;
+typedef IrSymbolList::const_iterator IrFuncArgsIterator;
+
 struct IrInstruction
 {
     OpCode op;
-    std::vector<SymbolInfo> params;
+    IrSymbolList params;
 
     bool operator==(IrInstruction & other) const;
     bool operator!=(IrInstruction & other) const;
 
     const SymbolInfo & label() const;
+    int funcArgsCount() const;
+    IrFuncArgsIterator funcArgsBegin() const;
+    IrFuncArgsIterator funcArgsEnd() const;
+    const SymbolInfo & returnValue() const;
     bool isBranch() const;
     bool isConditionalBranch() const;
     bool isUnconditionalBranch() const;
     bool isLabel() const;
     bool isCall() const;
+    bool hasReturnValue() const;
     std::string toString() const;
 };
 
