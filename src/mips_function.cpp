@@ -16,6 +16,13 @@ mips::MipsFunction::MipsFunction (const IrFunction & irFunc)
             addVar(mips::MipsSymbol::makeVar(irVar.name, mipsDataType), "0");
         }
     }
+
+    if (irFunc.makesCalls())
+    {
+        backupRa_ = true;
+        raBackupVarName_ = name_ + "_saved_ra";
+        addVar(mips::MipsSymbol::makeVar(raBackupVarName_, mips::WORD, "0"));
+    }
 }
 
 void mips::MipsFunction::addVar (const mips::MipsSymbol &var, const std::string & initialValue)
@@ -52,4 +59,19 @@ const mips::MipsVarMap & mips::MipsFunction::vars () const
 const mips::MipsInitVals & mips::MipsFunction::initialValues () const
 {
     return initialValues_;
+}
+
+bool mips::MipsFunction::backsUpRa () const
+{
+    return backupRa_;
+}
+
+std::string mips::MipsFunction::backupRaVarName () const
+{
+    return raBackupVarName_;
+}
+
+const mips::MipsSymbol & mips::MipsFunction::backupRaVar () const
+{
+    return vars_.at(raBackupVarName_);
 }

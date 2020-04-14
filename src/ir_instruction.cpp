@@ -65,6 +65,11 @@ bool IrInstruction::isLabel () const
     return op == OpCode::LABEL;
 }
 
+bool IrInstruction::isLabel () const
+{
+    return op == OpCode::CALL || op == OpCode::CALLR;
+}
+
 std::string IrInstruction::toString () const
 {
     std::stringstream buffer;

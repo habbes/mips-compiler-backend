@@ -43,6 +43,7 @@ struct IrInstruction
     bool isConditionalBranch() const;
     bool isUnconditionalBranch() const;
     bool isLabel() const;
+    bool isCall() const;
     std::string toString() const;
 };
 

@@ -105,7 +105,5 @@ std::string mipsOpToString (mips::MipsOp op)
             return "syscall";
     }
 
-    char buf[100];
-    sprintf(buf, "<unkown:%d>", op);
-    return std::string(buf);
+    return std::string("<unknown:") + std::to_string(op) + ">";
 }

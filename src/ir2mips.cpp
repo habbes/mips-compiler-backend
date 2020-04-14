@@ -33,6 +33,14 @@ void Ir2Mips::translateNextFunction()
 {
     auto & irFunc = ir_[funcIndex_];
     mips_.newFunction(irFunc);
+
+    if (curMipsFunction().backsUpRa())
+    {
+        // backup $ra
+        // sw $ra, func_saved_ra
+        emit({ mips::MipsOp::SW, { MipsSymbol::makeReg(mips::REG_RA), curMipsFunction().backupRaVar() } });
+    }
+
     instIndex_ = 0;
     while (instIndex_ < irFunc.numInstructions())
     {
@@ -197,6 +205,12 @@ void Ir2Mips::translateGoto (const IrInstruction &inst)
 
 void Ir2Mips::translateReturn (const IrInstruction &inst)
 {
+    if (curMipsFunction().backsUpRa())
+    {
+        // restore $ra from backup: lw $ra, func_saved_ra
+        emitLoad(curMipsFunction().backupRaVar(), MipsSymbol::makeReg(mips::REG_RA));
+    }
+
     emit({ mips::MipsOp::JR, { MipsSymbol::makeReg(mips::REG_RA) } });
 }
 

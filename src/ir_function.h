@@ -18,6 +18,7 @@ class IrFunction
     ParamList params_;
     VarMap vars_;
     InstructionList instructions_;
+    bool makesCalls_;
 public:
     IrFunction(const std::string & name);
     const std::string & name() const;
@@ -31,4 +32,6 @@ public:
     void addInstruction(IrInstructionUPtr instruction);
     const IrInstruction & instruction(int i) const;
     int numInstructions() const;
+    // whether the function calls other functions
+    bool makesCalls() const;
 };

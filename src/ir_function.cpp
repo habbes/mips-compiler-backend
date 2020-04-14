@@ -55,5 +55,15 @@ const IrInstruction & IrFunction::instruction(int i) const
 
 void IrFunction::addInstruction (IrInstructionUPtr inst)
 {
+    if (inst->isCall())
+    {
+        makesCalls_ = true;
+    }
+
     instructions_.push_back(std::move(inst));
+}
+
+bool IrFunction::makesCalls () const
+{
+    return makesCalls_;
 }

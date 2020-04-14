@@ -20,6 +20,8 @@ class MipsFunction
     MipsInstructionList instructions_;
     MipsVarMap vars_;
     MipsInitVals initialValues_;
+    bool backupRa_ = false;
+    std::string raBackupVarName_;
 
 public:
     MipsFunction(const std::string & name);
@@ -31,6 +33,11 @@ public:
     std::string name() const;
     const MipsVarMap &vars() const;
     const MipsInitVals &initialValues() const;
+    // whether to backup $ra in order to restore it after a call
+    bool backsUpRa () const;
+    // name of variable used to backup return address
+    std::string backupRaVarName () const;
+    const MipsSymbol & backupRaVar () const;
 };
 
 }
