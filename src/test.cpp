@@ -400,10 +400,10 @@ bool testMipsArithmeticAssignments()
     test_mips_instruction(func.instruction(10), "li $t9, 20");
     test_mips_instruction(func.instruction(11), "mul $t8, $t9, $t8");
     test_mips_instruction(func.instruction(12), "sw $t8, res_s1");
-    // add, 100, b_s1, b_s1 // TODO: test with dv
+    // div, 100, b_s1, b_s1
     test_mips_instruction(func.instruction(13), "li $t8, 100");
     test_mips_instruction(func.instruction(14), "lw $t9, b_s1");
-    test_mips_instruction(func.instruction(15), "add $t8, $t9, $t8");
+    test_mips_instruction(func.instruction(15), "div $t8, $t9, $t8");
     test_mips_instruction(func.instruction(16), "sw $t8, b_s1");
     // sub, 100, 20, res_s1
     test_mips_instruction(func.instruction(17), "li $t8, 100");

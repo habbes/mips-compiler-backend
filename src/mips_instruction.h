@@ -18,14 +18,20 @@ enum MipsOp
     SUB,
     // $op1 = $op2 * $op3
     MUL,
+    // $op1 = $op2 * $op3
+    DIV,
     // $op1 = $op2
     MOVE,
     // $op1 = $op2 + const
     ADDI,
     // $op1 = $op2 | const
     ORI,
+    // $op1 = $op2 | $op3
+    OR,
     // $op1 = $op2 & const
     ANDI,
+    // $op1 = $op2 & $op3
+    AND,
 
     /* Integer Load and Store */
     // lw $t0, label -> load 32bit word at label to $t0

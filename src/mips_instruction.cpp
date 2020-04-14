@@ -81,6 +81,8 @@ std::string mipsOpToString (mips::MipsOp op)
             return "sub";
         case mips::MipsOp::MUL:
             return "mul";
+        case mips::MipsOp::DIV:
+            return "div";
         case mips::MipsOp::JR:
             return "jr";
         case mips::MipsOp::J:
@@ -91,5 +93,7 @@ std::string mipsOpToString (mips::MipsOp op)
             return "syscall";
     }
 
-    return "<unknown>";
+    char buf[100];
+    sprintf(buf, "<unkown:%d>", op);
+    return std::string(buf);
 }

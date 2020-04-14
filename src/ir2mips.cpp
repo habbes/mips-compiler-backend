@@ -106,7 +106,13 @@ void Ir2Mips::translateNextInstruction()
         case OpCode::ADD:
         case OpCode::MULT:
         case OpCode::SUB:
+        case OpCode::DIV:
+        case OpCode::OR:
+        case OpCode::AND:
             translateBinary(inst);
+            break;
+        case OpCode::GOTO:
+            translateGoto(inst);
             break;
         case OpCode::RETURN:
             translateReturn(inst);
@@ -145,9 +151,18 @@ void Ir2Mips::translateBinary(const IrInstruction &inst)
     mips::MipsOp op =
         inst.op == OpCode::ADD ? mips::ADD :
         inst.op == OpCode::SUB ? mips::SUB :
-        inst.op == OpCode::MULT ? mips::MUL : mips::INVALID;
+        inst.op == OpCode::MULT ? mips::MUL :
+        inst.op == OpCode::DIV ? mips::DIV :
+        inst.op == OpCode::AND ? mips::AND :
+        inst.op == OpCode::OR ? mips::OR :
+        mips::INVALID;
     emit({ op, { mipsLeft, mipsRight, mipsLeft } });
     emit({ mips::MipsOp::SW, { mipsLeft, mipsDest }});
+}
+
+void Ir2Mips::translateGoto (const IrInstruction &inst)
+{
+    emit({ mips::MipsOp::J, { irToMipsSymbol(inst.label()) } });
 }
 
 void Ir2Mips::translateReturn (const IrInstruction &inst)

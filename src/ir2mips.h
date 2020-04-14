@@ -21,6 +21,7 @@ class Ir2Mips
     void translateAssign(const IrInstruction &);
     void translateLabel(const IrInstruction &);
     void translateBinary(const IrInstruction &);
+    void translateGoto(const IrInstruction &);
     void translateReturn(const IrInstruction &);
     void injectBuiltInFunctions();
     void injectProgramStart();
