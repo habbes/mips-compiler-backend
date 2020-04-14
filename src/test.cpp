@@ -7,6 +7,7 @@
 #define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
 
 #define test_objects_equal(actual, expected) test_expect((actual) == (expected), "expected %s but got %s", (expected).toString().c_str(), (actual).toString().c_str())
+#define test_strings_equal(actual, expected) test_expect((actual) == (expected), "expected %s but got %s", (expected), (actual).c_str())
 
 bool testParseSimpleFunction()
 {
@@ -332,7 +333,12 @@ bool testSimpleMipsTranslation()
     translator.translate();
     auto & mipsProgram = translator.mips();
 
-    auto & func = mipsProgram[0];
+    // built-in funcs
+    test_strings_equal(mipsProgram[0].name(), "__main__");
+    test_strings_equal(mipsProgram[2].name(), "printi");
+    test_strings_equal(mipsProgram[3].name(), "exit");
+
+    auto & func = mipsProgram[1];
     test_expect(func.name() == "main", "expected main but got %s", func.name().c_str());
 
     using mips::MipsSymbol;
@@ -373,7 +379,7 @@ bool testMipsArithmeticAssignments()
     translator.translate();
     auto & mipsProgram = translator.mips();
 
-    auto & func = mipsProgram[0];
+    auto & func = mipsProgram[1];
 
     // assign, n_s1, 10,
     test_mips_instruction(func.instruction(0), "li $t8, 10");

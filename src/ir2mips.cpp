@@ -16,11 +16,16 @@ const mips::MipsProgram &Ir2Mips::mips() const
 
 mips::MipsProgram &Ir2Mips::translate()
 {
+    injectProgramStart();
+
     for (int i = 0; i < ir_.numFunctions(); i++)
     {
         funcIndex_ = 0;
         translateNextFunction();
     }
+
+    injectBuiltInFunctions();
+
     return mips_;
 }
 
@@ -148,4 +153,61 @@ void Ir2Mips::translateBinary(const IrInstruction &inst)
 void Ir2Mips::translateReturn (const IrInstruction &inst)
 {
     emit({ mips::MipsOp::JR, { MipsSymbol::makeReg(mips::REG_RA) } });
+}
+
+void Ir2Mips::injectBuiltInFunctions ()
+{
+    injectPrintiFunction();
+    injectExitFunction();
+}
+
+void Ir2Mips::injectPrintiFunction ()
+{
+    /*
+    printi:
+    .data
+    lf:	.asciiz	"\n"
+    .text
+    li	$v0, 1
+    syscall
+    li	$v0,4
+    la	$a0, lf
+    syscall
+    jr	$ra
+    */
+
+    mips_.newFunction("printi");
+    curMipsFunction().addVar(MipsSymbol::makeVar("printi_lf", mips::MipsSymbolSize::ASCIIZ), "\n");
+    emit({ mips::MipsOp::LI, { { MipsSymbol::makeReg(mips::REG_V0), MipsSymbol::makeConst(1) } } });
+    emit({ mips::MipsOp::SYSCALL });
+    emit({ mips::MipsOp::LI, { { MipsSymbol::makeReg(mips::REG_V0), MipsSymbol::makeConst(4) } } });
+    emit({ mips::MipsOp::LA, { { MipsSymbol::makeReg(mips::REG_A0), curMipsFunction().vars().at("printi_lf") } } });
+    emit({ mips::MipsOp::SYSCALL });
+    emit({ mips::MipsOp::JR, { { MipsSymbol::makeReg(mips::REG_RA) } } });
+}
+
+void Ir2Mips::injectProgramStart()
+{
+    /*
+    __main__:
+    jal main
+    j exit
+    */
+
+   mips_.newFunction("__main__");
+   emit({ mips::MipsOp::JAL, { { MipsSymbol::makeLabel("main") } } });
+   emit({ mips::J, { { MipsSymbol::makeLabel("exit") } } });
+}
+
+void Ir2Mips::injectExitFunction ()
+{
+    /*
+    exit:
+	li	$v0, 10
+	syscall
+    */
+    
+    mips_.newFunction("exit");
+    emit({ mips::MipsOp::LI, { { MipsSymbol::makeReg(mips::REG_V0), MipsSymbol::makeConst(10) } } });
+    emit({ mips::MipsOp::SYSCALL });
 }

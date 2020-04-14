@@ -52,6 +52,8 @@ enum MipsOp
     BEQ,
     // blt $t0, $t1, label -> Branch if $t0 < $t1
     BLT,
+    // jal label -> jump and link, saves next address to $ra then jumps to label
+    JAL,
     // jr $ra -> return to calling program
     JR,
 
@@ -72,6 +74,8 @@ struct MipsInstruction
     bool operator==(const MipsInstruction & other) const;
     bool operator==(const std::string & other) const;
     bool operator!=(const MipsInstruction & other) const;
+    bool isLabel() const;
+    const MipsSymbol & label() const;
     std::string toString() const;
 };
 

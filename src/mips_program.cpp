@@ -1,9 +1,5 @@
 #include "mips_program.h"
 
-void writeIndent(std::ostream & out);
-void writeLine(std::ostream & out, const std::string & s = "");
-void writeIndentedLine(std::ostream & out, const std::string & s = "");
-
 mips::MipsFunction & mips::MipsProgram::newFunction(const std::string & name)
 {
     auto func = std::make_unique<MipsFunction>(name);
@@ -41,48 +37,63 @@ int mips::MipsProgram::numFunctions () const
 
 void mips::MipsProgram::write (std::ostream & out) const
 {
+    for (int i = 0; i < numFunctions(); i++)
+    {
+        writeFunctionAt(i, out);
+        out << std::endl;
+    }
+}
+
+void mips::MipsProgram::writeFunctionAt (int funcIndex, std::ostream & out) const
+{
     std::string indent = "  ";
-    auto & func = functionAt(0);
+    auto & func = functionAt(funcIndex);
 
     // data segment
+    out << "#" << func.name() << std::endl;
+    out << func.name() << ":" << std::endl;
     out << indent << ".data" << std::endl;
     for (auto & item : func.vars())
     {
-        out << item.second.name << ":"
+        auto & var = item.second;
+        std::string origValue = func.initialValues().at(var.name);
+
+        out << var.name << ":"
             << indent
-            << '.' << item.second.sizeString()
-            << indent
-            << func.initialValues().at(item.second.name)
-            << std::endl;
+            << '.' << var.sizeString()
+            << indent;
+        if (var.isStringVar())
+        {
+            out << "\"";
+            for (auto c : origValue)
+            {
+                if (c == '\n') out << "\\n";
+                else out << c;
+            }
+            out << "\"";
+        }
+        else
+        {
+            out << origValue;
+        }
+
+        out << std::endl;
     }
 
     // text segment
     out << indent << ".text" << std::endl;
-    // out << func.name() << ":" << std::endl;
     for (int i = 0; i < func.numInstructions(); i++)
     {
         auto & inst = func.instruction(i);
-        if (inst.op != mips::MipsOp::INST_LABEL)
+        if (inst.isLabel() && inst.label().name == func.name())
+        {
+            // function name label has already been added at the top, don't duplicate
+            continue;
+        }
+        if (!inst.isLabel())
         {
             out << indent;
         }
         out << inst.toString() << std::endl;
     }
-
-}
-
-void writeIndent(std::ostream & out)
-{
-    out << "  ";
-}
-
-void writeLine(std::ostream & out, const std::string & s)
-{
-    out << s << std::endl;
-}
-
-void writeIndentedLine(std::ostream & out, const std::string & s)
-{
-    writeIndent(out);
-    writeLine(out, s);
 }

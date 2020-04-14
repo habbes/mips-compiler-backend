@@ -13,6 +13,11 @@ bool mips::MipsSymbol::operator!= (const MipsSymbol & other) const
     return !(*this == other);
 }
 
+bool mips::MipsSymbol::isStringVar () const
+{
+    return size == mips::ASCII || size == mips::ASCIIZ;
+}
+
 std::string mips::MipsSymbol::toString () const
 {
     std::stringstream buffer;
@@ -52,7 +57,7 @@ mips::MipsSymbol mips::MipsSymbol::makeConst (int value)
     return { std::to_string(value), mips::MipsSymbolType::CONST };
 }
 
-mips::MipsSymbol mips::MipsSymbol::makeReg (std::string reg, mips::MipsSymbolSize dataType)
+mips::MipsSymbol mips::MipsSymbol::makeReg (const std::string & reg, mips::MipsSymbolSize dataType)
 {
     return { reg, mips::MipsSymbolType::REG, dataType };
 }
@@ -60,4 +65,9 @@ mips::MipsSymbol mips::MipsSymbol::makeReg (std::string reg, mips::MipsSymbolSiz
 mips::MipsSymbol mips::MipsSymbol::makeLabel (const std::string & label)
 {
     return { label, mips::LABEL };
+}
+
+mips::MipsSymbol mips::MipsSymbol::makeVar (const std::string & name, mips::MipsSymbolSize dataType)
+{
+    return { name, mips::MipsSymbolType::VAR, dataType };
 }

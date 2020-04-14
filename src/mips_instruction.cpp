@@ -25,6 +25,17 @@ bool mips::MipsInstruction::operator!= (const mips::MipsInstruction & other) con
     return !(*this == other);
 }
 
+bool mips::MipsInstruction::isLabel () const
+{
+    return op == mips::MipsOp::INST_LABEL;
+}
+
+const mips::MipsSymbol & mips::MipsInstruction::label () const
+{
+    if (isLabel()) return operands[0];
+    return operands[1];
+}
+
 std::string mips::MipsInstruction::toString () const
 {
     if (op == mips::MipsOp::INST_LABEL)
@@ -43,7 +54,6 @@ std::string mips::MipsInstruction::toString () const
     
     return buffer.str();
 }
-
 
 std::string mipsOpToString (mips::MipsOp op)
 {
@@ -73,6 +83,12 @@ std::string mipsOpToString (mips::MipsOp op)
             return "mul";
         case mips::MipsOp::JR:
             return "jr";
+        case mips::MipsOp::J:
+            return "j";
+        case mips::MipsOp::JAL:
+            return "jal";
+        case mips::MipsOp::SYSCALL:
+            return "syscall";
     }
 
     return "<unknown>";

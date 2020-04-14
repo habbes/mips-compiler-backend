@@ -22,6 +22,10 @@ class Ir2Mips
     void translateLabel(const IrInstruction &);
     void translateBinary(const IrInstruction &);
     void translateReturn(const IrInstruction &);
+    void injectBuiltInFunctions();
+    void injectProgramStart();
+    void injectPrintiFunction();
+    void injectExitFunction();
 public:
     Ir2Mips(IrProgram & ir);
     mips::MipsProgram &translate();

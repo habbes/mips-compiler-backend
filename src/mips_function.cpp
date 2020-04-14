@@ -11,13 +11,9 @@ mips::MipsFunction::MipsFunction (const IrFunction & irFunc)
         auto & irVar = item.second;
         if (irVar.type == SymbolType::VAR)
         {
-            mips::MipsSymbol mipsVar = {
-                .name = irVar.name,
-                .type = mips::MipsSymbolType::VAR,
-                .size = irVar.dataType == DTYPE_INT ? mips::MipsSymbolSize::WORD : mips::MipsSymbolSize::FLOAT
-            };
-
-            addVar(mipsVar, "0");
+            auto mipsDataType = irVar.dataType == DTYPE_INT ?
+                mips::MipsSymbolSize::WORD : mips::MipsSymbolSize::FLOAT;
+            addVar(mips::MipsSymbol::makeVar(irVar.name, mipsDataType), "0");
         }
     }
 }

@@ -73,11 +73,13 @@ struct MipsSymbol
 
     bool operator==(const MipsSymbol & other) const;
     bool operator!=(const MipsSymbol & other) const;
+    bool isStringVar() const;
     std::string toString() const;
     std::string sizeString() const;
     static MipsSymbol makeConst(int value);
-    static MipsSymbol makeReg (std::string reg, mips::MipsSymbolSize dataType = mips::WORD);
+    static MipsSymbol makeReg (const std::string & reg, mips::MipsSymbolSize dataType = mips::WORD);
     static MipsSymbol makeLabel(const std::string & label);
+    static MipsSymbol makeVar(const std::string & name, mips::MipsSymbolSize dataType = mips::WORD);
 };
 
 }

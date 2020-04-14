@@ -9,6 +9,8 @@ namespace mips
 class MipsProgram
 {
     std::vector<std::unique_ptr<MipsFunction>> functions_;
+    
+    void writeFunctionAt(int funcIndex, std::ostream & out) const;
 public:
     MipsFunction &newFunction(const std::string &);
     MipsFunction &newFunction(const IrFunction &);
