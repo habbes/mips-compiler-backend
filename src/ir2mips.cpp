@@ -130,6 +130,7 @@ void Ir2Mips::translateNextInstruction()
         case OpCode::CALL:
         case OpCode::CALLR:
             translateCall(inst);
+            break;
         case OpCode::RETURN:
             translateReturn(inst);
     }

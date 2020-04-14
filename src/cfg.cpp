@@ -1,5 +1,6 @@
 #include "cfg.h"
 #include <unordered_set>
+#include <algorithm>
 
 Cfg::Cfg (const IrFunction & function): function_(function)
 {
