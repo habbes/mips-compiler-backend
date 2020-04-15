@@ -175,7 +175,7 @@ void Ir2Mips::translateBinary(const IrInstruction &inst)
         inst.op == OpCode::AND ? mips::AND :
         inst.op == OpCode::OR ? mips::OR :
         mips::INVALID;
-    emit({ op, { mipsLeft, mipsRight, mipsLeft } });
+    emit({ op, { mipsLeft, mipsLeft, mipsRight } });
     emit({ mips::MipsOp::SW, { mipsLeft, mipsDest }});
 }
 

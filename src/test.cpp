@@ -394,22 +394,22 @@ bool testMipsArithmeticAssignments()
     // add, n_s1, b_s1, res_s1
     test_mips_instruction(func.instruction(5), "lw $t8, n_s1");
     test_mips_instruction(func.instruction(6), "lw $t9, b_s1");
-    test_mips_instruction(func.instruction(7), "add $t8, $t9, $t8");
+    test_mips_instruction(func.instruction(7), "add $t8, $t8, $t9");
     test_mips_instruction(func.instruction(8), "sw $t8, res_s1");
     // mul, b_s1, 20, res_s1
     test_mips_instruction(func.instruction(9), "lw $t8, b_s1");
     test_mips_instruction(func.instruction(10), "li $t9, 20");
-    test_mips_instruction(func.instruction(11), "mul $t8, $t9, $t8");
+    test_mips_instruction(func.instruction(11), "mul $t8, $t8, $t9");
     test_mips_instruction(func.instruction(12), "sw $t8, res_s1");
     // div, 100, b_s1, b_s1
     test_mips_instruction(func.instruction(13), "li $t8, 100");
     test_mips_instruction(func.instruction(14), "lw $t9, b_s1");
-    test_mips_instruction(func.instruction(15), "div $t8, $t9, $t8");
+    test_mips_instruction(func.instruction(15), "div $t8, $t8, $t9");
     test_mips_instruction(func.instruction(16), "sw $t8, b_s1");
     // sub, 100, 20, res_s1
     test_mips_instruction(func.instruction(17), "li $t8, 100");
     test_mips_instruction(func.instruction(18), "li $t9, 20");
-    test_mips_instruction(func.instruction(19), "sub $t8, $t9, $t8");
+    test_mips_instruction(func.instruction(19), "sub $t8, $t8, $t9");
     test_mips_instruction(func.instruction(20), "sw $t8, res_s1");
     // return, , , 
     test_mips_instruction(func.instruction(21), "jr $ra");
