@@ -18,6 +18,11 @@ bool mips::MipsSymbol::isStringVar () const
     return size == mips::ASCII || size == mips::ASCIIZ;
 }
 
+bool mips::MipsSymbol::isAddressReg () const
+{
+    return type == mips::ADDRESS_REG;
+}
+
 std::string mips::MipsSymbol::toString () const
 {
     std::stringstream buffer;
@@ -70,4 +75,9 @@ mips::MipsSymbol mips::MipsSymbol::makeLabel (const std::string & label)
 mips::MipsSymbol mips::MipsSymbol::makeVar (const std::string & name, mips::MipsSymbolSize dataType)
 {
     return { name, mips::MipsSymbolType::VAR, dataType };
+}
+
+mips::MipsSymbol mips::MipsSymbol::makeAddressReg (const std::string & reg)
+{
+    return { reg, mips::MipsSymbolType::ADDRESS_REG, mips::WORD };
 }

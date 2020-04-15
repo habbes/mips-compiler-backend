@@ -28,6 +28,8 @@ class Ir2Mips
     void injectBuiltInFunctions();
     void injectProgramStart();
     void injectPrintiFunction();
+    void injectLoadIntArray();
+    void injectStoreIntArray();
     void injectExitFunction();
 public:
     Ir2Mips(IrProgram & ir);

@@ -336,7 +336,9 @@ bool testSimpleMipsTranslation()
     // built-in funcs
     test_strings_equal(mipsProgram[0].name(), "__main__");
     test_strings_equal(mipsProgram[2].name(), "printi");
-    test_strings_equal(mipsProgram[3].name(), "exit");
+    test_strings_equal(mipsProgram[3].name(), "storeIntArray");
+    test_strings_equal(mipsProgram[4].name(), "loadIntArray");
+    test_strings_equal(mipsProgram[5].name(), "exit");
 
     auto & func = mipsProgram[1];
     test_expect(func.name() == "main", "expected main but got %s", func.name().c_str());

@@ -246,6 +246,8 @@ void Ir2Mips::translateReturn (const IrInstruction &inst)
 void Ir2Mips::injectBuiltInFunctions ()
 {
     injectPrintiFunction();
+    injectStoreIntArray();
+    injectLoadIntArray();
     injectExitFunction();
 }
 
@@ -272,6 +274,46 @@ void Ir2Mips::injectPrintiFunction ()
     emit({ mips::MipsOp::LA, { { MipsSymbol::makeReg(mips::REG_A0), curMipsFunction().vars().at("printi_lf") } } });
     emit({ mips::MipsOp::SYSCALL });
     emit({ mips::MipsOp::JR, { { MipsSymbol::makeReg(mips::REG_RA) } } });
+}
+
+void Ir2Mips::injectStoreIntArray ()
+{
+    /*
+    storeIntArray:
+	# $a0=address of array, $a1 = index, $a2 = value
+	li $s0, 4
+	mul $s1, $a1, $s0
+	add $a0, $a0, $s1
+	sw $a2, ($a0)
+	jr $ra
+    */
+
+   mips_.newFunction("storeIntArray");
+   emit({ mips::MipsOp::LI, { { MipsSymbol::makeReg(mips::REG_T8), MipsSymbol::makeConst(4) } } });
+   emit({ mips::MipsOp::MUL, { { MipsSymbol::makeReg(mips::REG_T9), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_T8) } } });
+   emit({ mips::MipsOp::ADD, { { MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_T9) } } });
+   emit({ mips::MipsOp::SW, { { MipsSymbol::makeReg(mips::REG_A2), MipsSymbol::makeAddressReg(mips::REG_A0) } } });
+   emit({ mips::MipsOp::JR, { { MipsSymbol::makeReg(mips::REG_RA) } } });
+}
+
+void Ir2Mips::injectLoadIntArray ()
+{
+    /*
+    loadIntArray:
+	# $a0=address of array, $a1 = index
+	li $s0, 4
+	mul $s1, $a1, $s0
+	add $a0, $a0, $s1
+	lw $v0, ($a0)
+	jr $ra
+    */
+
+   mips_.newFunction("loadIntArray");
+   emit({ mips::MipsOp::LI, { { MipsSymbol::makeReg(mips::REG_T8), MipsSymbol::makeConst(4) } } });
+   emit({ mips::MipsOp::MUL, { { MipsSymbol::makeReg(mips::REG_T9), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_T8) } } });
+   emit({ mips::MipsOp::ADD, { { MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_T9) } } });
+   emit({ mips::MipsOp::LW, { { MipsSymbol::makeReg(mips::REG_V0), MipsSymbol::makeAddressReg(mips::REG_A0) } } });
+   emit({ mips::MipsOp::JR, { { MipsSymbol::makeReg(mips::REG_RA) } } });
 }
 
 void Ir2Mips::injectProgramStart()

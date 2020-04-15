@@ -49,7 +49,14 @@ std::string mips::MipsInstruction::toString () const
     for (size_t i = 0; i < operands.size(); i++)
     {
         buffer << (i == 0 ? " " : ", ");
-        buffer << operands[i].name;
+        if (operands[i].isAddressReg())
+        {
+            buffer << "(" << operands[i].name << ")";
+        }
+        else
+        {
+            buffer << operands[i].name;
+        }
     }
     
     return buffer.str();
