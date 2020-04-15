@@ -11,9 +11,20 @@ mips::MipsFunction::MipsFunction (const IrFunction & irFunc)
         auto & irVar = item.second;
         if (irVar.type == SymbolType::VAR)
         {
-            auto mipsDataType = irVar.dataType == DTYPE_INT ?
-                mips::MipsSymbolSize::WORD : mips::MipsSymbolSize::FLOAT;
-            addVar(mips::MipsSymbol::makeVar(irVar.name, mipsDataType), "0");
+            if (irVar.isArray)
+            {
+                // allocate space for array
+                auto elementSize = irVar.dataType == DTYPE_INT ? 4 : 8;
+                auto totalSize = irVar.arraySize * elementSize;
+                addVar(mips::MipsSymbol::makeVar(irVar.name, mips::MipsSymbolSize::SPACE),
+                    std::to_string(totalSize));
+            }
+            else
+            {
+                auto mipsDataType = irVar.dataType == DTYPE_INT ?
+                    mips::MipsSymbolSize::WORD : mips::MipsSymbolSize::FLOAT;
+                addVar(mips::MipsSymbol::makeVar(irVar.name, mipsDataType), "0");
+            }
         }
     }
 

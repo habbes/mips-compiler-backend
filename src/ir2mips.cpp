@@ -91,6 +91,10 @@ void Ir2Mips::emitLoad (const mips::MipsSymbol & src, const mips::MipsSymbol & d
     {
         emit({ mips::MipsOp::LI, { dest, src } });
     }
+    else if (src.type == mips::MipsSymbolType::VAR && src.size == mips::MipsSymbolSize::SPACE)
+    {
+        emit({ mips::MipsOp::LA, { dest, src } });
+    }
     else
     {
         emit({ mips::MipsOp::LW, { dest, src } });
@@ -133,8 +137,17 @@ void Ir2Mips::translateNextInstruction()
         case OpCode::CALLR:
             translateCall(inst);
             break;
+        case OpCode::ARRAY_STORE:
+            translateArrayStore(inst);
+            break;
+        case OpCode::ARRAY_LOAD:
+            translateArrayLoad(inst);
+            break;
         case OpCode::RETURN:
             translateReturn(inst);
+            break;
+        case OpCode::INVALID:
+            emit({ mips::MipsOp::INVALID });
     }
 }
 
@@ -214,8 +227,7 @@ void Ir2Mips::translateCall(const IrInstruction &inst)
     auto it = inst.funcArgsBegin();
     for (int i = 0; i < inst.funcArgsCount(); i++)
     {
-        it += i;
-        emitLoad(irToMipsSymbol(*it), MipsSymbol::makeReg(regs[i]));
+        emitLoad(irToMipsSymbol(*(it + i)), MipsSymbol::makeReg(regs[i]));
     }
 
     emit({ mips::MipsOp::JAL, { MipsSymbol::makeLabel(inst.label().name) } });
@@ -225,6 +237,34 @@ void Ir2Mips::translateCall(const IrInstruction &inst)
         // store return from $v0
         emit({ mips::MipsOp::SW, { MipsSymbol::makeReg(mips::REG_V0), irToMipsSymbol(inst.returnValue()) } });
     }
+}
+
+void Ir2Mips::translateArrayStore(const IrInstruction &inst)
+{
+    // from: array_store, array, index, value
+    // to: call, storeIntArray, array, index, value
+    auto arrayStoreInst = IrInstructionBuilder::fromOp(OpCode::CALL)
+        .param({ "storeIntArray", SymbolType::FUNC })
+        .param(inst.params[0])
+        .param(inst.params[1])
+        .param(inst.params[2])
+        .build();
+
+    translateCall(*arrayStoreInst);
+}
+
+void Ir2Mips::translateArrayLoad(const IrInstruction &inst)
+{
+    // from: array_load, value, array, index
+    // to: callr,  value, loadIntArray, array, index
+    auto arrayLoadInst = IrInstructionBuilder::fromOp(OpCode::CALLR)
+        .param(inst.params[0])
+        .param({ "loadIntArray", SymbolType::FUNC })
+        .param(inst.params[1])
+        .param(inst.params[2])
+        .build();
+
+    translateCall(*arrayLoadInst);
 }
 
 void Ir2Mips::translateReturn (const IrInstruction &inst)
@@ -290,7 +330,7 @@ void Ir2Mips::injectStoreIntArray ()
 
    mips_.newFunction("storeIntArray");
    emit({ mips::MipsOp::LI, { { MipsSymbol::makeReg(mips::REG_T8), MipsSymbol::makeConst(4) } } });
-   emit({ mips::MipsOp::MUL, { { MipsSymbol::makeReg(mips::REG_T9), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_T8) } } });
+   emit({ mips::MipsOp::MUL, { { MipsSymbol::makeReg(mips::REG_T9), MipsSymbol::makeReg(mips::REG_A1), MipsSymbol::makeReg(mips::REG_T8) } } });
    emit({ mips::MipsOp::ADD, { { MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_T9) } } });
    emit({ mips::MipsOp::SW, { { MipsSymbol::makeReg(mips::REG_A2), MipsSymbol::makeAddressReg(mips::REG_A0) } } });
    emit({ mips::MipsOp::JR, { { MipsSymbol::makeReg(mips::REG_RA) } } });
@@ -310,7 +350,7 @@ void Ir2Mips::injectLoadIntArray ()
 
    mips_.newFunction("loadIntArray");
    emit({ mips::MipsOp::LI, { { MipsSymbol::makeReg(mips::REG_T8), MipsSymbol::makeConst(4) } } });
-   emit({ mips::MipsOp::MUL, { { MipsSymbol::makeReg(mips::REG_T9), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_T8) } } });
+   emit({ mips::MipsOp::MUL, { { MipsSymbol::makeReg(mips::REG_T9), MipsSymbol::makeReg(mips::REG_A1), MipsSymbol::makeReg(mips::REG_T8) } } });
    emit({ mips::MipsOp::ADD, { { MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_T9) } } });
    emit({ mips::MipsOp::LW, { { MipsSymbol::makeReg(mips::REG_V0), MipsSymbol::makeAddressReg(mips::REG_A0) } } });
    emit({ mips::MipsOp::JR, { { MipsSymbol::makeReg(mips::REG_RA) } } });
