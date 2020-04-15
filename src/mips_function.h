@@ -13,6 +13,7 @@ typedef std::unique_ptr<MipsInstruction> MipsInstructionUPtr;
 typedef std::vector<std::unique_ptr<MipsInstruction>> MipsInstructionList;
 typedef std::unordered_map<std::string, MipsSymbol> MipsVarMap;
 typedef std::unordered_map<std::string, std::string> MipsInitVals;
+typedef std::unordered_map<int, std::string> MipsCommentList;
 
 class MipsFunction
 {
@@ -20,6 +21,7 @@ class MipsFunction
     MipsInstructionList instructions_;
     MipsVarMap vars_;
     MipsInitVals initialValues_;
+    MipsCommentList codeComments_;
     bool backupRa_ = false;
     std::string raBackupVarName_;
 
@@ -33,6 +35,9 @@ public:
     std::string name() const;
     const MipsVarMap &vars() const;
     const MipsInitVals &initialValues() const;
+    // add comment to appear before the next instruction
+    void addCodeComment(const std::string &);
+    const MipsCommentList & codeComments() const;
     // whether to backup $ra in order to restore it after a call
     bool backsUpRa () const;
     // name of variable used to backup return address

@@ -61,6 +61,17 @@ const mips::MipsInitVals & mips::MipsFunction::initialValues () const
     return initialValues_;
 }
 
+void mips::MipsFunction::addCodeComment (const std::string & comment)
+{
+    int pos = instructions_.size();
+    codeComments_.insert_or_assign(pos, comment);
+}
+
+const mips::MipsCommentList & mips::MipsFunction::codeComments () const
+{
+    return codeComments_;
+}
+
 bool mips::MipsFunction::backsUpRa () const
 {
     return backupRa_;

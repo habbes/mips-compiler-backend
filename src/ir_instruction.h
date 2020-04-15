@@ -53,6 +53,7 @@ struct IrInstruction
     bool isCall() const;
     bool hasReturnValue() const;
     std::string toString() const;
+
 };
 
 typedef std::unique_ptr<IrInstruction> IrInstructionUPtr;

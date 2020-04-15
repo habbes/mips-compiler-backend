@@ -1,6 +1,8 @@
 #pragma once
 
 #include <ostream>
+#include <vector>
+#include <string>
 #include "mips_function.h"
 
 namespace mips

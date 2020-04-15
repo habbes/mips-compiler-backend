@@ -1,6 +1,8 @@
 #include "ir_instruction.h"
 #include <sstream>
 
+std::string opCodeToString (OpCode op);
+
 // IrInstruction
 
 bool IrInstruction::operator== (IrInstruction & other) const
@@ -110,10 +112,17 @@ bool IrInstruction::hasReturnValue () const
 std::string IrInstruction::toString () const
 {
     std::stringstream buffer;
-    buffer << op;
+
+    if (isLabel())
+    {
+        buffer << label().name << ":";
+        return buffer.str();
+    }
+
+    buffer << opCodeToString(op);
     for (auto param : params)
     {
-        buffer << ',' << param.name;
+        buffer << ", " << param.name;
     }
     return buffer.str();
 }
@@ -172,4 +181,31 @@ OpCode stringToOpCode(const std::string & text)
     if (text == "array_load") return OpCode::ARRAY_LOAD;
 
     return OpCode::INVALID;
+}
+
+std::string opCodeToString (OpCode op)
+{
+    switch (op)
+    {
+        case OpCode::ADD: return "add";
+        case OpCode::AND: return "and";
+        case OpCode::ARRAY_LOAD: return "array_load";
+        case OpCode::ARRAY_STORE: return "array_store";
+        case OpCode::ASSIGN: return "assign";
+        case OpCode::BREQ: return "breq";
+        case OpCode::BRGEQ: return "brgeq";
+        case OpCode::BRGT: return "brgt";
+        case OpCode::BRLEQ: return "brleq";
+        case OpCode::BRLT: return "brlt";
+        case OpCode::BRNEQ: return "brneq";
+        case OpCode::CALL: return "call";
+        case OpCode::CALLR: return "callr";
+        case OpCode::DIV: return "div";
+        case OpCode::GOTO: return "goto";
+        case OpCode::MULT: return "mul";
+        case OpCode::OR: return "or";
+        case OpCode::RETURN: return "return";
+        case OpCode::SUB: return "sub";
+        default: return std::string("<unknown:") + std::to_string(op) + ">";
+    }
 }

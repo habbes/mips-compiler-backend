@@ -50,7 +50,7 @@ void mips::MipsProgram::writeFunctionAt (int funcIndex, std::ostream & out) cons
     auto & func = functionAt(funcIndex);
 
     // data segment
-    out << "#" << func.name() << std::endl;
+    out << "### " << func.name() << " ###" << std::endl;
     out << func.name() << ":" << std::endl;
     out << indent << ".data" << std::endl;
     for (auto & item : func.vars())
@@ -81,9 +81,15 @@ void mips::MipsProgram::writeFunctionAt (int funcIndex, std::ostream & out) cons
     }
 
     // text segment
+    auto comments = func.codeComments();
     out << indent << ".text" << std::endl;
     for (int i = 0; i < func.numInstructions(); i++)
     {
+        auto comment = comments.find(i);
+        if (comment != comments.end())
+        {
+            out << "# " << comment->second << std::endl;
+        }
         auto & inst = func.instruction(i);
         if (inst.isLabel() && inst.label().name == func.name())
         {

@@ -100,6 +100,8 @@ void Ir2Mips::emitLoad (const mips::MipsSymbol & src, const mips::MipsSymbol & d
 void Ir2Mips::translateNextInstruction()
 {
     auto & inst = nextIrInstruction();
+    curMipsFunction().addCodeComment(inst.toString());
+
     switch (inst.op)
     {
         case OpCode::ASSIGN:
