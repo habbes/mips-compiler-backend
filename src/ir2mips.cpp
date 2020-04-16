@@ -5,7 +5,12 @@
 using mips::MipsInstruction;
 using mips::MipsSymbol;
 
-Ir2Mips::Ir2Mips (IrProgram & ir): ir_(ir), instIndex_(0), funcIndex_(0)
+Ir2Mips::Ir2Mips (IrProgram & ir): Ir2Mips(ir, BaseRegAllocator())
+{
+}
+
+Ir2Mips::Ir2Mips (IrProgram & ir, BaseRegAllocator regAllocator)
+    : ir_(ir), instIndex_(0), funcIndex_(0), regAllocator_(regAllocator)
 {
 }
 

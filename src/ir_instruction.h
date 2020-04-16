@@ -32,6 +32,7 @@ enum OpCode
 
 typedef std::vector<SymbolInfo> IrSymbolList;
 typedef IrSymbolList::const_iterator IrFuncArgsIterator;
+typedef IrSymbolList::const_iterator IrInputsIterator;
 
 struct IrInstruction
 {
@@ -45,12 +46,17 @@ struct IrInstruction
     int funcArgsCount() const;
     IrFuncArgsIterator funcArgsBegin() const;
     IrFuncArgsIterator funcArgsEnd() const;
+    IrInputsIterator inputsBegin() const;
+    IrInputsIterator inputsEnd() const;
+    int inputsCount() const;
     const SymbolInfo & returnValue() const;
     bool isBranch() const;
     bool isConditionalBranch() const;
     bool isUnconditionalBranch() const;
+    bool isArithmeticLogic() const;
     bool isLabel() const;
     bool isCall() const;
+    bool isReturn() const;
     bool hasReturnValue() const;
     std::string toString() const;
 

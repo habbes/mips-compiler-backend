@@ -2,6 +2,7 @@
 
 #include "ir_program.h"
 #include "mips_program.h"
+#include "base_reg_allocator.h"
 
 class Ir2Mips
 {
@@ -9,6 +10,7 @@ class Ir2Mips
     mips::MipsProgram mips_;
     int instIndex_;
     int funcIndex_;
+    BaseRegAllocator regAllocator_;
 
     const IrInstruction &nextIrInstruction();
     const IrFunction &curIrFunction();
@@ -35,6 +37,7 @@ class Ir2Mips
     void injectExitFunction();
 public:
     Ir2Mips(IrProgram & ir);
+    Ir2Mips(IrProgram & ir, BaseRegAllocator);
     mips::MipsProgram &translate();
     const mips::MipsProgram &mips() const;
 };

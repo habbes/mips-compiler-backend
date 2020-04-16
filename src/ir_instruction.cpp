@@ -61,6 +61,45 @@ IrFuncArgsIterator IrInstruction::funcArgsEnd () const
     return params.end();
 }
 
+int IrInstruction::inputsCount () const
+{
+    if (isCall()) return funcArgsCount();
+    // op, in1, in2, out
+    if (isArithmeticLogic()) return 2;
+    // op, in1, in2, label
+    if (isConditionalBranch()) return 2;
+    // op, in1  # in1 is optional
+    if (isReturn()) return params.size();
+    // no inputs
+    return 0;
+}
+
+IrInputsIterator IrInstruction::inputsBegin () const
+{
+    if (isCall()) return funcArgsBegin();
+    // op, in1, in2, out
+    if (isArithmeticLogic()) return params.begin();
+    // op, in1, in2, label
+    if (isConditionalBranch()) return params.begin();
+    // op, in1  # in1 is optional
+    if (isReturn()) return params.begin();
+    // no inputs
+    return params.end();
+}
+
+IrInputsIterator IrInstruction::inputsEnd () const
+{
+    if (isCall()) return funcArgsEnd();
+    // op, in1, in2, out
+    if (isArithmeticLogic()) return params.end() - 1;
+    // op, in1, in2, label
+    if (isConditionalBranch()) return params.end() - 1;
+    // op, in1  # in1 is optional
+    if (isReturn()) return params.end();
+    // no inputs
+    return params.end();
+}
+
 const SymbolInfo & IrInstruction::returnValue () const
 {
     switch (op)
@@ -76,6 +115,16 @@ const SymbolInfo & IrInstruction::returnValue () const
 bool IrInstruction::isBranch () const
 {
     return isConditionalBranch() || isUnconditionalBranch();
+}
+
+bool IrInstruction::isArithmeticLogic () const
+{
+    return op == OpCode::ADD
+        || op == OpCode::SUB
+        || op == OpCode::MULT
+        || op == OpCode::DIV
+        || op == OpCode::AND
+        || op == OpCode::OR;
 }
 
 bool IrInstruction::isConditionalBranch () const
@@ -101,6 +150,11 @@ bool IrInstruction::isLabel () const
 bool IrInstruction::isCall () const
 {
     return op == OpCode::CALL || op == OpCode::CALLR;
+}
+
+bool IrInstruction::isReturn () const
+{
+    return op == OpCode::RETURN;
 }
 
 bool IrInstruction::hasReturnValue () const
