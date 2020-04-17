@@ -9,7 +9,7 @@
 typedef std::unordered_map<std::string, std::string> VarToRegMap;
 
 
-class BlockAllocator: public BaseFunctionRegAllocator
+class BlockFunctionRegAllocator: public BaseFunctionRegAllocator
 {
     Cfg cfg_;
     const IrFunction & ir_;
@@ -23,5 +23,7 @@ class BlockAllocator: public BaseFunctionRegAllocator
     void allocate();
     void allocateBlock(const BasicBlock &);
 public:
-    BlockAllocator(const IrFunction &);
+    BlockFunctionRegAllocator(const IrFunction &);
+    void beforeInstruction(Ir2Mips &, int irInstIndex) override;
+    void afterInstruction(Ir2Mips &, int irInstIndex) override;
 };

@@ -1,6 +1,6 @@
 -- TEST CASE arithmetic --
 compiling...
-Output compiled to ./output/arithmetic.s
+Output compiled to ./output/arithmetic-naive.s
 executing...
 
 Loaded: /usr/share/spim/exceptions.s
@@ -13,7 +13,7 @@ Stats -- #instructions : 293
 done
 -- TEST CASE for-to --
 compiling...
-Output compiled to ./output/for-to.s
+Output compiled to ./output/for-to-naive.s
 executing...
 
 Loaded: /usr/share/spim/exceptions.s
@@ -40,7 +40,7 @@ Stats -- #instructions : 683
 done
 -- TEST CASE long-blocks --
 compiling...
-Output compiled to ./output/long-blocks.s
+Output compiled to ./output/long-blocks-naive.s
 executing...
 
 Loaded: /usr/share/spim/exceptions.s
@@ -51,7 +51,7 @@ Stats -- #instructions : 392
 done
 -- TEST CASE sort --
 compiling...
-Output compiled to ./output/sort.s
+Output compiled to ./output/sort-naive.s
 executing...
 
 Loaded: /usr/share/spim/exceptions.s
@@ -69,7 +69,7 @@ Stats -- #instructions : 2879
 done
 -- TEST CASE sum-to-n --
 compiling...
-Output compiled to ./output/sum-to-n.s
+Output compiled to ./output/sum-to-n-naive.s
 executing...
 
 Loaded: /usr/share/spim/exceptions.s

@@ -1,16 +1,18 @@
-#include "block_allocator.h"
-#include "mips_reg.h"
-
+#include "block_function_reg_allocator.h"
 #include <string>
 #include <algorithm>
+#include "mips_reg.h"
+#include "ir2mips.h"
 
-BlockAllocator::BlockAllocator (const IrFunction & ir):
+using mips::MipsSymbol;
+
+BlockFunctionRegAllocator::BlockFunctionRegAllocator (const IrFunction & ir):
     cfg_(Cfg(ir)), ir_(ir), instructionsAllocs_(ir.numInstructions())
 {
     allocate();
 }
 
-void BlockAllocator::allocate()
+void BlockFunctionRegAllocator::allocate()
 {
     for (auto it = cfg_.blocks().begin(); it < cfg_.blocks().end(); it++)
     {
@@ -18,7 +20,7 @@ void BlockAllocator::allocate()
     }
 }
 
-void BlockAllocator::allocateBlock(const BasicBlock & block)
+void BlockFunctionRegAllocator::allocateBlock(const BasicBlock & block)
 {
     const int numRegs = 4;
     std::string regsToAllocate[numRegs] = { mips::REG_S0, mips::REG_S1, mips::REG_S2, mips::REG_S3 };
@@ -72,4 +74,32 @@ void BlockAllocator::allocateBlock(const BasicBlock & block)
     registerLoads_.insert_or_assign(block.first, allocations);
     // map restores to last instruction
     registerStores_.insert_or_assign(block.last, allocations);
+}
+
+void BlockFunctionRegAllocator::beforeInstruction (Ir2Mips & compiler, int index)
+{
+    // load vars into registers at the start of basic block
+    auto loadsIt = registerLoads_.find(index);
+    if (loadsIt == registerLoads_.end()) return;
+    auto varsToLoad = loadsIt->second;
+    for (auto & item: varsToLoad)
+    {
+        auto mipsVar = compiler.curMipsFunction().vars().at(item.first);
+        auto reg = MipsSymbol::makeReg(item.second);
+        compiler.emit({ mips::MipsOp::LW, { reg, mipsVar} });
+    }
+}
+
+void BlockFunctionRegAllocator::afterInstruction (Ir2Mips & compiler, int index)
+{
+    // restore regs into vars when ending basic block
+    auto it = registerStores_.find(index);
+    if (it == registerStores_.end()) return;
+    auto varsToRestore = it->second;
+    for (auto & item: varsToRestore)
+    {
+        auto mipsVar = compiler.curMipsFunction().vars().at(item.first);
+        auto reg = MipsSymbol::makeReg(item.second);
+        compiler.emit({ mips::MipsOp::SW, { reg, mipsVar} });
+    }
 }
