@@ -2,6 +2,7 @@
 #include "mips_reg.h"
 
 #include <string>
+#include <algorithm>
 
 BlockAllocator::BlockAllocator (const IrFunction & ir):
     cfg_(Cfg(ir)), ir_(ir), instructionsAllocs_(ir.numInstructions())

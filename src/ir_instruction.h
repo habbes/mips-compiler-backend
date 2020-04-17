@@ -57,6 +57,7 @@ struct IrInstruction
     bool isLabel() const;
     bool isCall() const;
     bool isReturn() const;
+    bool isAssign() const;
     bool hasReturnValue() const;
     std::string toString() const;
 

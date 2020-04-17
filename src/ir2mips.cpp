@@ -1,15 +1,13 @@
 #include "ir2mips.h"
 #include "mips_reg.h"
 #include <string>
+#include <typeinfo>
+#include "naive_reg_allocator.h"
 
 using mips::MipsInstruction;
 using mips::MipsSymbol;
 
-Ir2Mips::Ir2Mips (IrProgram & ir): Ir2Mips(ir, BaseRegAllocator())
-{
-}
-
-Ir2Mips::Ir2Mips (IrProgram & ir, BaseRegAllocator regAllocator)
+Ir2Mips::Ir2Mips (IrProgram & ir, BaseRegAllocator & regAllocator)
     : ir_(ir), instIndex_(0), funcIndex_(0), regAllocator_(regAllocator)
 {
 }
@@ -38,18 +36,26 @@ void Ir2Mips::translateNextFunction()
 {
     auto & irFunc = ir_[funcIndex_];
     mips_.newFunction(irFunc);
-
+    if (curFuncRegAllocator_)
+    {
+        delete curFuncRegAllocator_;
+    }
+    curFuncRegAllocator_ = regAllocator_.getFunctionAllocator(irFunc);
+    // printf("TYPE %s\n", typeid(curFuncRegAllocator_).name());
     if (curMipsFunction().backsUpRa())
     {
         // backup $ra
         // sw $ra, func_saved_ra
-        emit({ mips::MipsOp::SW, { MipsSymbol::makeReg(mips::REG_RA), curMipsFunction().backupRaVar() } });
+        emitStore(MipsSymbol::makeReg(mips::REG_RA), curMipsFunction().backupRaVar());
     }
 
     instIndex_ = 0;
     while (instIndex_ < irFunc.numInstructions())
     {
+        int curInst = instIndex_;
+        curFuncRegAllocator_->beforeInstruction(curMipsFunction(), curIrFunction(), curInst);
         translateNextInstruction();
+        curFuncRegAllocator_->afterInstruction(curMipsFunction(), curIrFunction(), curInst);
     }
 }
 
@@ -98,18 +104,38 @@ void Ir2Mips::emitLoad (const mips::MipsSymbol & src, const mips::MipsSymbol & d
     }
     else if (src.type == mips::MipsSymbolType::VAR && src.size == mips::MipsSymbolSize::SPACE)
     {
+        // load array address
         emit({ mips::MipsOp::LA, { dest, src } });
+    }
+    else if (src.type == mips::MipsSymbolType::REG)
+    {
+        // move data between registers
+        emit({ mips::MipsOp::MOVE, { dest, src } });
     }
     else
     {
+        // load var
         emit({ mips::MipsOp::LW, { dest, src } });
+    }
+}
+
+void Ir2Mips::emitStore (const mips::MipsSymbol & src, const mips::MipsSymbol & dest)
+{
+    if (dest.type == mips::MipsSymbolType::REG)
+    {
+        emit({ mips::MipsOp::MOVE, { dest, src } });
+    }
+    else
+    {
+        // load var
+        emit({ mips::MipsOp::SW, { src, dest } });
     }
 }
 
 void Ir2Mips::translateNextInstruction()
 {
     auto & inst = nextIrInstruction();
-    curMipsFunction().addCodeComment(inst.toString());
+    curMipsFunction().addCodeComment(std::to_string(instIndex_) + ": " + inst.toString());
 
     switch (inst.op)
     {
@@ -171,7 +197,6 @@ void Ir2Mips::translateAssign(const IrInstruction &inst)
     auto & mipsDest = curMipsFunction().vars().at(irDest.name);
     MipsSymbol mipsSrc = MipsSymbol::makeReg(mips::REG_T8);
     emitLoad(irToMipsSymbol(irSrc), mipsSrc);
-    emit({ mips::MipsOp::SW, { mipsSrc, mipsDest } });
 }
 
 void Ir2Mips::translateBinary(const IrInstruction &inst)
@@ -194,7 +219,6 @@ void Ir2Mips::translateBinary(const IrInstruction &inst)
         inst.op == OpCode::OR ? mips::OR :
         mips::INVALID;
     emit({ op, { mipsLeft, mipsLeft, mipsRight } });
-    emit({ mips::MipsOp::SW, { mipsLeft, mipsDest }});
 }
 
 void Ir2Mips::translateConditionalBranch(const IrInstruction &inst)
@@ -240,7 +264,7 @@ void Ir2Mips::translateCall(const IrInstruction &inst)
     if (inst.hasReturnValue())
     {
         // store return from $v0
-        emit({ mips::MipsOp::SW, { MipsSymbol::makeReg(mips::REG_V0), irToMipsSymbol(inst.returnValue()) } });
+        emitStore(MipsSymbol::makeReg(mips::REG_V0), irToMipsSymbol(inst.returnValue()));
     }
 }
 

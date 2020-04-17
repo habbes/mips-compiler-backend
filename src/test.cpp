@@ -2,6 +2,7 @@
 #include "ir_parser.h"
 #include "ir2mips.h"
 #include "cfg.h"
+#include "naive_reg_allocator.h"
 
 #define test_expect(expr, message, ...) if(!(expr)) {fprintf(stderr, "Test failed: ");fprintf(stderr, (message), __VA_ARGS__); fprintf(stderr,"\n"); return false;}
 #define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
@@ -329,7 +330,8 @@ bool testSimpleMipsTranslation()
     IrParser parser(source);
     parser.parse();
     auto & irProgram = parser.program();
-    Ir2Mips translator(irProgram);
+    NaiveRegAllocator allocator;
+    Ir2Mips translator(irProgram, allocator);
     translator.translate();
     auto & mipsProgram = translator.mips();
 
@@ -378,7 +380,8 @@ bool testMipsArithmeticAssignments()
     IrParser parser(source);
     parser.parse();
     auto & irProgram = parser.program();
-    Ir2Mips translator(irProgram);
+    NaiveRegAllocator allocator;
+    Ir2Mips translator(irProgram, allocator);
     translator.translate();
     auto & mipsProgram = translator.mips();
 

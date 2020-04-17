@@ -10,14 +10,18 @@ class Ir2Mips
     mips::MipsProgram mips_;
     int instIndex_;
     int funcIndex_;
-    BaseRegAllocator regAllocator_;
+    BaseRegAllocator & regAllocator_;
+    FunctionRegAllocatorPtr curFuncRegAllocator_ = nullptr;
 
     const IrInstruction &nextIrInstruction();
     const IrFunction &curIrFunction();
     mips::MipsFunction &curMipsFunction();
     mips::MipsSymbol irToMipsSymbol(const SymbolInfo &);
     void emit(mips::MipsInstruction);
-    void emitLoad(const mips::MipsSymbol &, const mips::MipsSymbol &);
+    // loads/moves data from src to dest register
+    void emitLoad(const mips::MipsSymbol & src, const mips::MipsSymbol & dest);
+    // stores/moves data from src register to dest
+    void emitStore(const mips::MipsSymbol & src, const mips::MipsSymbol & dest);
     void translateNextFunction();
     void translateNextInstruction();
     void translateAssign(const IrInstruction &);
@@ -36,8 +40,14 @@ class Ir2Mips
     void injectStoreIntArray();
     void injectExitFunction();
 public:
-    Ir2Mips(IrProgram & ir);
-    Ir2Mips(IrProgram & ir, BaseRegAllocator);
+    Ir2Mips(IrProgram & ir, BaseRegAllocator &);
     mips::MipsProgram &translate();
     const mips::MipsProgram &mips() const;
+    ~Ir2Mips()
+    {
+        if (curFuncRegAllocator_)
+        {
+            delete curFuncRegAllocator_;
+        }
+    }
 };

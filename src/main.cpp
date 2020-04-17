@@ -3,6 +3,7 @@
 #include <sstream>
 #include "ir_parser.h"
 #include "ir2mips.h"
+#include "naive_reg_allocator.h"
 
 void printHelp()
 {
@@ -34,7 +35,8 @@ int main (int argc, char *argv[])
     IrParser parser(source);
     parser.parse();
     auto & irProgram = parser.program();
-    Ir2Mips compiler(irProgram);
+    NaiveRegAllocator allocator;
+    Ir2Mips compiler(irProgram, allocator);
     compiler.translate();
     auto & mipsProgram = compiler.mips();
 

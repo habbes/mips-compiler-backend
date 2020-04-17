@@ -106,6 +106,7 @@ const SymbolInfo & IrInstruction::returnValue () const
     {
         case OpCode::CALLR:
         case OpCode::RETURN:
+        case OpCode::ASSIGN:
             return params[0];
         default:
             return *(params.end() - 1);
@@ -155,6 +156,11 @@ bool IrInstruction::isCall () const
 bool IrInstruction::isReturn () const
 {
     return op == OpCode::RETURN;
+}
+
+bool IrInstruction::isAssign () const
+{
+    return op == OpCode::ASSIGN;
 }
 
 bool IrInstruction::hasReturnValue () const
