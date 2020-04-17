@@ -38,7 +38,7 @@ void Ir2Mips::translateNextFunction()
     mips_.newFunction(irFunc);
     if (curFuncRegAllocator_)
     {
-        delete curFuncRegAllocator_;
+        curFuncRegAllocator_.reset();
     }
     curFuncRegAllocator_ = regAllocator_.getFunctionAllocator(irFunc);
     // printf("TYPE %s\n", typeid(curFuncRegAllocator_).name());

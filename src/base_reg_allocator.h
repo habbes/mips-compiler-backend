@@ -3,7 +3,7 @@
 #include <memory>
 #include "base_function_reg_allocator.h"
 
-typedef BaseFunctionRegAllocator * FunctionRegAllocatorPtr;
+typedef std::unique_ptr<BaseFunctionRegAllocator> FunctionRegAllocatorPtr;
 
 /**
  * base class for program-wide register allocator

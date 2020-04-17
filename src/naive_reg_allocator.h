@@ -8,7 +8,6 @@ class NaiveRegAllocator: public BaseRegAllocator
 public:
     FunctionRegAllocatorPtr getFunctionAllocator(const IrFunction &)
     {
-        // return std::move(std::make_unique<NaiveFunctionRegAllocator>());
-        return new NaiveFunctionRegAllocator;
+        return std::move(std::make_unique<NaiveFunctionRegAllocator>());
     }
 };

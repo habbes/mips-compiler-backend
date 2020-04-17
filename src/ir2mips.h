@@ -43,12 +43,4 @@ public:
     void emitLoad(const mips::MipsSymbol & src, const mips::MipsSymbol & dest);
     // stores/moves data from src register to dest
     void emitStore(const mips::MipsSymbol & src, const mips::MipsSymbol & dest);
-
-    ~Ir2Mips()
-    {
-        if (curFuncRegAllocator_)
-        {
-            delete curFuncRegAllocator_;
-        }
-    }
 };
