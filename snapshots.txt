@@ -1,0 +1,81 @@
+-- TEST CASE arithmetic --
+compiling...
+Output compiled to ./output/arithmetic.s
+executing...
+
+Loaded: /usr/share/spim/exceptions.s
+6
+36
+36
+Stats -- #instructions : 293
+         #reads : 58  #writes 43  #branches 15  #other 177
+
+done
+-- TEST CASE for-to --
+compiling...
+Output compiled to ./output/for-to.s
+executing...
+
+Loaded: /usr/share/spim/exceptions.s
+0
+1
+2
+3
+4
+10
+0
+1
+2
+3
+4
+0
+1
+3
+6
+10
+10
+Stats -- #instructions : 683
+         #reads : 112  #writes 56  #branches 99  #other 416
+
+done
+-- TEST CASE long-blocks --
+compiling...
+Output compiled to ./output/long-blocks.s
+executing...
+
+Loaded: /usr/share/spim/exceptions.s
+6
+Stats -- #instructions : 392
+         #reads : 86  #writes 56  #branches 30  #other 220
+
+done
+-- TEST CASE sort --
+compiling...
+Output compiled to ./output/sort.s
+executing...
+
+Loaded: /usr/share/spim/exceptions.s
+2
+5
+6
+7
+10
+20
+33
+44
+Stats -- #instructions : 2879
+         #reads : 539  #writes 288  #branches 380  #other 1672
+
+done
+-- TEST CASE sum-to-n --
+compiling...
+Output compiled to ./output/sum-to-n.s
+executing...
+
+Loaded: /usr/share/spim/exceptions.s
+55
+55
+Stats -- #instructions : 309
+         #reads : 70  #writes 37  #branches 28  #other 174
+
+done
