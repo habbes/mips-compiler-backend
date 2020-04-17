@@ -3,6 +3,8 @@
 #include "ir_function.h"
 #include "mips_function.h"
 
+class Ir2Mips;
+
 using mips::MipsFunction;
 
 /**
@@ -13,12 +15,12 @@ class BaseFunctionRegAllocator
 {
 public:
     // called for each IR instruction, before the instruction is processed
-    virtual void beforeInstruction(MipsFunction &, const IrFunction & irFunc, int irInst)
+    virtual void beforeInstruction(Ir2Mips & compiler, int irInst)
     {
     }
 
     // called for each IR instruction, after instruction has been processed
-    virtual void afterInstruction(MipsFunction &, const IrFunction &irFunc, int IrInst)
+    virtual void afterInstruction(Ir2Mips & compiler, int IrInst)
     {
     }
 

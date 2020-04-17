@@ -53,9 +53,9 @@ void Ir2Mips::translateNextFunction()
     while (instIndex_ < irFunc.numInstructions())
     {
         int curInst = instIndex_;
-        curFuncRegAllocator_->beforeInstruction(curMipsFunction(), curIrFunction(), curInst);
+        curFuncRegAllocator_->beforeInstruction(*this, curInst);
         translateNextInstruction();
-        curFuncRegAllocator_->afterInstruction(curMipsFunction(), curIrFunction(), curInst);
+        curFuncRegAllocator_->afterInstruction(*this, curInst);
     }
 }
 

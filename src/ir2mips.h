@@ -14,14 +14,6 @@ class Ir2Mips
     FunctionRegAllocatorPtr curFuncRegAllocator_ = nullptr;
 
     const IrInstruction &nextIrInstruction();
-    const IrFunction &curIrFunction();
-    mips::MipsFunction &curMipsFunction();
-    mips::MipsSymbol irToMipsSymbol(const SymbolInfo &);
-    void emit(mips::MipsInstruction);
-    // loads/moves data from src to dest register
-    void emitLoad(const mips::MipsSymbol & src, const mips::MipsSymbol & dest);
-    // stores/moves data from src register to dest
-    void emitStore(const mips::MipsSymbol & src, const mips::MipsSymbol & dest);
     void translateNextFunction();
     void translateNextInstruction();
     void translateAssign(const IrInstruction &);
@@ -43,6 +35,15 @@ public:
     Ir2Mips(IrProgram & ir, BaseRegAllocator &);
     mips::MipsProgram &translate();
     const mips::MipsProgram &mips() const;
+    const IrFunction &curIrFunction();
+    mips::MipsFunction &curMipsFunction();
+    mips::MipsSymbol irToMipsSymbol(const SymbolInfo &);
+    void emit(mips::MipsInstruction);
+    // loads/moves data from src to dest register
+    void emitLoad(const mips::MipsSymbol & src, const mips::MipsSymbol & dest);
+    // stores/moves data from src register to dest
+    void emitStore(const mips::MipsSymbol & src, const mips::MipsSymbol & dest);
+
     ~Ir2Mips()
     {
         if (curFuncRegAllocator_)
