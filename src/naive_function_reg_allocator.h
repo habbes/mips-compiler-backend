@@ -7,6 +7,4 @@
 
 class NaiveFunctionRegAllocator: public BaseFunctionRegAllocator
 {
-public:
-    void afterInstruction(Ir2Mips & compiler, int irInst) override;
 };

@@ -78,10 +78,52 @@ void BlockFunctionRegAllocator::allocateBlock(const BasicBlock & block)
 
 void BlockFunctionRegAllocator::beforeInstruction (Ir2Mips & compiler, int index)
 {
+    auto inst = compiler.curIrFunction().instruction(index);
     // load vars into registers at the start of basic block
     auto loadsIt = registerLoads_.find(index);
-    if (loadsIt == registerLoads_.end()) return;
-    auto varsToLoad = loadsIt->second;
+    // if this is not a label, then loads should appear before instruction
+    if (loadsIt != registerLoads_.end() && !inst.isLabel())
+    {
+        auto varsToLoad = loadsIt->second;
+        loadVarsToRegisters(compiler, varsToLoad);
+    }
+
+    // if instruction is branch, then restore vars before,
+    // otherwise they might not be reached
+    auto restoresIt = registerStores_.find(index);
+    if (restoresIt != registerStores_.end() && (inst.isBranch() || inst.isReturn()))
+    {
+        auto varsToRestore = restoresIt->second;
+        restoreVarsFromRegisters(compiler, varsToRestore);
+    }
+}
+
+void BlockFunctionRegAllocator::afterInstruction (Ir2Mips & compiler, int index)
+{
+    auto inst = compiler.curIrFunction().instruction(index);
+
+    auto loadsIt = registerLoads_.find(index);
+    if (loadsIt != registerLoads_.end() && inst.isLabel())
+    {
+        auto varsToLoad = loadsIt->second;
+        loadVarsToRegisters(compiler, varsToLoad);
+    }
+
+    auto restoresIt = registerStores_.find(index);
+    if (restoresIt != registerStores_.end() && !inst.isBranch() && !inst.isReturn())
+    {
+        auto varsToRestore = restoresIt->second;
+        restoreVarsFromRegisters(compiler, varsToRestore);
+    }
+}
+
+void BlockFunctionRegAllocator::loadVarsToRegisters (Ir2Mips & compiler, const VarToRegMap & varsToLoad)
+{
+    if (varsToLoad.size() > 0u)
+    {
+        compiler.curMipsFunction().addCodeComment("allocating registers to variables");
+    }
+
     for (auto & item: varsToLoad)
     {
         auto mipsVar = compiler.curMipsFunction().vars().at(item.first);
@@ -90,16 +132,30 @@ void BlockFunctionRegAllocator::beforeInstruction (Ir2Mips & compiler, int index
     }
 }
 
-void BlockFunctionRegAllocator::afterInstruction (Ir2Mips & compiler, int index)
+void BlockFunctionRegAllocator::restoreVarsFromRegisters (Ir2Mips & compiler, const VarToRegMap & varsToRestore)
 {
-    // restore regs into vars when ending basic block
-    auto it = registerStores_.find(index);
-    if (it == registerStores_.end()) return;
-    auto varsToRestore = it->second;
+    if (varsToRestore.size() > 0u)
+    {
+        compiler.curMipsFunction().addCodeComment("restoring variables from allocated registers");
+    }
+
     for (auto & item: varsToRestore)
     {
         auto mipsVar = compiler.curMipsFunction().vars().at(item.first);
         auto reg = MipsSymbol::makeReg(item.second);
         compiler.emit({ mips::MipsOp::SW, { reg, mipsVar} });
     }
+}
+
+MipsSymbol BlockFunctionRegAllocator::getRegIfAllocated (const MipsSymbol & var, int irIndex)
+{
+    auto & allocations = instructionsAllocs_[irIndex];
+    auto it = allocations.find(var.name);
+    if (it == allocations.end())
+    {
+        // no register allocated for this var at this instruction
+        return var;
+    }
+
+    return MipsSymbol::makeReg(it->second);
 }

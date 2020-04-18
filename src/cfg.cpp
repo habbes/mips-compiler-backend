@@ -16,10 +16,10 @@ void Cfg::buildCfg ()
 
 void Cfg::findBasicBlocks (const std::vector<int> & leaders)
 {
-    for (int i = 0; i < leaders.size(); i++)
+    for (int i = 0; i < (int)leaders.size(); i++)
     {
         BasicBlock block = { .id = i, .first = leaders[i] };
-        if (i + 1 < leaders.size())
+        if (i + 1 < (int)leaders.size())
         {
             // block ends up to (but not including) next leader
             block.last = leaders[i + 1] - 1;

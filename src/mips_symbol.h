@@ -37,6 +37,8 @@ struct MipsSymbol
     bool operator!=(const MipsSymbol & other) const;
     bool isStringVar() const;
     bool isAddressReg() const;
+    bool isVar() const;
+    bool isReg() const;
     std::string toString() const;
     std::string sizeString() const;
     static MipsSymbol makeConst(int value);

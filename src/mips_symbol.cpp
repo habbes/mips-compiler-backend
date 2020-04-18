@@ -23,6 +23,16 @@ bool mips::MipsSymbol::isAddressReg () const
     return type == mips::ADDRESS_REG;
 }
 
+bool mips::MipsSymbol::isVar () const
+{
+    return type == mips::VAR;
+}
+
+bool mips::MipsSymbol::isReg () const
+{
+    return type == mips::REG;
+}
+
 std::string mips::MipsSymbol::toString () const
 {
     std::stringstream buffer;

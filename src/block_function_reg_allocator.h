@@ -22,8 +22,11 @@ class BlockFunctionRegAllocator: public BaseFunctionRegAllocator
     
     void allocate();
     void allocateBlock(const BasicBlock &);
+    void loadVarsToRegisters(Ir2Mips &, const VarToRegMap &);
+    void restoreVarsFromRegisters(Ir2Mips &, const VarToRegMap &);
 public:
     BlockFunctionRegAllocator(const IrFunction &);
     void beforeInstruction(Ir2Mips &, int irInstIndex) override;
     void afterInstruction(Ir2Mips &, int irInstIndex) override;
+    MipsSymbol getRegIfAllocated(const MipsSymbol & var, int irInstIndex) override;
 };

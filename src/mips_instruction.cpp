@@ -66,6 +66,8 @@ std::string mipsOpToString (mips::MipsOp op)
 {
     switch (op)
     {
+        case mips::MipsOp::MOVE:
+            return "move";
         case mips::MipsOp::LW:
             return "lw";
         case mips::MipsOp::LI:
@@ -84,12 +86,22 @@ std::string mipsOpToString (mips::MipsOp op)
             return "sw";
         case mips::MipsOp::ADD:
             return "add";
+        case mips::MipsOp::ADDI:
+            return "addi";
         case mips::MipsOp::SUB:
             return "sub";
         case mips::MipsOp::MUL:
             return "mul";
         case mips::MipsOp::DIV:
             return "div";
+        case mips::MipsOp::OR:
+            return "or";
+        case mips::MipsOp::ORI:
+            return "ori";
+        case mips::MipsOp::AND:
+            return "and";
+        case mips::MipsOp::ANDI:
+            return "andi";
         case mips::MipsOp::BEQ:
             return "beq";
         case mips::MipsOp::BNE:
@@ -110,7 +122,7 @@ std::string mipsOpToString (mips::MipsOp op)
             return "jal";
         case mips::MipsOp::SYSCALL:
             return "syscall";
+        default:
+            return std::string("<unknown:") + std::to_string(op) + ">";
     }
-
-    return std::string("<unknown:") + std::to_string(op) + ">";
 }

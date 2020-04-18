@@ -41,7 +41,6 @@ void Ir2Mips::translateNextFunction()
         curFuncRegAllocator_.reset();
     }
     curFuncRegAllocator_ = regAllocator_.getFunctionAllocator(irFunc);
-    // printf("TYPE %s\n", typeid(curFuncRegAllocator_).name());
     if (curMipsFunction().backsUpRa())
     {
         // backup $ra
@@ -52,10 +51,10 @@ void Ir2Mips::translateNextFunction()
     instIndex_ = 0;
     while (instIndex_ < irFunc.numInstructions())
     {
-        int curInst = instIndex_;
-        curFuncRegAllocator_->beforeInstruction(*this, curInst);
+        curFuncRegAllocator_->beforeInstruction(*this, instIndex_);
         translateNextInstruction();
-        curFuncRegAllocator_->afterInstruction(*this, curInst);
+        curFuncRegAllocator_->afterInstruction(*this, instIndex_);
+        instIndex_++;
     }
 }
 
@@ -63,7 +62,6 @@ const IrInstruction &Ir2Mips::nextIrInstruction()
 {
     auto & irFunc = ir_[funcIndex_];
     auto & inst = irFunc.instruction(instIndex_);
-    instIndex_++;
     return inst;
 }
 
@@ -88,7 +86,8 @@ MipsSymbol Ir2Mips::irToMipsSymbol (const SymbolInfo &irSym)
         return MipsSymbol::makeLabel(irSym.name);
     }
     // a variable is the only other type of symbol we care about translating
-    return curMipsFunction().vars().at(irSym.name);
+    auto var = curMipsFunction().vars().at(irSym.name);
+    return curFuncRegAllocator_->getRegIfAllocated(var, instIndex_);
 }
 
 void Ir2Mips::emit (mips::MipsInstruction inst)
@@ -135,7 +134,7 @@ void Ir2Mips::emitStore (const mips::MipsSymbol & src, const mips::MipsSymbol & 
 void Ir2Mips::translateNextInstruction()
 {
     auto & inst = nextIrInstruction();
-    curMipsFunction().addCodeComment(std::to_string(instIndex_) + ": " + inst.toString());
+    curMipsFunction().addCodeComment(std::to_string(instIndex_ + 1) + ": " + inst.toString());
 
     switch (inst.op)
     {
@@ -194,9 +193,20 @@ void Ir2Mips::translateAssign(const IrInstruction &inst)
 {
     auto & irDest = inst.params[0];
     auto & irSrc = inst.params[1];
-    auto & mipsDest = curMipsFunction().vars().at(irDest.name);
-    MipsSymbol mipsSrc = MipsSymbol::makeReg(mips::REG_T8);
-    emitLoad(irToMipsSymbol(irSrc), mipsSrc);
+    MipsSymbol t8 = MipsSymbol::makeReg(mips::REG_T8);
+    auto & mipsDestVar = curMipsFunction().vars().at(irDest.name);
+    auto mipsDest = curFuncRegAllocator_->getRegIfAllocated(mipsDestVar, instIndex_);
+
+    if (mipsDest.isReg())
+    {
+        emitLoad(irToMipsSymbol(irSrc), mipsDest);
+    }
+    else
+    {
+        emitLoad(irToMipsSymbol(irSrc), t8);
+        emitStore(t8, mipsDest);
+    }
+    
 }
 
 void Ir2Mips::translateBinary(const IrInstruction &inst)
@@ -204,12 +214,34 @@ void Ir2Mips::translateBinary(const IrInstruction &inst)
     auto & irLeft = inst.params[0];
     auto & irRight = inst.params[1];
     auto & irDest = inst.params[2];
-    auto mipsLeft = MipsSymbol::makeReg(mips::REG_T8);
-    auto mipsRight = MipsSymbol::makeReg(mips::REG_T9);
+    auto t8 = MipsSymbol::makeReg(mips::REG_T8);
+    auto t9 = MipsSymbol::makeReg(mips::REG_T9);
     auto mipsDest = irToMipsSymbol(irDest);
 
-    emitLoad(irToMipsSymbol(irLeft), mipsLeft);
-    emitLoad(irToMipsSymbol(irRight), mipsRight);
+    auto left = irToMipsSymbol(irLeft);
+    auto right = irToMipsSymbol(irRight);
+    MipsSymbol mipsLeft, mipsRight;
+
+    if (left.isReg())
+    {
+        mipsLeft = left;
+    }
+    else
+    {
+        emitLoad(left, t8);
+        mipsLeft = t8;
+    }
+
+    if (right.isReg())
+    {
+        mipsRight = right;
+    }
+    else
+    {
+        emitLoad(right, t9);
+        mipsRight = t9;
+    }
+    
     mips::MipsOp op =
         inst.op == OpCode::ADD ? mips::ADD :
         inst.op == OpCode::SUB ? mips::SUB :
@@ -218,7 +250,16 @@ void Ir2Mips::translateBinary(const IrInstruction &inst)
         inst.op == OpCode::AND ? mips::AND :
         inst.op == OpCode::OR ? mips::OR :
         mips::INVALID;
-    emit({ op, { mipsLeft, mipsLeft, mipsRight } });
+    
+    if (mipsDest.isReg())
+    {
+        emit({ op, { mipsDest, mipsLeft, mipsRight } });
+    }
+    else
+    {
+        emit({ op, { t8, mipsLeft, mipsRight } });
+        emitStore(t8, mipsDest);
+    }
 }
 
 void Ir2Mips::translateConditionalBranch(const IrInstruction &inst)
