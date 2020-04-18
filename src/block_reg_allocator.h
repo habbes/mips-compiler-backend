@@ -8,6 +8,6 @@ class BlockRegAllocator: public BaseRegAllocator
 public:
     FunctionRegAllocatorPtr getFunctionAllocator(const IrFunction & irFunc) override
     {
-        return std::move(std::make_unique<BlockFunctionRegAllocator>(irFunc));
+        return std::make_unique<BlockFunctionRegAllocator>(irFunc);
     }
 };

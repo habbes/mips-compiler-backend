@@ -137,3 +137,28 @@ const CfgNodeList & Cfg::nodes () const
 {
     return nodes_;
 }
+
+CfgBlockList Cfg::successors (const BasicBlock & block) const
+{
+    // TODO should probably implement a pair of iterators
+    // that automatically return the block object when dereferenced
+    // instead of creating a new vector each time this is called
+    auto node = nodes_[block.id];
+    CfgBlockList result;
+    std::transform(
+        node.successors.begin(), node.successors.end(), std::back_inserter(result),
+        [&](int successor) { return this->block(successor); });
+
+    return result;
+}
+
+CfgBlockList Cfg::predecessors (const BasicBlock & block) const
+{
+    auto node = nodes_[block.id];
+    CfgBlockList result;
+    std::transform(
+        node.predecessors.begin(), node.predecessors.end(), std::back_inserter(result),
+        [&](int successor) { return this->block(successor); });
+
+    return result;
+}

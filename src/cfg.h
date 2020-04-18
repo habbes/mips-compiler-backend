@@ -25,4 +25,6 @@ public:
     const BasicBlock &block(int i) const;
     const CfgBlockList &blocks() const;
     const CfgNodeList &nodes() const;
+    CfgBlockList successors(const BasicBlock &b) const;
+    CfgBlockList predecessors(const BasicBlock &b) const;
 };
