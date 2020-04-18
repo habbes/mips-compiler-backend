@@ -83,6 +83,8 @@ IrInputsIterator IrInstruction::inputsBegin () const
     if (isConditionalBranch()) return params.begin();
     // op, in1  # in1 is optional
     if (isReturn()) return params.begin();
+    // assign, out, in
+    if (isAssign()) return params.begin() + 1;
     // no inputs
     return params.end();
 }
@@ -96,6 +98,8 @@ IrInputsIterator IrInstruction::inputsEnd () const
     if (isConditionalBranch()) return params.end() - 1;
     // op, in1  # in1 is optional
     if (isReturn()) return params.end();
+    // assing, out, in
+    if (isAssign()) return params.end();
     // no inputs
     return params.end();
 }
@@ -166,7 +170,9 @@ bool IrInstruction::isAssign () const
 bool IrInstruction::hasReturnValue () const
 {
     return op == OpCode::CALLR
-        || (op == OpCode::RETURN && params.size() > 0);
+        || (op == OpCode::RETURN && params.size() > 0)
+        || isAssign()
+        || isArithmeticLogic();
 }
 
 std::string IrInstruction::toString () const
