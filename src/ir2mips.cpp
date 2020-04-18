@@ -267,12 +267,34 @@ void Ir2Mips::translateConditionalBranch(const IrInstruction &inst)
     auto & irLeft = inst.params[0];
     auto & irRight = inst.params[1];
     auto & irLabel = inst.params[2];
-    auto mipsLeft = MipsSymbol::makeReg(mips::REG_T8);
-    auto mipsRight = MipsSymbol::makeReg(mips::REG_T9);
+    auto t8 = MipsSymbol::makeReg(mips::REG_T8);
+    auto t9 = MipsSymbol::makeReg(mips::REG_T9);
     auto mipsLabel = irToMipsSymbol(irLabel);
 
-    emitLoad(irToMipsSymbol(irLeft), mipsLeft);
-    emitLoad(irToMipsSymbol(irRight), mipsRight);
+    auto left = irToMipsSymbol(irLeft);
+    auto right = irToMipsSymbol(irRight);
+    MipsSymbol mipsLeft, mipsRight;
+
+    if (left.isReg())
+    {
+        mipsLeft = left;
+    }
+    else
+    {
+        emitLoad(left, t8);
+        mipsLeft = t8;
+    }
+
+    if (right.isReg())
+    {
+        mipsRight = right;
+    }
+    else
+    {
+        emitLoad(right, t9);
+        mipsRight = t9;
+    }
+    
     mips::MipsOp op =
         inst.op == OpCode::BREQ ? mips::BEQ :
         inst.op == OpCode::BRNEQ ? mips::BNE :
