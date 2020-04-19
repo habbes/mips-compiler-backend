@@ -182,20 +182,21 @@ void BriggsFunctionRegAllocator::computeBlockLiveRanges ()
                 }
             }
 
-            // for each variable that's live after this instruction, extend live range
-            for (auto & var : outSets_[i])
+            // for each variable that's live at this instruction, extend live range
+            for (auto & var : inSets_[i])
             {
                 // skip the killed variable cause it's already been processed in the block above
                 if (defs_[i] == var) continue;
 
                 auto & varLiveRanges = getLiveRanges(var);
-                if (!varLiveRanges.empty())
+                if (!varLiveRanges.empty() && block.contains(varLiveRanges.back().end))
                 {
+                    // extend current range in this block
                     varLiveRanges.back().end = i;
                 }
                 else
                 {
-                    // start a new live range (this is most likely the beginning of a block)
+                    // start a new live range in this block
                     varLiveRanges.push_back({ .block = block.id, .start = i, .end = i });
                 } 
             }
@@ -292,7 +293,7 @@ void BriggsFunctionRegAllocator::computeWebs ()
     // move non-deleted webs
     for (auto i = 0u; i < webs.size(); i++)
     {
-        printf("copying web %s r %d\n", webs[i].var.c_str(), webs[i].localRanges.size());
+        printf("copying web %s r %lu\n", webs[i].var.c_str(), webs[i].localRanges.size());
         if (deleted.count(i) == 0)
         {
             liveRanges_.push_back(webs[i]);

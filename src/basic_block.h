@@ -9,5 +9,6 @@ struct BasicBlock
     int last;
 
     bool operator==(const BasicBlock & other) const;
+    bool contains(int instructionIndex) const;
     std::string toString() const;
 };
