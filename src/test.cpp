@@ -616,7 +616,7 @@ bool testBriggsAllocator()
     return true;
 }
 
-bool testGraphColoring ()
+bool testSimpleGraphColoring ()
 {
     int numColors = 3;
     InterferenceGraph ig(numColors);
@@ -649,6 +649,51 @@ bool testGraphColoring ()
         }
     }
 
+    return true;
+}
+
+bool testGraphColoringWithSpills()
+{
+    int numColors = 3;
+    InterferenceGraph ig(numColors);
+    ig.addNode("s0", 4);
+    ig.addNode("s1", 2);
+    ig.addNode("s2", 3);
+    ig.addNode("s3", 4);
+    ig.addNode("s4", 1);
+
+    ig.connectNodes("s0", "s1");
+    ig.connectNodes("s0", "s2");
+    ig.connectNodes("s0", "s3");
+    ig.connectNodes("s1", "s2");
+    ig.connectNodes("s1", "s3");
+    ig.connectNodes("s2", "s3");
+    ig.connectNodes("s2", "s4");
+    ig.connectNodes("s3", "s4");
+
+    ig.colorGraph();
+
+    // not all nodes can be colored in this graph
+    // s1 should be spilled because it has the lowest spill cost
+    // of all the nodes that have degree >= 3
+    auto s2 = ig.node("s1");
+    test_expect(!s2.hasColor(), "node %s should not have a color", s2.toString().c_str());
+
+    // all other nodes should be colored
+    for (auto & item : ig.nodes())
+    {
+        if (item.first == "s1") continue;
+
+        auto & node = item.second;
+        test_expect(node.hasColor(), "node %s should be colored", node.toString().c_str());
+        test_expect(node.color < numColors, "node %s color should be between 0-k", node.toString().c_str());
+        for (auto & neighbor : node.neighbors)
+        {
+            test_expect(node.color != ig.node(neighbor).color,
+                "node %s should not have same color as neighbor %s",
+                node.toString().c_str(), ig.node(neighbor).toString().c_str());
+        }
+    }
 
     return true;
 }
@@ -664,7 +709,8 @@ int main(int argc, char *argv[])
     test_run_scenario(testMipsArithmeticAssignments);
     test_run_scenario(testCfgSimpleBasicBlocks);
     test_run_scenario(testBriggsAllocator);
-    test_run_scenario(testGraphColoring);
+    test_run_scenario(testSimpleGraphColoring);
+    test_run_scenario(testGraphColoringWithSpills);
 
     puts("SUCCESS!");
     return 0;

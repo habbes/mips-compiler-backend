@@ -32,6 +32,7 @@ class InterferenceGraph
     int numColors_;
     // returns a node with degree < numColors or empty string if none exists
     std::string findDefinitelyColorableNode() const;
+    std::string findMinCostNode () const;
     void tryColorNode (std::string node);
 public:
 

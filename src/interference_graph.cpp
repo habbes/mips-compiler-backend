@@ -36,6 +36,11 @@ void InterferenceGraph::colorGraph ()
     while (!workGraph.empty())
     {
         auto node = workGraph.findDefinitelyColorableNode();
+        if (node.empty())
+        {
+            node = workGraph.findMinCostNode();
+        }
+    
         workGraph.removeNode(node);
         stack.push(node);
     }
@@ -56,6 +61,20 @@ std::string InterferenceGraph::findDefinitelyColorableNode () const
     }
 
     return "";
+}
+
+std::string InterferenceGraph::findMinCostNode () const
+{
+    auto node = nodes_.begin()->second;
+    for (auto & item : nodes_)
+    {
+        if (item.second.cost < node.cost)
+        {
+            node = item.second;
+        }
+    }
+
+    return node.id;
 }
 
 void InterferenceGraph::tryColorNode (std::string id)
