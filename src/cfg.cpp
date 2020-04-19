@@ -162,3 +162,8 @@ CfgBlockList Cfg::predecessors (const BasicBlock & block) const
 
     return result;
 }
+
+bool Cfg::hasSuccessor (const BasicBlock & reference, const BasicBlock & candidate) const
+{
+    return nodes_[reference.id].successors.count(candidate.id) > 0;
+}

@@ -27,4 +27,6 @@ public:
     const CfgNodeList &nodes() const;
     CfgBlockList successors(const BasicBlock &b) const;
     CfgBlockList predecessors(const BasicBlock &b) const;
+    // check whether reference has candidate as a successor
+    bool hasSuccessor (const BasicBlock & reference, const BasicBlock & candidate) const;
 };

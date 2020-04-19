@@ -3,7 +3,9 @@
 #include "ir2mips.h"
 #include "cfg.h"
 #include "naive_reg_allocator.h"
+#include "briggs_function_reg_allocator.h"
 
+#define test_assert(expr) if (!(expr)) { return false; }
 #define test_expect(expr, message, ...) if(!(expr)) {fprintf(stderr, "Test failed: ");fprintf(stderr, (message), __VA_ARGS__); fprintf(stderr,"\n"); return false;}
 #define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
 
@@ -459,6 +461,59 @@ bool testCfgSimpleBasicBlocks()
     return true;
 }
 
+template<class T>
+bool testObjectsEqual(T actual, T expected)
+{
+    test_objects_equal(actual, expected);
+    return true;
+}
+
+bool testBriggsAllocatorBlockLiveRanges()
+{
+    std::string filename = "../test_cases/examples/ir/sum-to-n.ir";
+    std::ifstream source(filename);
+
+    IrParser parser(source);
+    parser.parse();
+    auto & irProgram = parser.program();
+    auto & func = irProgram[0];
+    BriggsFunctionRegAllocator allocator(func);
+
+    auto & blockRanges = allocator.blockLiveRanges();
+
+    auto n = blockRanges.at("n_s1");
+    test_assert(testObjectsEqual(n[0], BlockLiveRange{.block = 0, .start = 0, .end = 3, .definesVar = true}));
+    test_assert(testObjectsEqual(n[1], BlockLiveRange{ 1, 4, 5 }));
+    test_assert(testObjectsEqual(n[2], BlockLiveRange{ 2, 6, 9 }));
+    test_assert(testObjectsEqual(n[3], BlockLiveRange{ 3, 10, 13 }));
+
+    auto total = blockRanges.at("total_s1");
+    test_assert(testObjectsEqual(total[0], BlockLiveRange{ 0, 2, 3, true }));
+    test_assert(testObjectsEqual(total[1], BlockLiveRange{ 1, 4, 5 }));
+    test_assert(testObjectsEqual(total[2], BlockLiveRange{ 2, 6, 6 }));
+    test_assert(testObjectsEqual(total[3], BlockLiveRange{ 2, 7, 9, true }));
+
+    auto index = blockRanges.at("index_s1");
+    test_assert(testObjectsEqual(index[0], BlockLiveRange{ 0, 3, 3, true }));
+    test_assert(testObjectsEqual(index[1], BlockLiveRange{ 1, 4, 5,  }));
+    test_assert(testObjectsEqual(index[2], BlockLiveRange{ 2, 6, 8 }));
+    test_assert(testObjectsEqual(index[3], BlockLiveRange{ 2, 8, 9, true }));
+
+    auto t1 = blockRanges.at("_t1_s0");
+    test_assert(testObjectsEqual(t1[0], BlockLiveRange{ 2, 6, 7, true }));
+
+    auto t2 = blockRanges.at("_t2_s0");
+    test_assert(testObjectsEqual(t2[0], BlockLiveRange{ 3, 12, 13, true }));
+
+    auto t3 = blockRanges.at("_t3_s0");
+    test_assert(testObjectsEqual(t3[0], BlockLiveRange{ 3, 13, 14, true }));
+
+    auto t4 = blockRanges.at("_t4_s0");
+    test_assert(testObjectsEqual(t4[0], BlockLiveRange{ 3, 14, 15, true }));
+
+    return true;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -469,6 +524,7 @@ int main(int argc, char *argv[])
     test_run_scenario(testSimpleMipsTranslation);
     test_run_scenario(testMipsArithmeticAssignments);
     test_run_scenario(testCfgSimpleBasicBlocks);
+    test_run_scenario(testBriggsAllocatorBlockLiveRanges);
 
     puts("SUCCESS!");
     return 0;
