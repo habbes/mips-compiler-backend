@@ -9,6 +9,7 @@ BriggsFunctionRegAllocator::BriggsFunctionRegAllocator (const IrFunction & irFun
     livenessAnalysis();
     computeBlockLiveRanges();
     computeWebs();
+    buildInterferenceGraph();
 }
 
 void BriggsFunctionRegAllocator::livenessAnalysis ()
@@ -246,6 +247,25 @@ void BriggsFunctionRegAllocator::computeWebs ()
         if (deleted.count(i) == 0)
         {
             liveRanges_.push_back(webs[i]);
+        }
+    }
+}
+
+void BriggsFunctionRegAllocator::buildInterferenceGraph ()
+{
+    for (auto & web : liveRanges_)
+    {
+        ig_.addNode(web.id());
+    }
+
+    for (auto web = liveRanges_.begin(); web != liveRanges_.end(); web++)
+    {
+        for (auto otherWeb = web + 1; otherWeb != liveRanges_.end(); otherWeb++)
+        {
+            if (web->interferesWith(*otherWeb))
+            {
+                ig_.connectNodes(web->id(), otherWeb->id());
+            }
         }
     }
 }

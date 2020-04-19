@@ -5,7 +5,7 @@
 #include "naive_reg_allocator.h"
 #include "briggs_function_reg_allocator.h"
 
-#define test_assert(expr) if (!(expr)) { return false; }
+#define test(expr, message) if (!(expr)) { fprintf(stderr, "Test failed: %s", (message)); return false; }
 #define test_expect(expr, message, ...) if(!(expr)) {fprintf(stderr, "Test failed: ");fprintf(stderr, (message), __VA_ARGS__); fprintf(stderr,"\n"); return false;}
 #define test_run_scenario(fn) if(!(fn())) {fprintf(stderr, "\nTESTS FAILED\n"); return EXIT_FAILURE;}
 
@@ -469,6 +469,9 @@ bool testObjectsEqual(T actual, T expected)
     return true;
 }
 
+#define test_connected(graph, node1, node2) test_expect((graph).areConnected((node1), (node2)), "%s and %s should be connected", (node1), (node2))
+#define test_not_connected(graph, node1, node2) test_expect(!(graph).areConnected((node1), (node2)), "%s and %s should not be connected", (node1), (node2))
+
 bool testBriggsAllocatorLiveRanges()
 {
     std::string filename = "../test_cases/examples/ir/sum-to-n.ir";
@@ -555,6 +558,59 @@ bool testBriggsAllocatorLiveRanges()
     test_expect(std::find(webs.begin(), webs.end(), t4Web0) != webs.end(), "did not find web %s", object_cstr(t4Web0));
 
     test_expect(webs.size() == 7, "expected 7 webs but found %lu", webs.size());
+
+    // Interference graph
+    auto & graph = allocator.interferenceGraph();
+    test_expect(graph.nodes().size() == 7, "expected 7 nodes in interference graph but got %lu", graph.nodes().size());
+    
+    test_connected(graph, nWeb0.id().c_str(), totalWeb0.id().c_str());
+    test_connected(graph, nWeb0.id().c_str(), indexWeb0.id().c_str());
+    test_connected(graph, nWeb0.id().c_str(), t1Web0.id().c_str());
+    test_connected(graph, nWeb0.id().c_str(), t2Web0.id().c_str());
+    test_not_connected(graph, nWeb0.id().c_str(), t3Web0.id().c_str());
+    test_not_connected(graph, nWeb0.id().c_str(), t4Web0.id().c_str());
+
+    test_connected(graph, totalWeb0.id().c_str(), nWeb0.id().c_str());
+    test_connected(graph, totalWeb0.id().c_str(), indexWeb0.id().c_str());
+    test_not_connected(graph, totalWeb0.id().c_str(), t1Web0.id().c_str());
+    test_not_connected(graph, totalWeb0.id().c_str(), t2Web0.id().c_str());
+    test_not_connected(graph, totalWeb0.id().c_str(), t3Web0.id().c_str());
+    test_not_connected(graph, totalWeb0.id().c_str(), t4Web0.id().c_str());
+
+    test_connected(graph, indexWeb0.id().c_str(), nWeb0.id().c_str());
+    test_connected(graph, indexWeb0.id().c_str(), totalWeb0.id().c_str());
+    test_connected(graph, indexWeb0.id().c_str(), t1Web0.id().c_str());
+    test_not_connected(graph, indexWeb0.id().c_str(), t2Web0.id().c_str());
+    test_not_connected(graph, indexWeb0.id().c_str(), t3Web0.id().c_str());
+    test_not_connected(graph, indexWeb0.id().c_str(), t4Web0.id().c_str());
+
+    test_connected(graph, t1Web0.id().c_str(), nWeb0.id().c_str());
+    test_connected(graph, t1Web0.id().c_str(), indexWeb0.id().c_str());
+    test_not_connected(graph, t1Web0.id().c_str(), totalWeb0.id().c_str());
+    test_not_connected(graph, t1Web0.id().c_str(), t2Web0.id().c_str());
+    test_not_connected(graph, t1Web0.id().c_str(), t3Web0.id().c_str());
+    test_not_connected(graph, t1Web0.id().c_str(), t4Web0.id().c_str());
+
+    test_connected(graph, t2Web0.id().c_str(), nWeb0.id().c_str());
+    test_not_connected(graph, t2Web0.id().c_str(), indexWeb0.id().c_str());
+    test_not_connected(graph, t2Web0.id().c_str(), totalWeb0.id().c_str());
+    test_not_connected(graph, t2Web0.id().c_str(), t1Web0.id().c_str());
+    test_not_connected(graph, t2Web0.id().c_str(), t3Web0.id().c_str());
+    test_not_connected(graph, t2Web0.id().c_str(), t4Web0.id().c_str());
+
+    test_not_connected(graph, t3Web0.id().c_str(), nWeb0.id().c_str());
+    test_not_connected(graph, t3Web0.id().c_str(), indexWeb0.id().c_str());
+    test_not_connected(graph, t3Web0.id().c_str(), totalWeb0.id().c_str());
+    test_not_connected(graph, t3Web0.id().c_str(), t1Web0.id().c_str());
+    test_not_connected(graph, t3Web0.id().c_str(), t2Web0.id().c_str());
+    test_not_connected(graph, t3Web0.id().c_str(), t4Web0.id().c_str());
+
+    test_not_connected(graph, t4Web0.id().c_str(), nWeb0.id().c_str());
+    test_not_connected(graph, t4Web0.id().c_str(), indexWeb0.id().c_str());
+    test_not_connected(graph, t4Web0.id().c_str(), totalWeb0.id().c_str());
+    test_not_connected(graph, t4Web0.id().c_str(), t1Web0.id().c_str());
+    test_not_connected(graph, t4Web0.id().c_str(), t2Web0.id().c_str());
+    test_not_connected(graph, t4Web0.id().c_str(), t3Web0.id().c_str());
 
     return true;
 }
