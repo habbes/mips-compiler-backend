@@ -4,6 +4,7 @@
 #include "cfg.h"
 #include "naive_reg_allocator.h"
 #include "briggs_function_reg_allocator.h"
+#include "interference_graph.h"
 
 #define test(expr, message) if (!(expr)) { fprintf(stderr, "Test failed: %s", (message)); return false; }
 #define test_expect(expr, message, ...) if(!(expr)) {fprintf(stderr, "Test failed: ");fprintf(stderr, (message), __VA_ARGS__); fprintf(stderr,"\n"); return false;}
@@ -472,7 +473,7 @@ bool testObjectsEqual(T actual, T expected)
 #define test_connected(graph, node1, node2) test_expect((graph).areConnected((node1), (node2)), "%s and %s should be connected", (node1), (node2))
 #define test_not_connected(graph, node1, node2) test_expect(!(graph).areConnected((node1), (node2)), "%s and %s should not be connected", (node1), (node2))
 
-bool testBriggsAllocatorLiveRanges()
+bool testBriggsAllocator()
 {
     std::string filename = "../test_cases/examples/ir/sum-to-n.ir";
     std::ifstream source(filename);
@@ -615,6 +616,43 @@ bool testBriggsAllocatorLiveRanges()
     return true;
 }
 
+bool testGraphColoring ()
+{
+    int numColors = 3;
+    InterferenceGraph ig(numColors);
+    ig.addNode("s0");
+    ig.addNode("s1");
+    ig.addNode("s2");
+    ig.addNode("s3");
+    ig.addNode("s4");
+
+    ig.connectNodes("s0", "s1");
+    ig.connectNodes("s0", "s2");
+    ig.connectNodes("s0", "s3");
+    ig.connectNodes("s1", "s2");
+    ig.connectNodes("s1", "s3");
+    ig.connectNodes("s2", "s4");
+    ig.connectNodes("s3", "s4");
+
+    ig.colorGraph();
+
+    for (auto & item : ig.nodes())
+    {
+        auto & node = item.second;
+        test_expect(node.hasColor(), "node %s should be colored", node.toString().c_str());
+        test_expect(node.color < numColors, "node %s color should be between 0-k", node.toString().c_str());
+        for (auto & neighbor : node.neighbors)
+        {
+            test_expect(node.color != ig.node(neighbor).color,
+                "node %s should not have same color as neighbor %s",
+                node.toString().c_str(), ig.node(neighbor).toString().c_str());
+        }
+    }
+
+
+    return true;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -625,7 +663,8 @@ int main(int argc, char *argv[])
     test_run_scenario(testSimpleMipsTranslation);
     test_run_scenario(testMipsArithmeticAssignments);
     test_run_scenario(testCfgSimpleBasicBlocks);
-    test_run_scenario(testBriggsAllocatorLiveRanges);
+    test_run_scenario(testBriggsAllocator);
+    test_run_scenario(testGraphColoring);
 
     puts("SUCCESS!");
     return 0;

@@ -1,7 +1,8 @@
 #include "briggs_function_reg_allocator.h"
 
 BriggsFunctionRegAllocator::BriggsFunctionRegAllocator (const IrFunction & irFunc):
-    cfg_(Cfg(irFunc)), ir_(irFunc), 
+    cfg_(Cfg(irFunc)), ir_(irFunc),
+    ig_(8),
     inSets_(irFunc.numInstructions()), outSets_(irFunc.numInstructions()),
     useSets_(irFunc.numInstructions()), defs_(irFunc.numInstructions()),
     blockOutSets_(cfg_.blocks().size())
@@ -80,7 +81,7 @@ bool BriggsFunctionRegAllocator::updateBlockLiveness (const BasicBlock & block)
 {
     auto origOutSize = blockOutSets_[block.id].size();
 
-    // out[B] = union for B' in successors(B) (in[B'])
+    // out[B] = union of in[B'] for B' in successors(B)
     for (auto & successor: cfg_.successors(block))
     {
         auto & successorIn = inSets_[successor.first];
@@ -255,7 +256,7 @@ void BriggsFunctionRegAllocator::buildInterferenceGraph ()
 {
     for (auto & web : liveRanges_)
     {
-        ig_.addNode(web.id());
+        ig_.addNode(web.id(), 1);
     }
 
     for (auto web = liveRanges_.begin(); web != liveRanges_.end(); web++)

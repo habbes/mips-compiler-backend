@@ -17,8 +17,8 @@ typedef std::vector<Web> LiveRanges;
 class BriggsFunctionRegAllocator: public BaseFunctionRegAllocator
 {
     Cfg cfg_;
-    InterferenceGraph ig_;
     const IrFunction & ir_;
+    InterferenceGraph ig_;
     // variables that are live at each instruction
     std::vector<VarSet> inSets_;
     // variables that are live after instruction
