@@ -9,65 +9,6 @@ BriggsFunctionRegAllocator::BriggsFunctionRegAllocator (const IrFunction & irFun
     livenessAnalysis();
     computeBlockLiveRanges();
     computeWebs();
-
-    // this is for debuggin, should replace with unit tests
-    printf("LIVENESS FOR %s\n", irFunc.name().c_str());
-    for (auto & block: cfg_.blocks())
-    {
-        printf("BLOCK %d\n", block.id);
-        for (int i = block.first; i <= block.last; i++)
-        {
-            auto & inst = ir_.instruction(i);
-            printf("%s:\t", inst.toString().c_str());
-            printf("in: {");
-            for (auto & var : inSets_[i])
-            {
-                printf("%s,", var.c_str());
-            }
-            printf("}\t");
-
-            printf("out: {");
-            for (auto & var : outSets_[i])
-            {
-                printf("%s,", var.c_str());
-            }
-            printf("}\t");
-
-            printf("def: {");
-            if (defs_[i] != "")
-            {
-                printf("%s,", defs_[i].c_str());
-            }
-            printf("}\t");
-
-            printf("use: {");
-            for (auto var: useSets_[i])
-            {
-                printf("%s,", var.c_str());
-            }
-            printf("}\n");
-        }
-    }
-    printf("LIVE RANGES FOR %s\n", irFunc.name().c_str());
-    for (auto & item : blockLiveRanges_)
-    {
-        printf("var %s:\n\t", item.first.c_str());
-        for (auto & range: item.second)
-        {
-            printf("B%d %d - %d def:%d, ", range.block, range.start, range.end, range.definesVar);
-        }
-        puts("");
-    }
-    printf("\nWEBS RANGES FOR %s\n", irFunc.name().c_str());
-    for (auto & item : liveRanges_)
-    {
-        printf("var %s:\n\t", item.var.c_str());
-        for (auto & range: item.localRanges)
-        {
-            printf("B%d %d - %d, ", range.block, range.start, range.end);
-        }
-        puts("");
-    }
 }
 
 void BriggsFunctionRegAllocator::livenessAnalysis ()
@@ -230,6 +171,14 @@ void BriggsFunctionRegAllocator::computeWebs ()
         for (auto & r1 : ranges)
         {
             auto & b1 = cfg_.block(r1.block);
+
+            // if not already in a web, put r1 in its own web
+            if (webMap.count(r1) == 0)
+            {
+                webs.push_back({ var, .localRanges = { r1 } });
+                webMap[r1] = webs.size() - 1;
+            }
+
             for (auto & r2 : ranges)
             {
                 auto & b2 = cfg_.block(r2.block);
@@ -237,7 +186,7 @@ void BriggsFunctionRegAllocator::computeWebs ()
 
                 // these are not directly connected if they both define the variable
                 // but they may be connected through a live range that uses both
-                // in that case, they might be added to the web later
+                // in that case, their webs will be merged later
                 if (r1.definesVar && r2.definesVar) continue;
 
                 // because all blocks of interests are visited,
@@ -268,7 +217,7 @@ void BriggsFunctionRegAllocator::computeWebs ()
                         webMap[r2] = web1;
                     }
                     // if both are in different webs, then merge the webs
-                    else if (web1 != -1 && web2 != -1)
+                    else if (web1 != -1 && web2 != -1 && web1 != web2)
                     {
                         deleted.insert(web2);
                         for (auto r2Neighbor : webs[web2].localRanges)
@@ -276,11 +225,12 @@ void BriggsFunctionRegAllocator::computeWebs ()
                             webs[web1].localRanges.insert(r2Neighbor);
                             webMap[r2Neighbor] = web1;
                         }
+                        
                     }
                     // if none is in a web, then create a new web and move both in it
                     else if (web1 == -1 && web2 == -1)
                     {
-                        webs.push_back({ var });
+                        webs.push_back({ var, .localRanges = { r1, r2 } });
                         webMap[r1] = webs.size() - 1;
                         webMap[r2] = webs.size() - 1;
                     }
@@ -293,7 +243,6 @@ void BriggsFunctionRegAllocator::computeWebs ()
     // move non-deleted webs
     for (auto i = 0u; i < webs.size(); i++)
     {
-        printf("copying web %s r %lu\n", webs[i].var.c_str(), webs[i].localRanges.size());
         if (deleted.count(i) == 0)
         {
             liveRanges_.push_back(webs[i]);

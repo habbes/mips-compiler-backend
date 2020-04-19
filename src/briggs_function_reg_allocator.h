@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_set>
 #include <functional>
+#include <sstream>
 #include "cfg.h"
 #include "base_function_reg_allocator.h"
 
@@ -56,6 +57,30 @@ struct Web
 {
     std::string var;
     BlockLiveRangeSet localRanges;
+
+    bool operator==(const Web & other) const
+    {
+        if (var != other.var) return false;
+        if (localRanges.size() != other.localRanges.size()) return false;
+        for (auto & range : localRanges)
+        {
+            if (other.localRanges.count(range) == 0) return false;
+        }
+
+        return true;
+    }
+
+    std::string toString() const
+    {
+        std::stringstream buffer;
+        buffer << var << ":";
+        for (auto & range: localRanges)
+        {
+            buffer << " " << range.toString() << ",";
+        }
+
+        return buffer.str();
+    }
 };
 
 typedef std::vector<BlockLiveRange> BlockLiveRanges;
@@ -112,5 +137,10 @@ public:
     const VarBlockLiveRanges & blockLiveRanges() const
     {
         return blockLiveRanges_;
+    }
+
+    const LiveRanges & liveRanges() const
+    {
+        return liveRanges_;
     }
 };

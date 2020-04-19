@@ -11,6 +11,7 @@
 
 #define test_objects_equal(actual, expected) test_expect((actual) == (expected), "expected %s but got %s", (expected).toString().c_str(), (actual).toString().c_str())
 #define test_strings_equal(actual, expected) test_expect((actual) == (expected), "expected %s but got %s", (expected), (actual).c_str())
+#define object_cstr(o) (o).toString().c_str()
 
 bool testParseSimpleFunction()
 {
@@ -468,7 +469,7 @@ bool testObjectsEqual(T actual, T expected)
     return true;
 }
 
-bool testBriggsAllocatorBlockLiveRanges()
+bool testBriggsAllocatorLiveRanges()
 {
     std::string filename = "../test_cases/examples/ir/sum-to-n.ir";
     std::ifstream source(filename);
@@ -479,37 +480,81 @@ bool testBriggsAllocatorBlockLiveRanges()
     auto & func = irProgram[0];
     BriggsFunctionRegAllocator allocator(func);
 
+    // Local in-block live ranges
     auto & blockRanges = allocator.blockLiveRanges();
 
     auto n = blockRanges.at("n_s1");
-    test_assert(testObjectsEqual(n[0], BlockLiveRange{.block = 0, .start = 0, .end = 3, .definesVar = true}));
-    test_assert(testObjectsEqual(n[1], BlockLiveRange{ 1, 4, 5 }));
-    test_assert(testObjectsEqual(n[2], BlockLiveRange{ 2, 6, 9 }));
-    test_assert(testObjectsEqual(n[3], BlockLiveRange{ 3, 10, 13 }));
+    auto nR0 = BlockLiveRange{ .block = 0, .start = 0, .end = 3, .definesVar = true };
+    auto nR1 = BlockLiveRange{ 1, 4, 5 };
+    auto nR2 = BlockLiveRange{ 2, 6, 9 };
+    auto nR3 = BlockLiveRange{ 3, 10, 13 };
+    test_objects_equal(n[0], nR0);
+    test_objects_equal(n[1], nR1);
+    test_objects_equal(n[2], nR2);
+    test_objects_equal(n[3], nR3);
 
     auto total = blockRanges.at("total_s1");
-    test_assert(testObjectsEqual(total[0], BlockLiveRange{ 0, 2, 3, true }));
-    test_assert(testObjectsEqual(total[1], BlockLiveRange{ 1, 4, 5 }));
-    test_assert(testObjectsEqual(total[2], BlockLiveRange{ 2, 6, 6 }));
-    test_assert(testObjectsEqual(total[3], BlockLiveRange{ 2, 7, 9, true }));
+    auto totalR0 = BlockLiveRange{ 0, 2, 3, true };
+    auto totalR1 = BlockLiveRange{ 1, 4, 5 };
+    auto totalR2 = BlockLiveRange{ 2, 6, 6 };
+    auto totalR3 = BlockLiveRange{ 2, 7, 9, true };
+    auto totalR4 = BlockLiveRange{ 3, 10, 11 };
+    test_objects_equal(total[0], totalR0);
+    test_objects_equal(total[1], totalR1);
+    test_objects_equal(total[2], totalR2);
+    test_objects_equal(total[3], totalR3);
+    test_objects_equal(total[4], totalR4);
 
     auto index = blockRanges.at("index_s1");
-    test_assert(testObjectsEqual(index[0], BlockLiveRange{ 0, 3, 3, true }));
-    test_assert(testObjectsEqual(index[1], BlockLiveRange{ 1, 4, 5,  }));
-    test_assert(testObjectsEqual(index[2], BlockLiveRange{ 2, 6, 8 }));
-    test_assert(testObjectsEqual(index[3], BlockLiveRange{ 2, 8, 9, true }));
+    auto indexR0 = BlockLiveRange{ 0, 3, 3, true };
+    auto indexR1 = BlockLiveRange{ 1, 4, 5 };
+    auto indexR2 = BlockLiveRange{ 2, 6, 8 };
+    auto indexR3 = BlockLiveRange{ 2, 8, 9, true };
+    test_objects_equal(index[0], indexR0);
+    test_objects_equal(index[1], indexR1);
+    test_objects_equal(index[2], indexR2);
+    test_objects_equal(index[3], indexR3);
 
     auto t1 = blockRanges.at("_t1_s0");
-    test_assert(testObjectsEqual(t1[0], BlockLiveRange{ 2, 6, 7, true }));
+    auto t1R0 = BlockLiveRange{ 2, 6, 7, true };
+    test_objects_equal(t1[0], t1R0);
 
     auto t2 = blockRanges.at("_t2_s0");
-    test_assert(testObjectsEqual(t2[0], BlockLiveRange{ 3, 12, 13, true }));
+    auto t2R0 = BlockLiveRange{ 3, 12, 13, true };
+    test_objects_equal(t2[0], t2R0);
 
     auto t3 = blockRanges.at("_t3_s0");
-    test_assert(testObjectsEqual(t3[0], BlockLiveRange{ 3, 13, 14, true }));
+    auto t3R0 = BlockLiveRange{ 3, 13, 14, true };
+    test_objects_equal(t3[0], t3R0);
 
     auto t4 = blockRanges.at("_t4_s0");
-    test_assert(testObjectsEqual(t4[0], BlockLiveRange{ 3, 14, 15, true }));
+    auto t4R0 = BlockLiveRange{ 3, 14, 15, true };
+    test_objects_equal(t4[0], t4R0);
+
+    // Webs
+    auto & webs = allocator.liveRanges();
+    Web nWeb0 = { "n_s1", { nR0, nR1, nR2, nR3 } };
+    test_expect(std::find(webs.begin(), webs.end(), nWeb0) != webs.end(), "did not find web %s", object_cstr(nWeb0));
+
+    Web totalWeb0 = { "total_s1", { totalR0, totalR1, totalR2, totalR3, totalR4 } };
+    test_expect(std::find(webs.begin(), webs.end(), totalWeb0) != webs.end(), "did not find web %s", object_cstr(totalWeb0));
+
+    Web indexWeb0 = { "index_s1", { indexR0, indexR1, indexR2, indexR3 } };
+    test_expect(std::find(webs.begin(), webs.end(), indexWeb0) != webs.end(), "did not find web %s", object_cstr(indexWeb0));
+
+    Web t1Web0 = { "_t1_s0", { t1R0 } };
+    test_expect(std::find(webs.begin(), webs.end(), t1Web0) != webs.end(), "did not find web %s", object_cstr(t1Web0));
+
+    Web t2Web0 = { "_t2_s0", { t2R0 } };
+    test_expect(std::find(webs.begin(), webs.end(), t2Web0) != webs.end(), "did not find web %s", object_cstr(t2Web0));
+    
+    Web t3Web0 = { "_t3_s0", { t3R0 } };
+    test_expect(std::find(webs.begin(), webs.end(), t3Web0) != webs.end(), "did not find web %s", object_cstr(t3Web0));
+
+    Web t4Web0 = { "_t4_s0", { t4R0 } };
+    test_expect(std::find(webs.begin(), webs.end(), t4Web0) != webs.end(), "did not find web %s", object_cstr(t4Web0));
+
+    test_expect(webs.size() == 7, "expected 7 webs but found %lu", webs.size());
 
     return true;
 }
@@ -524,7 +569,7 @@ int main(int argc, char *argv[])
     test_run_scenario(testSimpleMipsTranslation);
     test_run_scenario(testMipsArithmeticAssignments);
     test_run_scenario(testCfgSimpleBasicBlocks);
-    test_run_scenario(testBriggsAllocatorBlockLiveRanges);
+    test_run_scenario(testBriggsAllocatorLiveRanges);
 
     puts("SUCCESS!");
     return 0;
