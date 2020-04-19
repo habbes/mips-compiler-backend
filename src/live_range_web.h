@@ -94,7 +94,7 @@ struct Web
             {
                 if (it->start < start) start = it->start;
             }
-            id_ = var + std::to_string(start);
+            id_ = var + "_" + std::to_string(start);
         }
     
         return id_;

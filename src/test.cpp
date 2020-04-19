@@ -473,7 +473,8 @@ bool testObjectsEqual(T actual, T expected)
 #define test_connected(graph, node1, node2) test_expect((graph).areConnected((node1), (node2)), "%s and %s should be connected", (node1), (node2))
 #define test_not_connected(graph, node1, node2) test_expect(!(graph).areConnected((node1), (node2)), "%s and %s should not be connected", (node1), (node2))
 #define test_node_cost(graph, nodeId, expectedCost) test_expect((graph).node((nodeId)).cost == expectedCost, \
-    "node %s should have cost %d", (graph).node(nodeId).toString().c_str(), (expectedCost))
+    "node %s should have cost %d", (graph).node((nodeId)).toString().c_str(), (expectedCost))
+#define test_node_colored(graph, nodeId) test_expect((graph).node((nodeId)).hasColor(), "node %s should be colored", (graph).node((nodeId)).toString().c_str())
 
 bool testBriggsAllocator()
 {
@@ -624,6 +625,14 @@ bool testBriggsAllocator()
     test_node_cost(graph, t3Web0.id(), 2);
     test_node_cost(graph, t4Web0.id(), 2);
 
+    // since we have 8 registers, all webs should get a color
+    test_node_colored(graph, nWeb0.id());
+    test_node_colored(graph, totalWeb0.id());
+    test_node_colored(graph, indexWeb0.id());
+    test_node_colored(graph, t1Web0.id());
+    test_node_colored(graph, t2Web0.id());
+    test_node_colored(graph, t3Web0.id());
+    test_node_colored(graph, t4Web0.id());
 
     return true;
 }

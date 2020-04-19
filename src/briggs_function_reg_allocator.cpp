@@ -11,6 +11,7 @@ BriggsFunctionRegAllocator::BriggsFunctionRegAllocator (const IrFunction & irFun
     computeBlockLiveRanges();
     computeWebs();
     buildInterferenceGraph();
+    ig_.colorGraph();
 }
 
 void BriggsFunctionRegAllocator::livenessAnalysis ()
