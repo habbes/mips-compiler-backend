@@ -86,11 +86,11 @@ void InterferenceGraph::tryColorNode (std::string id)
         neighborsColors.insert(nodes_[n].color);
     }
 
-    for (int i = 0; i < numColors_; i++)
+    for (int color = 0; color < numColors_; color++)
     {
-        if (neighborsColors.count(i) == 0)
+        if (neighborsColors.count(color) == 0)
         {
-            node.color = i;
+            node.color = color;
             return;
         }
     }

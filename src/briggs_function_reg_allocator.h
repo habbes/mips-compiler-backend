@@ -39,6 +39,7 @@ class BriggsFunctionRegAllocator: public BaseFunctionRegAllocator
     void computeBlockLiveRanges();
     void computeWebs();
     void buildInterferenceGraph();
+    int estimateSpillCost(const Web & web) const;
     BlockLiveRanges & getLiveRanges(const std::string & var);
 public:
     BriggsFunctionRegAllocator(const IrFunction &);

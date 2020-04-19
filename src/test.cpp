@@ -472,6 +472,8 @@ bool testObjectsEqual(T actual, T expected)
 
 #define test_connected(graph, node1, node2) test_expect((graph).areConnected((node1), (node2)), "%s and %s should be connected", (node1), (node2))
 #define test_not_connected(graph, node1, node2) test_expect(!(graph).areConnected((node1), (node2)), "%s and %s should not be connected", (node1), (node2))
+#define test_node_cost(graph, nodeId, expectedCost) test_expect((graph).node((nodeId)).cost == expectedCost, \
+    "node %s should have cost %d", (graph).node(nodeId).toString().c_str(), (expectedCost))
 
 bool testBriggsAllocator()
 {
@@ -612,6 +614,16 @@ bool testBriggsAllocator()
     test_not_connected(graph, t4Web0.id().c_str(), t1Web0.id().c_str());
     test_not_connected(graph, t4Web0.id().c_str(), t2Web0.id().c_str());
     test_not_connected(graph, t4Web0.id().c_str(), t3Web0.id().c_str());
+
+    // estimate spill costs
+    test_node_cost(graph, nWeb0.id(), 13);
+    test_node_cost(graph, totalWeb0.id(), 22);
+    test_node_cost(graph, indexWeb0.id(), 41);
+    test_node_cost(graph, t1Web0.id(), 20);
+    test_node_cost(graph, t2Web0.id(), 2);
+    test_node_cost(graph, t3Web0.id(), 2);
+    test_node_cost(graph, t4Web0.id(), 2);
+
 
     return true;
 }

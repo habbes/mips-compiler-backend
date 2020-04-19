@@ -256,7 +256,7 @@ void BriggsFunctionRegAllocator::buildInterferenceGraph ()
 {
     for (auto & web : liveRanges_)
     {
-        ig_.addNode(web.id(), 1);
+        ig_.addNode(web.id(), estimateSpillCost(web));
     }
 
     for (auto web = liveRanges_.begin(); web != liveRanges_.end(); web++)
@@ -269,4 +269,45 @@ void BriggsFunctionRegAllocator::buildInterferenceGraph ()
             }
         }
     }
+}
+
+int BriggsFunctionRegAllocator::estimateSpillCost(const Web & web) const
+{
+    int cost = 0;
+    for (auto & range : web.localRanges)
+    {
+        int rangeCost = 0;
+        int blockWeight = 1;
+        // check if it's a loop
+        // quick hack: if it ends with a loop_label_... branch, then assume it's a loop
+        auto lastInstIndex = cfg_.block(range.block).last;
+        auto & lastInst = ir_.instruction(lastInstIndex);
+        if (lastInst.isBranch() && lastInst.label().name.find("loop_label") != std::string::npos)
+        {
+            // if it's a loop, assume it runs on average 10 times
+            blockWeight = 10;
+        }
+
+        for (int i = range.start; i <= range.end; i++)
+        {
+            // the same instruction can have both a use and a def in
+            // two consecutive ranges,
+            // check definesVar to distinguish between
+            // the range with the use, and range with the definition
+            if (defs_[i] == web.var && range.definesVar)
+            {
+                // assume store cost = 1
+                rangeCost++;
+            }
+            else if (useSets_[i].count(web.var) != 0)
+            {
+                // assume load cost = 1
+                rangeCost++;
+            }
+        }
+        
+        cost += rangeCost * blockWeight;
+    }
+
+    return cost;
 }
