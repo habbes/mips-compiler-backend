@@ -70,6 +70,12 @@ int IrInstruction::inputsCount () const
     if (isConditionalBranch()) return 2;
     // op, in1  # in1 is optional
     if (isReturn()) return params.size();
+    // assign, out, in
+    if (isAssign()) return 1;
+    // array_store, arr, in1, in2
+    if (op == ARRAY_STORE) return 2;
+    // array_load, out, arr, in1
+    if (op == ARRAY_LOAD) return 1;
     // no inputs
     return 0;
 }
@@ -85,6 +91,10 @@ IrInputsIterator IrInstruction::inputsBegin () const
     if (isReturn()) return params.begin();
     // assign, out, in
     if (isAssign()) return params.begin() + 1;
+    // array_store, arr, in1, in2
+    if (op == ARRAY_STORE) return params.begin() + 1;
+    // array_load, out, arr, in1
+    if (op == ARRAY_LOAD) return params.begin() + 2;
     // no inputs
     return params.end();
 }
@@ -100,6 +110,10 @@ IrInputsIterator IrInstruction::inputsEnd () const
     if (isReturn()) return params.end();
     // assing, out, in
     if (isAssign()) return params.end();
+    // array_store, arr, in1, in2
+    if (op == ARRAY_STORE) return params.end();
+    // array_load, out, arr, in1
+    if (op == ARRAY_LOAD) return params.end();
     // no inputs
     return params.end();
 }
@@ -111,6 +125,7 @@ const SymbolInfo & IrInstruction::returnValue () const
         case OpCode::CALLR:
         case OpCode::RETURN:
         case OpCode::ASSIGN:
+        case OpCode::ARRAY_LOAD:
             return params[0];
         default:
             return *(params.end() - 1);
@@ -171,6 +186,7 @@ bool IrInstruction::hasReturnValue () const
 {
     return op == OpCode::CALLR
         || (op == OpCode::RETURN && params.size() > 0)
+        || op == OpCode::ARRAY_LOAD
         || isAssign()
         || isArithmeticLogic();
 }

@@ -1,5 +1,5 @@
 
-allocators=("naive" "block")
+allocators=("naive" "block" "briggs")
 
 for allocator in ${allocators[@]}; do
     echo "Testing $allocator allocator snapshots"

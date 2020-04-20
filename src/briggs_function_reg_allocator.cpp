@@ -63,7 +63,8 @@ bool BriggsFunctionRegAllocator::updateInstructionLiveness (int i, const BasicBl
     auto origInSize = inSets_[i].size();
     auto origOutSize = outSets_[i].size();
 
-    // out[i] = in[i + 1] (last instruction of block is handled separately)
+    // out[i] = in[i + 1]
+    // last instruction of block is handled separately
     if (i != block.last)
     {
         outSets_[i].insert(inSets_[i + 1].begin(), inSets_[i + 1].end());
@@ -71,11 +72,7 @@ bool BriggsFunctionRegAllocator::updateInstructionLiveness (int i, const BasicBl
 
     // in[i] = (out[i] - def[i]) union use[i]
     inSets_[i].insert(outSets_[i].begin(), outSets_[i].end());
-    if (!defs_[i].empty())
-    {
-        inSets_[i].erase(defs_[i]);
-    }
-
+    inSets_[i].erase(defs_[i]);
     inSets_[i].insert(useSets_[i].begin(), useSets_[i].end());
 
     return inSets_[i].size() != origInSize && outSets_[i].size() != origOutSize;
@@ -98,9 +95,11 @@ bool BriggsFunctionRegAllocator::updateBlockLiveness (const BasicBlock & block)
         return false;
     }
 
-    // update outset of last instruction
+    // update live sets of last instruction
     outSets_[block.last].insert(blockOutSets_[block.id].begin(), blockOutSets_[block.id].end());
-
+    inSets_[block.last].insert(outSets_[block.last].begin(), outSets_[block.last].end());
+    inSets_[block.last].erase(defs_[block.last]);
+ 
     return true;
 }
 
@@ -113,14 +112,15 @@ void BriggsFunctionRegAllocator::computeBlockLiveRanges ()
             if (defs_[i] != "")
             {
                 auto var = defs_[i];
-                // kill the variable, end it's range here
+                
                 auto & varLiveRanges = getLiveRanges(var);
-                if (!varLiveRanges.empty())
+                if (!varLiveRanges.empty() && inSets_[i].count(var) > 0)
                 {
-                    // if the var is used in this instruction, e.g. var = var + 1
-                    // then this is the end of the range, otherwise the end
-                    // is the previous instruction
-                    varLiveRanges.back().end = inSets_[i].count(var) > 0 ? i : i - 1;
+                    // if the var is both used and assigned at this instruction,
+                    // e.g. var = var + 1
+                    // then extend the life of the use value before
+                    // starting a new live range
+                    varLiveRanges.back().end = i; //inSets_[i].count(var) > 0 ? i : i - 1;
                 }
                 // start a new live range if this var is used later
                 if (outSets_[i].count(var) > 0)
@@ -132,7 +132,7 @@ void BriggsFunctionRegAllocator::computeBlockLiveRanges ()
             // for each variable that's live at this instruction, extend live range
             for (auto & var : inSets_[i])
             {
-                // skip the killed variable cause it's already been processed in the block above
+                // don't extend the life of the killed variable
                 if (defs_[i] == var) continue;
 
                 auto & varLiveRanges = getLiveRanges(var);

@@ -463,6 +463,66 @@ bool testCfgSimpleBasicBlocks()
     return true;
 }
 
+bool testCfgComplex()
+{
+    std::string filename = "../test_cases/examples/ir/for-to.ir";
+    std::ifstream source(filename);
+
+    IrParser parser(source);
+    parser.parse();
+    auto & irProgram = parser.program();
+    
+    auto & func = irProgram[0];
+    Cfg cfg(func);
+    auto & blocks = cfg.blocks();
+    test_expect(blocks.size() == 10, "expected 10 blocks but got %lu", blocks.size());
+    BasicBlock b0 = { .id = 0, .first = 0, .last = 2};
+    BasicBlock b1 = { 1, 3, 4 };
+    BasicBlock b2 = { 2, 5, 9 };
+    BasicBlock b3 = { 3, 10, 12 };
+    BasicBlock b4 = { 4, 13, 14 };
+    BasicBlock b5 = { 5, 15, 19 };
+    BasicBlock b6 = { 6, 20, 22 };
+    BasicBlock b7 = { 7, 23, 24 };
+    BasicBlock b8 = { 8, 25, 30 };
+    BasicBlock b9 = { 9, 31, 33 };
+    test_objects_equal(blocks[0], b0);
+    test_objects_equal(blocks[1], b1);
+    test_objects_equal(blocks[2], b2);
+    test_objects_equal(blocks[3], b3);
+    test_objects_equal(blocks[4], b4);
+    test_objects_equal(blocks[5], b5);
+    test_objects_equal(blocks[6], b6);
+    test_objects_equal(blocks[7], b7);
+    test_objects_equal(blocks[8], b8);
+    test_objects_equal(blocks[9], b9);
+
+    auto & nodes = cfg.nodes();
+    test_expect(nodes.size() == 10, "expected 10 nodes but got %lu", nodes.size());
+    CfgNode n0 = { .block = 0, .successors = { 1 }, .predecessors = {} };
+    CfgNode n1 = { 1, { 2, 3 }, { 0, 2 } };
+    CfgNode n2 = { 2, { 1 }, { 1 } };
+    CfgNode n3 = { 3, { 4 }, { 1 } };
+    CfgNode n4 = { 4, { 5, 6 }, { 3, 5 } };
+    CfgNode n5 = { 5, { 4 }, { 4 } };
+    CfgNode n6 = { 6, { 7 }, { 4 } };
+    CfgNode n7 = { 7, { 8, 9 }, { 6, 8 } };
+    CfgNode n8 = { 8, { 7 }, { 7 } };
+    CfgNode n9 = { 9, {}, { 7 } };
+    test_objects_equal(nodes[0], n0);
+    test_objects_equal(nodes[1], n1);
+    test_objects_equal(nodes[2], n2);
+    test_objects_equal(nodes[3], n3);
+    test_objects_equal(nodes[4], n4);
+    test_objects_equal(nodes[5], n5);
+    test_objects_equal(nodes[6], n6);
+    test_objects_equal(nodes[7], n7);
+    test_objects_equal(nodes[8], n8);
+    test_objects_equal(nodes[9], n9);
+
+    return true;
+}
+
 template<class T>
 bool testObjectsEqual(T actual, T expected)
 {
@@ -729,6 +789,7 @@ int main(int argc, char *argv[])
     test_run_scenario(testSimpleMipsTranslation);
     test_run_scenario(testMipsArithmeticAssignments);
     test_run_scenario(testCfgSimpleBasicBlocks);
+    test_run_scenario(testCfgComplex);
     test_run_scenario(testBriggsAllocator);
     test_run_scenario(testSimpleGraphColoring);
     test_run_scenario(testGraphColoringWithSpills);

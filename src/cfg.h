@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <ostream>
 #include "ir_function.h"
 #include "basic_block.h"
 #include "cfg_node.h"
@@ -29,4 +30,6 @@ public:
     CfgBlockList predecessors(const BasicBlock &b) const;
     // check whether reference has candidate as a successor
     bool hasSuccessor (const BasicBlock & reference, const BasicBlock & candidate) const;
+    // prints a graphViz visualization of the graph to the specified output
+    void writeViz(std::ostream & out) const;
 };

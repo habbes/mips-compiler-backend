@@ -7,8 +7,8 @@ Loaded: /usr/share/spim/exceptions.s
 6
 36
 36
-Stats -- #instructions : 305
-         #reads : 58  #writes 48  #branches 15  #other 184
+Stats -- #instructions : 309
+         #reads : 58  #writes 47  #branches 15  #other 189
 
 done
 -- TEST CASE for-to --
@@ -34,8 +34,8 @@ Loaded: /usr/share/spim/exceptions.s
 6
 10
 10
-Stats -- #instructions : 700
-         #reads : 77  #writes 76  #branches 99  #other 448
+Stats -- #instructions : 710
+         #reads : 77  #writes 76  #branches 99  #other 458
 
 done
 -- TEST CASE long-blocks --
@@ -44,9 +44,11 @@ Output compiled to ./output/long-blocks-block.s
 executing...
 
 Loaded: /usr/share/spim/exceptions.s
+2
+3
 6
-Stats -- #instructions : 461
-         #reads : 82  #writes 94  #branches 30  #other 255
+Stats -- #instructions : 489
+         #reads : 82  #writes 92  #branches 34  #other 281
 
 done
 -- TEST CASE sort --
@@ -63,8 +65,8 @@ Loaded: /usr/share/spim/exceptions.s
 20
 33
 44
-Stats -- #instructions : 3207
-         #reads : 507  #writes 432  #branches 380  #other 1888
+Stats -- #instructions : 3468
+         #reads : 523  #writes 495  #branches 380  #other 2070
 
 done
 -- TEST CASE sum-to-n --
@@ -75,7 +77,7 @@ executing...
 Loaded: /usr/share/spim/exceptions.s
 55
 55
-Stats -- #instructions : 337
-         #reads : 60  #writes 60  #branches 28  #other 189
+Stats -- #instructions : 347
+         #reads : 60  #writes 60  #branches 28  #other 199
 
 done

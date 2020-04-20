@@ -167,3 +167,39 @@ bool Cfg::hasSuccessor (const BasicBlock & reference, const BasicBlock & candida
 {
     return nodes_[reference.id].successors.count(candidate.id) > 0;
 }
+
+void Cfg::writeViz (std::ostream & out) const
+{
+    out << "digraph G {\n";
+
+    // print connections
+    for (auto b1 = blocks_.begin(); b1 != blocks_.end(); b1++)
+    {
+        for (auto b2 = blocks_.begin(); b2 != blocks_.end(); b2++)
+        {
+            if (hasSuccessor(*b1, *b2) && b1 != b2)
+            {
+                out << b1->id << " -> " << b2->id << "\n";
+            }
+        }
+    }
+
+    out << "\n";
+
+    // print labels
+    for (auto b : blocks_)
+    {
+        out << b.id
+            << " [label=\""
+            // display id, first and last instructions as the node label
+            << "B" << b.id << "[" << b.first << " - " << b.last << "]"
+            << "\\n"
+            << function_.instruction(b.first).toString()
+            << "\\n"
+            << function_.instruction(b.last).toString()
+            << "\"]"
+            << "\n";
+    }
+
+    out << "}\n";
+}

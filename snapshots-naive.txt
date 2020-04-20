@@ -44,9 +44,11 @@ Output compiled to ./output/long-blocks-naive.s
 executing...
 
 Loaded: /usr/share/spim/exceptions.s
+2
+3
 6
-Stats -- #instructions : 392
-         #reads : 86  #writes 56  #branches 30  #other 220
+Stats -- #instructions : 412
+         #reads : 88  #writes 56  #branches 34  #other 234
 
 done
 -- TEST CASE sort --

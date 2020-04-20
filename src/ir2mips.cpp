@@ -134,7 +134,7 @@ void Ir2Mips::emitStore (const mips::MipsSymbol & src, const mips::MipsSymbol & 
 void Ir2Mips::translateNextInstruction()
 {
     auto & inst = nextIrInstruction();
-    curMipsFunction().addCodeComment(std::to_string(instIndex_ + 1) + ": " + inst.toString());
+    curMipsFunction().addCodeComment(std::to_string(instIndex_) + ": " + inst.toString());
 
     switch (inst.op)
     {
