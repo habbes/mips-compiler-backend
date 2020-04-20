@@ -75,7 +75,7 @@ mips::MipsFunction & Ir2Mips::curMipsFunction ()
     return mips_.currentFunction();
 }
 
-MipsSymbol Ir2Mips::irToMipsSymbol (const SymbolInfo &irSym)
+MipsSymbol Ir2Mips::irToMipsSymbol (const SymbolInfo &irSym, bool isDef)
 {
     if (irSym.type == SymbolType::CONST)
     {
@@ -87,7 +87,7 @@ MipsSymbol Ir2Mips::irToMipsSymbol (const SymbolInfo &irSym)
     }
     // a variable is the only other type of symbol we care about translating
     auto var = curMipsFunction().vars().at(irSym.name);
-    return curFuncRegAllocator_->getRegIfAllocated(var, instIndex_);
+    return curFuncRegAllocator_->getRegIfAllocated(var, instIndex_, isDef);
 }
 
 void Ir2Mips::emit (mips::MipsInstruction inst)
@@ -195,7 +195,7 @@ void Ir2Mips::translateAssign(const IrInstruction &inst)
     auto & irSrc = inst.params[1];
     MipsSymbol t8 = MipsSymbol::makeReg(mips::REG_T8);
     auto & mipsDestVar = curMipsFunction().vars().at(irDest.name);
-    auto mipsDest = curFuncRegAllocator_->getRegIfAllocated(mipsDestVar, instIndex_);
+    auto mipsDest = curFuncRegAllocator_->getRegIfAllocated(mipsDestVar, instIndex_, true);
 
     if (mipsDest.isReg())
     {
@@ -216,7 +216,7 @@ void Ir2Mips::translateBinary(const IrInstruction &inst)
     auto & irDest = inst.params[2];
     auto t8 = MipsSymbol::makeReg(mips::REG_T8);
     auto t9 = MipsSymbol::makeReg(mips::REG_T9);
-    auto mipsDest = irToMipsSymbol(irDest);
+    auto mipsDest = irToMipsSymbol(irDest, true);
 
     auto left = irToMipsSymbol(irLeft);
     auto right = irToMipsSymbol(irRight);
@@ -326,13 +326,14 @@ void Ir2Mips::translateCall(const IrInstruction &inst)
 
     if (inst.hasReturnValue())
     {
-        // store return from $v0
-        emitStore(MipsSymbol::makeReg(mips::REG_V0), irToMipsSymbol(inst.returnValue()));
+        // store return value from $v0
+        emitStore(MipsSymbol::makeReg(mips::REG_V0), irToMipsSymbol(inst.returnValue(), true));
     }
 }
 
 void Ir2Mips::translateArrayStore(const IrInstruction &inst)
 {
+    // translate into a function call to storeIntArray
     // from: array_store, array, index, value
     // to: call, storeIntArray, array, index, value
     auto arrayStoreInst = IrInstructionBuilder::fromOp(OpCode::CALL)
@@ -347,6 +348,7 @@ void Ir2Mips::translateArrayStore(const IrInstruction &inst)
 
 void Ir2Mips::translateArrayLoad(const IrInstruction &inst)
 {
+    // transform into a function call to built-in loadIntArray
     // from: array_load, value, array, index
     // to: callr,  value, loadIntArray, array, index
     auto arrayLoadInst = IrInstructionBuilder::fromOp(OpCode::CALLR)

@@ -29,6 +29,10 @@ class BriggsFunctionRegAllocator: public BaseFunctionRegAllocator
     std::vector<std::string> defs_;
     // outset of each block
     std::vector<VarSet> blockOutSets_;
+    // registers allocated to defined variable at each instruction
+    std::vector<std::string> defAllocs_;
+    // registers allocated to used variables at each instruction
+    std::vector<std::unordered_map<std::string, std::string>> useAllocs_;
     VarBlockLiveRanges blockLiveRanges_;
     LiveRanges liveRanges_;
 
@@ -39,10 +43,12 @@ class BriggsFunctionRegAllocator: public BaseFunctionRegAllocator
     void computeBlockLiveRanges();
     void computeWebs();
     void buildInterferenceGraph();
+    void allocateRegisters();
     int estimateSpillCost(const Web & web) const;
     BlockLiveRanges & getLiveRanges(const std::string & var);
 public:
     BriggsFunctionRegAllocator(const IrFunction &);
+    MipsSymbol getRegIfAllocated(const MipsSymbol & var, int irInstIndex, bool isDef = false) override;
 
     const std::vector<VarSet> & inSets() const
     {

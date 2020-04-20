@@ -28,5 +28,5 @@ public:
     BlockFunctionRegAllocator(const IrFunction &);
     void beforeInstruction(Ir2Mips &, int irInstIndex) override;
     void afterInstruction(Ir2Mips &, int irInstIndex) override;
-    MipsSymbol getRegIfAllocated(const MipsSymbol & var, int irInstIndex) override;
+    MipsSymbol getRegIfAllocated(const MipsSymbol & var, int irInstIndex, bool isDef = false) override;
 };

@@ -1,17 +1,20 @@
 #include "briggs_function_reg_allocator.h"
+#include "mips_reg.h"
 
 BriggsFunctionRegAllocator::BriggsFunctionRegAllocator (const IrFunction & irFunc):
     cfg_(Cfg(irFunc)), ir_(irFunc),
-    ig_(8),
+    ig_(mips::NUM_PERSISTENT_REGS),
     inSets_(irFunc.numInstructions()), outSets_(irFunc.numInstructions()),
     useSets_(irFunc.numInstructions()), defs_(irFunc.numInstructions()),
-    blockOutSets_(cfg_.blocks().size())
+    blockOutSets_(cfg_.blocks().size()),
+    defAllocs_(irFunc.numInstructions()), useAllocs_(irFunc.numInstructions())
 {
     livenessAnalysis();
     computeBlockLiveRanges();
     computeWebs();
     buildInterferenceGraph();
     ig_.colorGraph();
+    allocateRegisters();
 }
 
 void BriggsFunctionRegAllocator::livenessAnalysis ()
@@ -281,6 +284,7 @@ int BriggsFunctionRegAllocator::estimateSpillCost(const Web & web) const
         int blockWeight = 1;
         // check if it's a loop
         // quick hack: if it ends with a loop_label_... branch, then assume it's a loop
+        // not that robust, but good enough for now. Also doesn't account for nested loops
         auto lastInstIndex = cfg_.block(range.block).last;
         auto & lastInst = ir_.instruction(lastInstIndex);
         if (lastInst.isBranch() && lastInst.label().name.find("loop_label") != std::string::npos)
@@ -293,7 +297,7 @@ int BriggsFunctionRegAllocator::estimateSpillCost(const Web & web) const
         {
             // the same instruction can have both a use and a def in
             // two consecutive ranges,
-            // check definesVar to distinguish between
+            // use range.definesVar to distinguish between
             // the range with the use, and range with the definition
             if (defs_[i] == web.var && range.definesVar)
             {
@@ -311,4 +315,54 @@ int BriggsFunctionRegAllocator::estimateSpillCost(const Web & web) const
     }
 
     return cost;
+}
+
+void BriggsFunctionRegAllocator::allocateRegisters ()
+{
+    for (auto & web : liveRanges_)
+    {
+        auto & node = ig_.node(web.id());
+
+        // this web will spill
+        if (!node.hasColor()) continue;
+
+        // register to allocate to this variable in this live range web
+        auto reg = mips::PERSISTENT_REGS[node.color];
+        
+        for (auto & range : web.localRanges)
+        {
+            // for each instruction in this range
+            // map this variable to the assigned register
+            for (int i = range.start; i <= range.end; i++)
+            {
+                if (defs_[i] == web.var && range.definesVar)
+                {
+                    defAllocs_[i] = reg;
+                }
+                else if (useSets_[i].count(web.var) != 0)
+                {
+                    useAllocs_[i].insert_or_assign(web.var, reg);
+                }
+            }
+        }
+    }
+}
+
+MipsSymbol BriggsFunctionRegAllocator::getRegIfAllocated (const MipsSymbol & var, int irInstIndex, bool isDef)
+{
+    // check if var is being assigned
+    if (isDef && defs_[irInstIndex] == var.name && !defAllocs_[irInstIndex].empty())
+    {
+        return MipsSymbol::makeReg(defAllocs_[irInstIndex]);
+    }
+
+    // var is being used
+    auto item = useAllocs_[irInstIndex].find(var.name);
+    if (item != useAllocs_[irInstIndex].end())
+    {
+        return MipsSymbol::makeReg(item->second);
+    }
+    
+    // no register allocated for this var
+    return var;
 }

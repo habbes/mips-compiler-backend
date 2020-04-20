@@ -27,7 +27,8 @@ public:
 
     // returns the register allocated for the specified var if any
     // otherwise, returns the var itself
-    virtual MipsSymbol getRegIfAllocated(const MipsSymbol & var, int irIndex)
+    // isDef is true when the var is being assigned and false when it's value is being used
+    virtual MipsSymbol getRegIfAllocated(const MipsSymbol & var, int irIndex, bool isDef = false)
     {
         return var;
     }

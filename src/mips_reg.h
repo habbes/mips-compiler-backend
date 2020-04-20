@@ -85,4 +85,8 @@ constexpr const char * REG_F29 = "$f29";
 constexpr const char * REG_F30 = "$f30";
 constexpr const char * REG_F31 = "$f31";
 
+// persistent registers that we can allocate to variables
+constexpr const char* PERSISTENT_REGS[] = { REG_S0, REG_S1, REG_S2, REG_S3, REG_S4, REG_S5, REG_S6, REG_S7 };
+constexpr const int NUM_PERSISTENT_REGS = 8;
+
 }

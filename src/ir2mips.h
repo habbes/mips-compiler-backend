@@ -37,7 +37,12 @@ public:
     const mips::MipsProgram &mips() const;
     const IrFunction &curIrFunction();
     mips::MipsFunction &curMipsFunction();
-    mips::MipsSymbol irToMipsSymbol(const SymbolInfo &);
+    /**
+     * converts the IR symbol to a corresponding MIPS symbol
+     * isDef is true when the symbol is being defined/assigned a value
+     * and false when its value is being used
+     */
+    mips::MipsSymbol irToMipsSymbol(const SymbolInfo &, bool isDef = false);
     void emit(mips::MipsInstruction);
     // loads/moves data from src to dest register
     void emitLoad(const mips::MipsSymbol & src, const mips::MipsSymbol & dest);
