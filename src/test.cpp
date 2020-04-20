@@ -794,6 +794,6 @@ int main(int argc, char *argv[])
     test_run_scenario(testSimpleGraphColoring);
     test_run_scenario(testGraphColoringWithSpills);
 
-    puts("SUCCESS!");
+    puts("UNIT TESTS PASSED!");
     return 0;
 }
