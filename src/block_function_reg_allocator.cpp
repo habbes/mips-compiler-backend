@@ -22,9 +22,6 @@ void BlockFunctionRegAllocator::allocate()
 
 void BlockFunctionRegAllocator::allocateBlock(const BasicBlock & block)
 {
-    const int numRegs = 4;
-    std::string regsToAllocate[numRegs] = { mips::REG_S0, mips::REG_S1, mips::REG_S2, mips::REG_S3 };
-
     // count the usages of each variable in the block
     std::unordered_map<std::string, int> varUsages{};
     for (int i = block.first; i <= block.last; i++)
@@ -57,10 +54,10 @@ void BlockFunctionRegAllocator::allocateBlock(const BasicBlock & block)
     
     // allocate available registers to most-used vars
     VarToRegMap allocations;
-    for (size_t i = 0; i < numRegs && i < sortedUsages.size(); i++)
+    for (size_t i = 0; i < mips::NUM_PERSISTENT_REGS && i < sortedUsages.size(); i++)
     {
         auto var = sortedUsages[i].first;
-        auto reg = regsToAllocate[i];
+        auto reg = mips::PERSISTENT_REGS[i];
         allocations[var] = reg;
     }
 
