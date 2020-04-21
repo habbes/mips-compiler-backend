@@ -1,0 +1,38 @@
+#start_function main
+    void main()
+    int-list: elfCount_s1, counter_s1, elves_s1[5], _t1_s0, _t2_s0, _t3_s0, _t4_s0, _t5_s0
+    float-list: 
+    assign, elves_s1, 5, 5
+    main:
+    assign, elfCount_s1, 0, 
+    assign, counter_s1, 0, 
+    loop_label_0:
+    brgt, counter_s1, 5, loop_label_1
+    add, elfCount_s1, counter_s1, _t1_s0
+    assign, elfCount_s1, _t1_s0, 
+    add, counter_s1, 1, counter_s1
+    goto, loop_label_0, , 
+    loop_label_1:
+    assign, _t2_s0, 0, 
+    brneq, elfCount_s1, 15, if_label_2
+    assign, _t2_s0, 1, 
+    if_label_2:
+    call, printi, _t2_s0
+    assign, elfCount_s1, 0, 
+    assign, counter_s1, 0, 
+    loop_label_3:
+    brgt, counter_s1, 4, loop_label_4
+    array_load, _t3_s0, elves_s1, counter_s1
+    add, elfCount_s1, _t3_s0, _t4_s0
+    assign, elfCount_s1, _t4_s0, 
+    add, counter_s1, 1, counter_s1
+    goto, loop_label_3, , 
+    loop_label_4:
+    assign, _t5_s0, 0, 
+    brneq, elfCount_s1, 25, if_label_5
+    assign, _t5_s0, 1, 
+    if_label_5:
+    call, printi, _t5_s0
+    return, , , 
+#end_function main
+

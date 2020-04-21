@@ -1,0 +1,27 @@
+#start_function main
+    void main()
+    int-list: total_s1, n_s1, index_s1, _t1_s0, _t2_s0, _t3_s0, _t4_s0, _t5_s0
+    float-list: 
+    assign, n_s1, 20, 
+    assign, index_s1, 0, 
+    main:
+    assign, total_s1, 0, 
+    assign, index_s1, 1, 
+    loop_label_0:
+    brgt, index_s1, n_s1, loop_label_1
+    add, total_s1, index_s1, _t1_s0
+    assign, total_s1, _t1_s0, 
+    add, index_s1, 1, index_s1
+    goto, loop_label_0, , 
+    loop_label_1:
+    add, n_s1, 1, _t3_s0
+    mul, n_s1, _t3_s0, _t4_s0
+    div, _t4_s0, 2, _t5_s0
+    assign, _t2_s0, 0, 
+    brneq, _t5_s0, total_s1, if_label_2
+    assign, _t2_s0, 1, 
+    if_label_2:
+    call, printi, _t2_s0
+    return, , , 
+#end_function main
+

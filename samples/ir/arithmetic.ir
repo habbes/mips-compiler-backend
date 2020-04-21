@@ -1,0 +1,41 @@
+#start_function main
+    void main()
+    int-list: two_s1, three_s1, sum_s1, product_s1, constants_s1, expression_s1, exponent_s1, _t1_s0, _t2_s0, _t3_s0, _t4_s0, _t5_s0, _t6_s0, _t7_s0, _t8_s0, _t9_s0, _t10_s0, _t11_s0, _t12_s0, _t13_s0, _t14_s0, _t15_s0, _t16_s0
+    float-list: 
+    assign, two_s1, 2, 
+    assign, three_s1, 3, 
+    main:
+    add, three_s1, three_s1, _t1_s0
+    assign, sum_s1, _t1_s0, 
+    mul, 2, three_s1, _t2_s0
+    assign, product_s1, _t2_s0, 
+    add, 2, 2, _t3_s0
+    add, _t3_s0, 2, _t4_s0
+    assign, constants_s1, _t4_s0, 
+    mul, 1, 1, _t5_s0
+    add, _t5_s0, 2, _t6_s0
+    add, _t6_s0, three_s1, _t7_s0
+    assign, expression_s1, _t7_s0, 
+    assign, _t8_s0, 1, 
+    assign, _t9_s0, 1, 
+    loop_label_0:
+    brgt, _t9_s0, 3, loop_label_1
+    mult, _t8_s0, 2, _t10_s0
+    assign, _t8_s0, _t10_s0, 
+    add, _t9_s0, 1, _t9_s0
+    goto, loop_label_0, , 
+    loop_label_1:
+    sub, _t8_s0, 2, _t11_s0
+    assign, exponent_s1, _t11_s0, 
+    add, sum_s1, product_s1, _t13_s0
+    add, _t13_s0, constants_s1, _t14_s0
+    add, _t14_s0, expression_s1, _t15_s0
+    add, _t15_s0, exponent_s1, _t16_s0
+    assign, _t12_s0, 0, 
+    brneq, _t16_s0, 30, if_label_2
+    assign, _t12_s0, 1, 
+    if_label_2:
+    call, printi, _t12_s0
+    return, , , 
+#end_function main
+

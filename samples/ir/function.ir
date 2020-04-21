@@ -1,0 +1,52 @@
+#start_function addInt
+    int addInt(int first_s2, int second_s2)
+    int-list: first_s2, second_s2, _t1_s0
+    float-list:
+    add, first_s2, second_s2, _t1_s0
+    return, _t1_s0, ,
+#end_function addInt
+
+#start_function addUp
+    int addUp(int a_s3, int b_s3)
+    int-list: a_s3, b_s3, i_s4, total_s4, _t2_s0
+    float-list:
+    
+    
+    
+    assign, i_s4, 0,
+    assign, total_s4, 0,
+    assign, i_s4, a_s3,
+    loop_label_0:
+    brgt, i_s4, b_s3, loop_label_1
+    add, total_s4, i_s4, _t2_s0
+    assign, total_s4, _t2_s0,
+    add, i_s4, 1, i_s4
+    goto, loop_label_0, ,
+    loop_label_1:
+    return, total_s4, ,
+
+    return, 0, ,
+#end_function addUp
+
+#start_function main
+    void main()
+    int-list: sum_s1, total_s1, _t3_s0, _t4_s0, _t5_s0, _t6_s0
+    float-list:
+    main:
+    callr, _t3_s0, addInt, 4, 3
+    assign, sum_s1, _t3_s0,
+    assign, _t4_s0, 0,
+    brneq, sum_s1, 7, if_label_2
+    assign, _t4_s0, 1,
+    if_label_2:
+    call, printi, _t4_s0
+    callr, _t5_s0, addUp, 7, 9
+    assign, total_s1, _t5_s0,
+    assign, _t6_s0, 0,
+    brneq, total_s1, 24, if_label_3
+    assign, _t6_s0, 1,
+    if_label_3:
+    call, printi, _t6_s0
+    return, , ,
+#end_function main
+

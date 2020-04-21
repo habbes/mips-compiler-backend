@@ -1,0 +1,25 @@
+#start_function main
+    void main()
+    int-list: _t1_s0, _t2_s0
+    float-list: 
+    main:
+    assign, _t1_s0, 0, 
+    brneq, 1, 1, if_label_1
+    assign, _t1_s0, 1, 
+    if_label_1:
+    brneq, _t1_s0, 1, if_label_0
+    call, printi, 1
+    if_label_0:
+    assign, _t2_s0, 0, 
+    brneq, 1, 0, if_label_2
+    assign, _t2_s0, 1, 
+    if_label_2:
+    brneq, _t2_s0, 1, if_label_3
+    call, printi, 1
+    goto, if_label_4, , 
+    if_label_3:
+    call, printi, 1
+    if_label_4:
+    return, , , 
+#end_function main
+

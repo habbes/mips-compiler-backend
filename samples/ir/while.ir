@@ -1,0 +1,27 @@
+#start_function main
+    void main()
+    int-list: elves_s1, counter_s1, _t1_s0, _t2_s0, _t3_s0, _t4_s0
+    float-list: 
+    main:
+    assign, counter_s1, 1, 
+    assign, elves_s1, 0, 
+    while_label_0:
+    assign, _t1_s0, 0, 
+    brgt, counter_s1, 10, if_label_2
+    assign, _t1_s0, 1, 
+    if_label_2:
+    breq, _t1_s0, 0, while_label_1
+    add, elves_s1, counter_s1, _t2_s0
+    assign, elves_s1, _t2_s0, 
+    add, counter_s1, 1, _t3_s0
+    assign, counter_s1, _t3_s0, 
+    goto, while_label_0, , 
+    while_label_1:
+    assign, _t4_s0, 0, 
+    brneq, elves_s1, 55, if_label_3
+    assign, _t4_s0, 1, 
+    if_label_3:
+    call, printi, _t4_s0
+    return, , , 
+#end_function main
+

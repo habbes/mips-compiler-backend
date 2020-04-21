@@ -6,4 +6,6 @@ src/test_mem
 src/main
 build
 output
+samples/asm
+samples/res
 ir2mips

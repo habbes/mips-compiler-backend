@@ -1,0 +1,33 @@
+#start_function return65
+    float return65()
+    int-list: 
+    float-list: 
+    return, 6.5, , 
+#end_function return65
+
+#start_function main
+    void main()
+    int-list: _t1_s0, _t3_s0, _t5_s0
+    float-list: number_s1, _t2_s0, _t4_s0
+    main:
+    add, 2.0, 2.0, _t2_s0
+    assign, _t1_s0, 0, 
+    brneq, _t2_s0, 4.0, if_label_0
+    assign, _t1_s0, 1, 
+    if_label_0:
+    call, printi, _t1_s0
+    assign, _t3_s0, 0, 
+    brgeq, 1.0, 2.0, if_label_1
+    assign, _t3_s0, 1, 
+    if_label_1:
+    call, printi, _t3_s0
+    callr, _t4_s0, return65
+    assign, number_s1, _t4_s0, 
+    assign, _t5_s0, 0, 
+    brneq, number_s1, 6.5, if_label_2
+    assign, _t5_s0, 1, 
+    if_label_2:
+    call, printi, _t5_s0
+    return, , , 
+#end_function main
+
