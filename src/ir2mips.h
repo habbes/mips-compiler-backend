@@ -30,6 +30,7 @@ class Ir2Mips
     void injectPrintiFunction();
     void injectLoadIntArray();
     void injectStoreIntArray();
+    void injectInitIntArray();
     void injectExitFunction();
 public:
     Ir2Mips(IrProgram & ir, BaseRegAllocator &);

@@ -23,7 +23,7 @@ mips::MipsProgram &Ir2Mips::translate()
 
     for (int i = 0; i < ir_.numFunctions(); i++)
     {
-        funcIndex_ = 0;
+        funcIndex_ = i;
         translateNextFunction();
     }
 
@@ -191,6 +191,24 @@ void Ir2Mips::translateLabel(const IrInstruction &inst)
 
 void Ir2Mips::translateAssign(const IrInstruction &inst)
 {
+    if (inst.params[0].isArray)
+    {
+        // assigning an array
+        // translate into a function call to initIntArray
+        // from: assign, array, size, value
+        // to: call, initIntArray, array, size, value
+        auto arrayStoreInst = IrInstructionBuilder::fromOp(OpCode::CALL)
+            .param({ "initIntArray", SymbolType::FUNC })
+            .param(inst.params[0])
+            .param(inst.params[1])
+            .param(inst.params[2])
+            .build();
+        
+        translateCall(*arrayStoreInst);
+        return;
+    }
+
+
     auto & irDest = inst.params[0];
     auto & irSrc = inst.params[1];
     MipsSymbol t8 = MipsSymbol::makeReg(mips::REG_T8);
@@ -382,6 +400,7 @@ void Ir2Mips::injectBuiltInFunctions ()
     injectPrintiFunction();
     injectStoreIntArray();
     injectLoadIntArray();
+    injectInitIntArray();
     injectExitFunction();
 }
 
@@ -447,6 +466,35 @@ void Ir2Mips::injectLoadIntArray ()
    emit({ mips::MipsOp::MUL, { { MipsSymbol::makeReg(mips::REG_T9), MipsSymbol::makeReg(mips::REG_A1), MipsSymbol::makeReg(mips::REG_T8) } } });
    emit({ mips::MipsOp::ADD, { { MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_T9) } } });
    emit({ mips::MipsOp::LW, { { MipsSymbol::makeReg(mips::REG_V0), MipsSymbol::makeAddressReg(mips::REG_A0) } } });
+   emit({ mips::MipsOp::JR, { { MipsSymbol::makeReg(mips::REG_RA) } } });
+}
+
+void Ir2Mips::injectInitIntArray ()
+{
+    /*
+    initIntArray:
+	# $a0=address of array, $a1 = size of array, $a2 = value
+	li $s0, 0
+	startloop:
+	beq $s0, $a1, endloop
+	sw $a2, ($a0)
+	addi $a0, $a0, 4
+	addi $s0, $s0, 1
+	j startloop
+	endloop: jr $ra
+    */
+   
+   auto startLabel = MipsSymbol::makeLabel("initIntArrayStartLoop");
+   auto endLabel = MipsSymbol::makeLabel("initIntArrayEndLoop");
+   mips_.newFunction("initIntArray");
+   emit({ mips::MipsOp::LI, { { MipsSymbol::makeReg(mips::REG_T8), MipsSymbol::makeConst(0) } } });
+   emit({ mips::MipsOp::INST_LABEL, { { startLabel} } });
+   emit({ mips::MipsOp::BEQ, { { MipsSymbol::makeReg(mips::REG_T8), MipsSymbol::makeReg(mips::REG_A1), endLabel } } });
+   emit({ mips::MipsOp::SW, { { MipsSymbol::makeReg(mips::REG_A2), MipsSymbol::makeAddressReg(mips::REG_A0) } } });
+   emit({ mips::MipsOp::ADDI, { { MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeReg(mips::REG_A0), MipsSymbol::makeConst(4) } } });
+   emit({ mips::MipsOp::ADDI, { { MipsSymbol::makeReg(mips::REG_T8), MipsSymbol::makeReg(mips::REG_T8), MipsSymbol::makeConst(1) } } });
+   emit({ mips::MipsOp::J, { { startLabel } } });
+   emit({ mips::MipsOp::INST_LABEL, { { endLabel } } });
    emit({ mips::MipsOp::JR, { { MipsSymbol::makeReg(mips::REG_RA) } } });
 }
 

@@ -249,6 +249,22 @@ bool testParseMultipleFunctions()
     return true;
 }
 
+bool testMultiplFunctionsSample ()
+{
+    std::string filename = "../samples/ir/function.ir";
+    std::ifstream source(filename);
+
+    IrParser parser(source);
+    parser.parse();
+    auto & program = parser.program();
+
+    test_expect(program[0].name() == "addInt", "expect func addInt but got %s", program[0].name().c_str());
+    test_expect(program[1].name() == "addUp", "expect func addUp but got %s", program[1].name().c_str());
+    test_expect(program[2].name() == "main", "expect func main but got %s", program[2].name().c_str());
+
+    return true;
+}
+
 bool testParseArray()
 {
     std::string filename = "../test_cases/examples/ir/array.ir";
@@ -344,7 +360,8 @@ bool testSimpleMipsTranslation()
     test_strings_equal(mipsProgram[2].name(), "printi");
     test_strings_equal(mipsProgram[3].name(), "storeIntArray");
     test_strings_equal(mipsProgram[4].name(), "loadIntArray");
-    test_strings_equal(mipsProgram[5].name(), "exit");
+    test_strings_equal(mipsProgram[5].name(), "initIntArray");
+    test_strings_equal(mipsProgram[6].name(), "exit");
 
     auto & func = mipsProgram[1];
     test_expect(func.name() == "main", "expected main but got %s", func.name().c_str());
@@ -784,6 +801,7 @@ int main(int argc, char *argv[])
 {
     test_run_scenario(testParseSimpleFunction);
     test_run_scenario(testParseMultipleFunctions);
+    test_run_scenario(testMultiplFunctionsSample);
     test_run_scenario(testFunctionMemoryBugs);
     test_run_scenario(testParseArray);
     test_run_scenario(testSimpleMipsTranslation);
