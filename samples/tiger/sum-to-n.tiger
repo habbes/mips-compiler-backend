@@ -1,0 +1,19 @@
+/* rarh3 */
+
+main let
+
+    var total : int;
+    var n : int := 10;
+    var index : int;
+
+in begin
+
+    /* sum the numbers from 1 = n */
+    total := 0;
+    for index := 1 to n do
+        total := total + index;
+    enddo;
+
+    printi(( n * (n + 1) / 2) == total);
+
+end

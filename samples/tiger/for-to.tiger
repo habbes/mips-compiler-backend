@@ -1,0 +1,24 @@
+/* rarh3 */
+
+main let
+
+    type elfArray = array [5] of int;
+    var elfCount : int;
+    var counter : int;
+    var elves : elfArray := 5;
+
+in begin
+
+    elfCount := 0;
+    for counter := 0 to 5 do
+        elfCount := elfCount + counter;
+    enddo;
+    printi(elfCount == 15);
+
+    elfCount := 0;
+    for counter := 0 to 4 do
+        elfCount := elfCount + elves[counter];
+    enddo;
+    printi(elfCount == 25);
+
+end

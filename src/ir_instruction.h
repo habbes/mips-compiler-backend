@@ -58,6 +58,8 @@ struct IrInstruction
     bool isCall() const;
     bool isReturn() const;
     bool isAssign() const;
+    bool isBreakingFlow() const;
+    bool isUnconditionallyBreakingFlow() const;
     bool hasReturnValue() const;
     std::string toString() const;
 

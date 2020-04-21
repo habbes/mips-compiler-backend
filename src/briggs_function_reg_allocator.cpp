@@ -1,5 +1,6 @@
 #include "briggs_function_reg_allocator.h"
 #include "mips_reg.h"
+#include <iostream>
 
 BriggsFunctionRegAllocator::BriggsFunctionRegAllocator (const IrFunction & irFunc):
     cfg_(Cfg(irFunc)), ir_(irFunc),
@@ -46,7 +47,7 @@ void BriggsFunctionRegAllocator::initUseAndDefSets()
     for (int i = 0; i < ir_.numInstructions(); i++)
     {
         const auto & inst = ir_.instruction(i);
-        defs_[i] = inst.hasReturnValue() ? inst.returnValue().name : "";
+        defs_[i] = inst.hasReturnValue() && !inst.isReturn() ? inst.returnValue().name : "";
         
         for (auto input = inst.inputsBegin(); input != inst.inputsEnd(); input++)
         {
@@ -75,7 +76,7 @@ bool BriggsFunctionRegAllocator::updateInstructionLiveness (int i, const BasicBl
     inSets_[i].erase(defs_[i]);
     inSets_[i].insert(useSets_[i].begin(), useSets_[i].end());
 
-    return inSets_[i].size() != origInSize && outSets_[i].size() != origOutSize;
+    return inSets_[i].size() != origInSize || outSets_[i].size() != origOutSize;
 }
 
 bool BriggsFunctionRegAllocator::updateBlockLiveness (const BasicBlock & block)
@@ -99,6 +100,7 @@ bool BriggsFunctionRegAllocator::updateBlockLiveness (const BasicBlock & block)
     outSets_[block.last].insert(blockOutSets_[block.id].begin(), blockOutSets_[block.id].end());
     inSets_[block.last].insert(outSets_[block.last].begin(), outSets_[block.last].end());
     inSets_[block.last].erase(defs_[block.last]);
+    inSets_[block.last].insert(useSets_[block.last].begin(), useSets_[block.last].end());
  
     return true;
 }
@@ -339,7 +341,7 @@ void BriggsFunctionRegAllocator::allocateRegisters ()
                 {
                     defAllocs_[i] = reg;
                 }
-                else if (useSets_[i].count(web.var) != 0)
+                else if (inSets_[i].count(web.var) != 0)
                 {
                     useAllocs_[i].insert_or_assign(web.var, reg);
                 }
@@ -350,6 +352,22 @@ void BriggsFunctionRegAllocator::allocateRegisters ()
 
 MipsSymbol BriggsFunctionRegAllocator::getRegIfAllocated (const MipsSymbol & var, int irInstIndex, bool isDef)
 {
+    if (irInstIndex < 0)
+    {
+        // queries made before the first instruction are for function arguments
+        if (defs_[0] == var.name && !defAllocs_[0].empty())
+        {
+            return MipsSymbol::makeReg(defAllocs_[0]);
+        }
+        auto item = useAllocs_[0].find(var.name);
+        if (item != useAllocs_[0].end())
+        {
+            return MipsSymbol::makeReg(item->second);
+        }
+
+        return  var;
+    }
+
     // check if var is being assigned
     if (isDef && defs_[irInstIndex] == var.name && !defAllocs_[irInstIndex].empty())
     {

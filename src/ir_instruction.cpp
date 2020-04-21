@@ -162,6 +162,16 @@ bool IrInstruction::isUnconditionalBranch () const
     return op == OpCode::GOTO;
 }
 
+bool IrInstruction::isBreakingFlow() const
+{
+    return isBranch() || isReturn();
+}
+
+bool IrInstruction::isUnconditionallyBreakingFlow() const
+{
+    return isUnconditionalBranch() || isReturn();
+}
+
 bool IrInstruction::isLabel () const
 {
     return op == OpCode::LABEL;

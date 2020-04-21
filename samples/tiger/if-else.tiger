@@ -1,0 +1,17 @@
+/* rarh3 */
+
+main let
+
+in begin
+
+    if (1 == 1) then
+        printi(1);
+    endif;
+
+    if (1 == 0) then
+        printi(1);
+    else
+        printi(1);
+    endif;
+
+end

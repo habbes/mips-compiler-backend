@@ -1,0 +1,23 @@
+/* rarh3 */
+
+main let
+
+    var two : int := 2;
+    var three : int := 3;
+    var sum : int;
+    var product : int;
+    var constants : int;
+    var expression : int;
+    var exponent : int;
+
+in begin
+
+    sum := three + three;                   /* 6 */
+    product := 2 * three;                   /* 6 */
+    constants := 2 + 2 + 2;                 /* 6 */
+    expression := (1 * 1) + 2 + three;      /* 6 */
+    exponent := (2**3) - 2;                 /* 6 */
+
+    printi(sum + product + constants + expression + exponent == 30);
+
+end

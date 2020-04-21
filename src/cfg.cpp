@@ -62,7 +62,7 @@ void Cfg::connectBasicBlocks ()
                 (lastOfCurrent.isBranch() && firstOfOther.isLabel() && lastOfCurrent.label() == firstOfOther.label())
                 ||
                 // current follows through to other
-                (!lastOfCurrent.isUnconditionalBranch() && other.first == current.last + 1)
+                (!lastOfCurrent.isUnconditionallyBreakingFlow() && other.first == current.last + 1)
                 )
             {
                 nodes_[current.id].successors.insert(other.id);
@@ -88,9 +88,9 @@ std::vector<int> Cfg::findLeaders ()
         }
         else
         {
-            // statements following a branch are leaders
+            // statements following a branch or return are leaders
             auto & prev = function_.instruction(i - 1);
-            if (prev.isBranch())
+            if (prev.isBreakingFlow())
             {
                 leaders.push_back(i);
             }

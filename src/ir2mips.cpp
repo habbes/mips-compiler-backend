@@ -41,11 +41,30 @@ void Ir2Mips::translateNextFunction()
         curFuncRegAllocator_.reset();
     }
     curFuncRegAllocator_ = regAllocator_.getFunctionAllocator(irFunc);
+    instIndex_ = -1;
     if (curMipsFunction().backsUpRa())
     {
+        curMipsFunction().addCodeComment("backup return address");
         // backup $ra
         // sw $ra, func_saved_ra
         emitStore(MipsSymbol::makeReg(mips::REG_RA), curMipsFunction().backupRaVar());
+    }
+
+    if (!isMainOrBuiltinFunction())
+    {
+        backupPersistentRegs();
+    }
+
+    // load params
+    curMipsFunction().addCodeComment("load function arguments");
+    std::string argsRegs[] = { mips::REG_A0, mips::REG_A1, mips::REG_A2, mips::REG_A3 };
+    int i = 0;
+    for (auto & param : irFunc.params())
+    {
+        // currently only support up to 4 params
+        if (i >= 4) break;
+        emitStore(MipsSymbol::makeReg(argsRegs[i]), irToMipsSymbol(param, true));
+        i++;
     }
 
     instIndex_ = 0;
@@ -392,6 +411,11 @@ void Ir2Mips::translateReturn (const IrInstruction &inst)
         emitLoad(curMipsFunction().backupRaVar(), MipsSymbol::makeReg(mips::REG_RA));
     }
 
+    if (!isMainOrBuiltinFunction())
+    {
+        restorePersistentRegs();
+    }
+
     emit({ mips::MipsOp::JR, { MipsSymbol::makeReg(mips::REG_RA) } });
 }
 
@@ -522,4 +546,34 @@ void Ir2Mips::injectExitFunction ()
     mips_.newFunction("exit");
     emit({ mips::MipsOp::LI, { { MipsSymbol::makeReg(mips::REG_V0), MipsSymbol::makeConst(10) } } });
     emit({ mips::MipsOp::SYSCALL });
+}
+
+bool Ir2Mips::isMainOrBuiltinFunction ()
+{
+    return curIrFunction().name() == "main";
+}
+
+void Ir2Mips::backupPersistentRegs ()
+{
+    curMipsFunction().addCodeComment("backup persistent registers");
+    for (int i = 0; i < mips::NUM_PERSISTENT_REGS; i++)
+    {
+        auto reg = mips::PERSISTENT_REGS[i];
+        auto tempName = curMipsFunction().name() + "_s" + std::to_string(i) + "_temp";
+        auto temp = MipsSymbol::makeVar(tempName);
+        curMipsFunction().addVar(temp, "0");
+        emitStore(MipsSymbol::makeReg(reg), temp);
+    }
+}
+
+void Ir2Mips::restorePersistentRegs ()
+{
+    curMipsFunction().addCodeComment("restore persistent registers");
+    for (int i = 0; i < mips::NUM_PERSISTENT_REGS; i++)
+    {
+        auto reg = mips::PERSISTENT_REGS[i];
+        auto tempName = curMipsFunction().name() + "_s" + std::to_string(i) + "_temp";
+        auto temp = curMipsFunction().vars().at(tempName);
+        emitLoad(temp, MipsSymbol::makeReg(reg));
+    }
 }

@@ -146,6 +146,11 @@ void BlockFunctionRegAllocator::restoreVarsFromRegisters (Ir2Mips & compiler, co
 
 MipsSymbol BlockFunctionRegAllocator::getRegIfAllocated (const MipsSymbol & var, int irIndex, bool isDef)
 {
+    if (irIndex < 0)
+    {
+        // regs not yet allocated
+        return var;
+    }
     auto & allocations = instructionsAllocs_[irIndex];
     auto it = allocations.find(var.name);
     if (it == allocations.end())

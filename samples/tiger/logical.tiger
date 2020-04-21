@@ -1,0 +1,15 @@
+/* rarh3 */
+
+main let
+
+    var true : int := 1;
+    var false : int := 0;
+
+in begin
+
+    printi((true & true) == true);
+    printi((true & false) == false);
+    printi((false & false) == false);
+    
+
+end

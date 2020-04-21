@@ -1,0 +1,32 @@
+/* rarh3 */
+
+main let
+
+    var one : int := 1;
+    var two : int := 2;
+    var three : int := 3;
+    var seven : int := 1;
+    var number : int := 0;
+
+in begin
+
+    seven := 0;
+    for number := 1 to 2 do
+        if (number == 1) then
+            seven := two * three + 1;
+            seven := three + three + 1;
+            seven := two ** three - two + 1;
+            seven := seven;
+            seven := ((two * two * three) / two) + 1; 
+        else
+            seven := two * three + 1;
+            seven := three + three + 1;
+            seven := two ** three - two + 1;
+            seven := seven;
+            seven := (two * two * three) / two + 1; 
+        endif;
+    enddo;
+
+    printi(seven == 7);
+
+end

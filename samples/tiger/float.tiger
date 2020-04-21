@@ -1,0 +1,20 @@
+/* rarh3 */
+
+main let
+
+    var number : float;
+
+    function return65() : float begin
+        return 6.5;
+    end;
+
+in begin
+
+    printi(2.0 + 2.0 == 4.0);
+
+    printi(1.0 < 2.0);
+
+    number := return65();
+    printi(number == 6.5);
+
+end

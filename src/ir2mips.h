@@ -32,6 +32,9 @@ class Ir2Mips
     void injectStoreIntArray();
     void injectInitIntArray();
     void injectExitFunction();
+    bool isMainOrBuiltinFunction();
+    void backupPersistentRegs();
+    void restorePersistentRegs();
 public:
     Ir2Mips(IrProgram & ir, BaseRegAllocator &);
     mips::MipsProgram &translate();
